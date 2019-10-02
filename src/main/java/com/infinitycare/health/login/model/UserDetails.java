@@ -1,4 +1,4 @@
-package com.infinitycare.health;
+package com.infinitycare.health.login.model;
 
 public class UserDetails {
 
