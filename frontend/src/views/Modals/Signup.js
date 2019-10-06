@@ -22,17 +22,20 @@ import GridContainer from "components/Grid/GridContainer.js";
 import GridItem from "components/Grid/GridItem.js";
 
 import modalStyles from "assets/jss/material-kit-react/modalStyle.js";
+import loginStyles from "assets/jss/material-kit-react/views/loginPage.js";
 
 const Transition = React.forwardRef(function Transition(props, ref) {
   return <Slide direction="down" ref={ref} {...props} />;
 });
 
-const useStyles = makeStyles(modalStyles);
+const useModalStyles = makeStyles(modalStyles);
+const useLoginStyles = makeStyles(loginStyles);
 
 export default function Modal() {
   const [modal, setModal] = React.useState(false);
-  const classes = useStyles();
   const [cardAnimaton, setCardAnimation] = React.useState("cardHidden");
+  const modalClasses = useModalStyles();
+  const loginClasses = useLoginStyles();
   setTimeout(function() {
     setCardAnimation("");
   }, 700);
@@ -42,9 +45,9 @@ export default function Modal() {
           Sign up
         </Button>
       <Dialog
-        classes={{
-          root: classes.center,
-          paper: classes.modal
+        modalClasses={{
+          root: modalClasses.center,
+          paper: modalClasses.modal
         }}
         open={modal}
         TransitionComponent={Transition}
@@ -56,31 +59,31 @@ export default function Modal() {
         <DialogTitle
           id="classic-modal-slide-title"
           disableTypography
-          className={classes.modalHeader}
+          className={modalClasses.modalHeader}
         >
           <IconButton
-            className={classes.modalCloseButton}
+            className={modalClasses.modalCloseButton}
             key="close"
             aria-label="Close"
             color="inherit"
             onClick={() => setModal(false)}
           >
-            <Close className={classes.modalClose} />
+            <Close className={modalClasses.modalClose} />
           </IconButton>
-          <h4 className={classes.modalTitle}>Sign Up</h4>
+          <h4 className={modalClasses.modalTitle}>Sign Up</h4>
         </DialogTitle>
         <DialogContent
           id="modal-slide-description"
-          className={classes.modalBody}
+          className={modalClasses.modalBody}
         >
-        <div className={classes.container}>
+        <div className={loginClasses.container}>
             <GridContainer justify="center">
                 <GridItem xs={12} sm={12} md={4}>
-                <Card className={classes[cardAnimaton]}>
-                    <form className={classes.form}>
-                    <CardHeader color="primary" className={classes.cardHeader}>
+                <Card className={loginClasses[cardAnimaton]}>
+                    <form className={loginClasses.form}>
+                    <CardHeader color="primary" className={loginClasses.cardHeader}>
                         <h4>Sign up with</h4>
-                        <div className={classes.socialLine}>
+                        <div className={loginClasses.socialLine}>
                         <Button
                             justIcon
                             href="#pablo"
@@ -103,7 +106,7 @@ export default function Modal() {
                             type: "email",
                             endAdornment: (
                             <InputAdornment position="end">
-                                <Email className={classes.inputIconsColor} />
+                                <Email className={loginClasses.inputIconsColor} />
                             </InputAdornment>
                             )
                         }}
@@ -118,7 +121,7 @@ export default function Modal() {
                             type: "password",
                             endAdornment: (
                             <InputAdornment position="end">
-                                <Icon className={classes.inputIconsColor}>
+                                <Icon className={loginClasses.inputIconsColor}>
                                 lock_outline
                                 </Icon>
                             </InputAdornment>
@@ -134,10 +137,10 @@ export default function Modal() {
         </div>
         </DialogContent>
         <DialogActions
-          className={classes.modalFooter + " " + classes.modalFooterCenter}
+          className={modalClasses.modalFooter + " " + modalClasses.modalFooterCenter}
         >
-          <Button onClick={() => setModal(false)} color="success">
-            Sign
+          <Button style={{minWidth: "70%"}} onClick={() => setModal(false)} color="info">
+            Sign Up
           </Button>
         </DialogActions>
       </Dialog>

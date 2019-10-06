@@ -18,18 +18,18 @@ import CardFooter from "components/Card/CardFooter.js";
 import CustomInput from "components/CustomInput/CustomInput.js";
 import Signup from "views/Modals/Signup.js";
 
-import styles from "assets/jss/material-kit-react/views/loginPage.js";
+import loginStyles from "assets/jss/material-kit-react/views/loginPage.js";
 
 import image from "assets/img/bg7.jpg";
 
-const useStyles = makeStyles(styles);
+const useLoginStyles = makeStyles(loginStyles);
 
 export default function LoginPage(props) {
   const [cardAnimaton, setCardAnimation] = React.useState("cardHidden");
   setTimeout(function() {
     setCardAnimation("");
   }, 700);
-  const classes = useStyles();
+  const loginClasses = useLoginStyles();
   const { ...rest } = props;
   return (
     <div>
@@ -41,21 +41,21 @@ export default function LoginPage(props) {
         {...rest}
       />
       <div
-        className={classes.pageHeader}
+        className={loginClasses.pageHeader}
         style={{
           backgroundImage: "url(" + image + ")",
           backgroundSize: "cover",
           backgroundPosition: "top center"
         }}
       >
-        <div className={classes.container}>
+        <div className={loginClasses.container}>
           <GridContainer justify="center">
             <GridItem xs={12} sm={12} md={4}>
-              <Card className={classes[cardAnimaton]}>
-                <form className={classes.form}>
-                  <CardHeader color="primary" className={classes.cardHeader}>
+              <Card className={loginClasses[cardAnimaton]}>
+                <form className={loginClasses.form}>
+                  <CardHeader color="primary" className={loginClasses.cardHeader}>
                     <h4>Log in with</h4>
-                    <div className={classes.socialLine}>
+                    <div className={loginClasses.socialLine}>
                       <Button
                         justIcon
                         href="#pablo"
@@ -78,7 +78,7 @@ export default function LoginPage(props) {
                         type: "email",
                         endAdornment: (
                           <InputAdornment position="end">
-                            <Email className={classes.inputIconsColor} />
+                            <Email className={loginClasses.inputIconsColor} />
                           </InputAdornment>
                         )
                       }}
@@ -93,7 +93,7 @@ export default function LoginPage(props) {
                         type: "password",
                         endAdornment: (
                           <InputAdornment position="end">
-                            <Icon className={classes.inputIconsColor}>
+                            <Icon className={loginClasses.inputIconsColor}>
                               lock_outline
                             </Icon>
                           </InputAdornment>
@@ -103,7 +103,7 @@ export default function LoginPage(props) {
                     />
                     <small style={{display: 'flex', justifyContent: 'center'}}>I agree to the Terms and Conditions &amp; Privacy Policy</small>
                   </CardBody>
-                  <CardFooter className={classes.cardFooter}>
+                  <CardFooter className={loginClasses.cardFooter}>
                     <Button color="primary" size="lg">
                       Sign In
                     </Button>
