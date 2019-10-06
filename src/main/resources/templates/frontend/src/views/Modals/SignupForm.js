@@ -33,7 +33,7 @@ const useModalStyles = makeStyles(modalStyles);
 const useLoginStyles = makeStyles(loginStyles);
 
 export default function SignupForm() {
-  const [modal, setModal] = React.useState(false);
+  const [modal, setModal] = React.useState(true);
   const [cardAnimaton, setCardAnimation] = React.useState("cardHidden");
   const modalClasses = useModalStyles();
   const loginClasses = useLoginStyles();

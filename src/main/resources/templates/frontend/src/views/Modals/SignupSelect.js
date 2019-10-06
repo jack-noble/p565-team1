@@ -13,7 +13,6 @@ import LocalHospital from "@material-ui/icons/LocalHospital";
 import People from "@material-ui/icons/People";
 import Note from "@material-ui/icons/Note";
 // core components
-import Button from "components/CustomButtons/Button.js";
 import GridContainer from "components/Grid/GridContainer.js";
 import GridItem from "components/Grid/GridItem.js";
 import InfoArea from "components/InfoArea/InfoArea.js";
@@ -30,15 +29,12 @@ const useModalStyles = makeStyles(modalStyles);
 const useProductStyles = makeStyles(productStyles);
 
 export default function SignupSelect() {
-  const [modal, setModal] = React.useState(false);
+  const [modal, setModal] = React.useState(true);
   const modalClasses = useModalStyles();
   const productClasses = useProductStyles();
 
   return (
     <div>
-        <Button color="primary" size="sm" simple onClick={() => setModal(true)}>
-          Sign up
-        </Button>
       <Dialog
         modalClasses={{
           root: modalClasses.center,
@@ -121,9 +117,6 @@ export default function SignupSelect() {
         <DialogActions
           className={modalClasses.modalFooter + " " + modalClasses.modalFooterCenter}
         >
-          <Button onClick={() => setModal(false)} color="info">
-            Next
-          </Button>
         </DialogActions>
       </Dialog>
     </div>
