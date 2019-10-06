@@ -20,6 +20,7 @@ import CardHeader from "components/Card/CardHeader.js";
 import CustomInput from "components/CustomInput/CustomInput.js";
 import GridContainer from "components/Grid/GridContainer.js";
 import GridItem from "components/Grid/GridItem.js";
+import CustomLinearProgress from "components/CustomLinearProgress/CustomLinearProgress.js";
 
 import modalStyles from "assets/jss/material-kit-react/modalStyle.js";
 import loginStyles from "assets/jss/material-kit-react/views/loginPage.js";
@@ -42,9 +43,6 @@ export default function SignupForm() {
   
   return (
     <div>
-        <Button color="primary" size="sm" simple onClick={() => setModal(true)}>
-          Sign up
-        </Button>
       <Dialog
         modalClasses={{
           root: modalClasses.center,
@@ -143,6 +141,11 @@ export default function SignupForm() {
           <Button style={{minWidth: "70%"}} onClick={() => setModal(false)} color="info">
             Sign Up
           </Button>
+          <CustomLinearProgress
+            variant="determinate"
+            color="primary"
+            value={100}
+          />
         </DialogActions>
       </Dialog>
     </div>

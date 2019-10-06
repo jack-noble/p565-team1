@@ -1,4 +1,5 @@
 import React from "react";
+import { Link } from "react-router-dom";
 // @material-ui/core components
 import { makeStyles } from "@material-ui/core/styles";
 import InputAdornment from "@material-ui/core/InputAdornment";
@@ -109,7 +110,12 @@ export default function LoginPage(props) {
                     </Button>
                   </CardFooter>
                   <div style={{display: 'flex', justifyContent: 'center', alignItems: 'center', marginBottom: 10}}>
-                  <p style={{display: 'flex', justifyContent: 'center', margin: 0}}>Don't have an account?</p><SignupSelect/>
+                  <p style={{display: 'flex', justifyContent: 'center', margin: 0}}>Don't have an account?</p>
+                  <Link to="signup" className={loginClasses.link}>
+                    <Button color="primary" size="sm">
+                      Sign Up
+                    </Button>
+                  </Link>
                   </div>
                 </form>
               </Card>
