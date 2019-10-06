@@ -31,7 +31,7 @@ const Transition = React.forwardRef(function Transition(props, ref) {
 const useModalStyles = makeStyles(modalStyles);
 const useLoginStyles = makeStyles(loginStyles);
 
-export default function Modal() {
+export default function SignupForm() {
   const [modal, setModal] = React.useState(false);
   const [cardAnimaton, setCardAnimation] = React.useState("cardHidden");
   const modalClasses = useModalStyles();
@@ -39,6 +39,7 @@ export default function Modal() {
   setTimeout(function() {
     setCardAnimation("");
   }, 700);
+  
   return (
     <div>
         <Button color="primary" size="sm" simple onClick={() => setModal(true)}>

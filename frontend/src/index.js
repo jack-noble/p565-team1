@@ -9,7 +9,8 @@ import "assets/scss/material-kit-react.scss?v=1.8.0";
 import Components from "views/Components/Components.js";
 import LandingPage from "views/LandingPage/LandingPage.js";
 import ProfilePage from "views/ProfilePage/ProfilePage.js";
-import LoginPage from "views/LoginPage/LoginPage.js";
+import Login from "views/LoginPage/LoginPage.js";
+import Signup from "views/Modals/SignupForm.js";
 
 var hist = createBrowserHistory();
 
@@ -18,7 +19,8 @@ ReactDOM.render(
     <Switch>
       <Route path="/components" component={Components} />
       <Route path="/profile-page" component={ProfilePage} />
-      <Route path="/login-page" component={LoginPage}/>
+      <Route path="/login" component={Login}/>
+      <Route path="/signup" component={Signup}/>
       <Route path="/" component={LandingPage} />
     </Switch>
   </Router>,

@@ -16,7 +16,7 @@ import CardBody from "components/Card/CardBody.js";
 import CardHeader from "components/Card/CardHeader.js";
 import CardFooter from "components/Card/CardFooter.js";
 import CustomInput from "components/CustomInput/CustomInput.js";
-import Signup from "views/Modals/Signup.js";
+import SignupSelect from "views/Modals/SignupSelect.js";
 
 import loginStyles from "assets/jss/material-kit-react/views/loginPage.js";
 
@@ -109,7 +109,7 @@ export default function LoginPage(props) {
                     </Button>
                   </CardFooter>
                   <div style={{display: 'flex', justifyContent: 'center', alignItems: 'center', marginBottom: 10}}>
-                  <p style={{display: 'flex', justifyContent: 'center', margin: 0}}>Don't have an account?</p><Signup/>
+                  <p style={{display: 'flex', justifyContent: 'center', margin: 0}}>Don't have an account?</p><SignupSelect/>
                   </div>
                 </form>
               </Card>
