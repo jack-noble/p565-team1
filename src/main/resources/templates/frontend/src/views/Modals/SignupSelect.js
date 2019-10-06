@@ -5,7 +5,6 @@ import Slide from "@material-ui/core/Slide";
 import Dialog from "@material-ui/core/Dialog";
 import DialogTitle from "@material-ui/core/DialogTitle";
 import DialogContent from "@material-ui/core/DialogContent";
-import DialogActions from "@material-ui/core/DialogActions";
 import IconButton from "@material-ui/core/IconButton";
 // @material-ui/icons
 import Close from "@material-ui/icons/Close";
@@ -13,6 +12,7 @@ import LocalHospital from "@material-ui/icons/LocalHospital";
 import People from "@material-ui/icons/People";
 import Note from "@material-ui/icons/Note";
 // core components
+import Button from "components/CustomButtons/Button.js";
 import GridContainer from "components/Grid/GridContainer.js";
 import GridItem from "components/Grid/GridItem.js";
 import InfoArea from "components/InfoArea/InfoArea.js";
@@ -29,12 +29,15 @@ const useModalStyles = makeStyles(modalStyles);
 const useProductStyles = makeStyles(productStyles);
 
 export default function SignupSelect() {
-  const [modal, setModal] = React.useState(true);
+  const [modal, setModal] = React.useState(false);
   const modalClasses = useModalStyles();
   const productClasses = useProductStyles();
 
   return (
     <div>
+        <Button color="primary" size="sm" simple onClick={() => setModal(true)}>
+          Sign up
+        </Button>
       <Dialog
         modalClasses={{
           root: modalClasses.center,
@@ -67,57 +70,53 @@ export default function SignupSelect() {
           id="modal-slide-description"
           className={modalClasses.modalBody}
         >
-          <div className={productClasses.section}>
-            <GridContainer justify="center">
-                <GridItem xs={12} sm={12} md={8}>
-                <h2 className={productClasses.title}>Are you a(n)...</h2>
-                </GridItem>
-            </GridContainer>
-            <div>
-                <GridContainer>
-                <GridItem xs={12} sm={12} md={4}>
-                    <a href={'/Signup/Insurance'} onclick="console.log('The link was clicked.'); return false">
-                    <InfoArea
-                    title="Patient"
-                    icon={People}
-                    iconColor="info"
-                    vertical
-                    />
+            <div className={productClasses.section}>
+                <GridContainer justify="center">
+                    <GridItem xs={12} sm={12} md={8}>
+                    <h2 className={productClasses.title}>Are you a(n)...</h2>
+                    </GridItem>
+                </GridContainer>
+                <div>
+                    <GridContainer>
+                    <GridItem xs={12} sm={12} md={4}>
+                        <a href={'/Signup/Insurance'} onclick="console.log('The link was clicked.'); return false">
+                        <InfoArea
+                        title="Patient"
+                        icon={People}
+                        iconColor="info"
+                        vertical
+                        />
+                        </a>
+                    </GridItem>
+                    <GridItem xs={12} sm={12} md={4}>
+                        <a href={'/Signup/Insurance'} onclick="console.log('The link was clicked.'); return false">
+                        <InfoArea
+                        title="Doctor"
+                        icon={LocalHospital}
+                        iconColor="danger"
+                        vertical
+                        />
                     </a>
-                </GridItem>
-                <GridItem xs={12} sm={12} md={4}>
+                    </GridItem>
+                    <GridItem xs={12} sm={12} md={4}>
                     <a href={'/Signup/Insurance'} onclick="console.log('The link was clicked.'); return false">
-                    <InfoArea
-                    title="Doctor"
-                    icon={LocalHospital}
-                    iconColor="danger"
-                    vertical
-                    />
-                </a>
-                </GridItem>
-                <GridItem xs={12} sm={12} md={4}>
-                <a href={'/Signup/Insurance'} onclick="console.log('The link was clicked.'); return false">
-                    <InfoArea
-                    title="Insurance Company"
-                    icon={Note}
-                    iconColor="warning"
-                    vertical
-                    />
-                </a>
-                </GridItem>
-              </GridContainer>  
-              <CustomLinearProgress
-                variant="determinate"
-                color="primary"
-                value={50}
-              />
-              </div>
+                        <InfoArea
+                        title="Insurance Company"
+                        icon={Note}
+                        iconColor="warning"
+                        vertical
+                        />
+                    </a>
+                    </GridItem>
+                    </GridContainer>
+                </div>
             </div>
-          </DialogContent>
-        <DialogActions
-          className={modalClasses.modalFooter + " " + modalClasses.modalFooterCenter}
-        >
-        </DialogActions>
+            <CustomLinearProgress
+              variant="determinate"
+              color="primary"
+              value={50}
+            />
+        </DialogContent>
       </Dialog>
     </div>
   );

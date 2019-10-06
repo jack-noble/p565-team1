@@ -139,7 +139,7 @@ export default function SignupForm() {
           className={modalClasses.modalFooter + " " + modalClasses.modalFooterCenter}
         >
           <Button style={{minWidth: "70%"}} onClick={() => setModal(false)} color="info">
-            Sign Up
+            Sign up
           </Button>
           <CustomLinearProgress
             variant="determinate"

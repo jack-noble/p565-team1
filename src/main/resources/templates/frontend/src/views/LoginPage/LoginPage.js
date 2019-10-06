@@ -1,5 +1,4 @@
 import React from "react";
-import { Link } from "react-router-dom";
 // @material-ui/core components
 import { makeStyles } from "@material-ui/core/styles";
 import InputAdornment from "@material-ui/core/InputAdornment";
@@ -17,6 +16,7 @@ import CardBody from "components/Card/CardBody.js";
 import CardHeader from "components/Card/CardHeader.js";
 import CardFooter from "components/Card/CardFooter.js";
 import CustomInput from "components/CustomInput/CustomInput.js";
+import SignupSelect from "views/Modals/SignupSelect.js";
 
 import loginStyles from "assets/jss/material-kit-react/views/loginPage.js";
 
@@ -109,12 +109,7 @@ export default function LoginPage(props) {
                     </Button>
                   </CardFooter>
                   <div style={{display: 'flex', justifyContent: 'center', alignItems: 'center', marginBottom: 10}}>
-                  <p style={{display: 'flex', justifyContent: 'center', margin: 0}}>Don't have an account?</p>
-                  <Link to="signup" className={loginClasses.link}>
-                    <Button color="primary" size="sm" simple>
-                      Sign Up
-                    </Button>
-                  </Link>
+                  <p style={{display: 'flex', justifyContent: 'center', margin: 0}}>Don't have an account?</p><SignupSelect/>
                   </div>
                 </form>
               </Card>
