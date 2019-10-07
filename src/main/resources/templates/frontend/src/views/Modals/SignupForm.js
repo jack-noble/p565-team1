@@ -80,7 +80,7 @@ export default function SignupForm() {
           id="modal-slide-description"
           className={modalClasses.modalBody}
         >
-        <div className={loginClasses.container}>
+        <div className={loginClasses.container} style={{padding: 0}}>
             <GridContainer justify="center">
                 <GridItem xs={12} sm={12} md={4}>
                 <Card className={loginClasses[cardAnimaton]}>
