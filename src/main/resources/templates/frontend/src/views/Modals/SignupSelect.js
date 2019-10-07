@@ -15,8 +15,9 @@ import Note from "@material-ui/icons/Note";
 import Button from "components/CustomButtons/Button.js";
 import GridContainer from "components/Grid/GridContainer.js";
 import GridItem from "components/Grid/GridItem.js";
-import InfoArea from "components/InfoArea/InfoArea.js";
 import CustomLinearProgress from "components/CustomLinearProgress/CustomLinearProgress.js";
+import SignupForm from "views/Modals/SignupForm.js";
+import InfoArea from "components/InfoArea/InfoArea.js";
 
 import modalStyles from "assets/jss/material-kit-react/modalStyle.js";
 import productStyles from "assets/jss/material-kit-react/views/landingPageSections/productStyle.js";
@@ -70,46 +71,44 @@ export default function SignupSelect() {
           id="modal-slide-description"
           className={modalClasses.modalBody}
         >
-            <div className={productClasses.section}>
-                <GridContainer justify="center">
-                    <GridItem xs={12} sm={12} md={8}>
-                    <h2 className={productClasses.title}>Are you a(n)...</h2>
-                    </GridItem>
-                </GridContainer>
-                <div>
-                    <GridContainer>
-                    <GridItem xs={12} sm={12} md={4}>
-                        <a href={'/Signup/Insurance'} onclick="console.log('The link was clicked.'); return false">
-                        <InfoArea
-                        title="Patient"
-                        icon={People}
-                        iconColor="info"
-                        vertical
-                        />
-                        </a>
-                    </GridItem>
-                    <GridItem xs={12} sm={12} md={4}>
-                        <a href={'/Signup/Insurance'} onclick="console.log('The link was clicked.'); return false">
-                        <InfoArea
-                        title="Doctor"
-                        icon={LocalHospital}
-                        iconColor="danger"
-                        vertical
-                        />
-                    </a>
-                    </GridItem>
-                    <GridItem xs={12} sm={12} md={4}>
+            <div className={productClasses.section} style={{padding: 0}}>
+              <GridContainer justify="center">
+                  <GridItem xs={12} sm={12} md={8}>
+                  <h2 className={productClasses.title}>Are you a(n)...</h2>
+                  </GridItem>
+              </GridContainer>
+              <GridContainer>
+                <GridItem xs={12} sm={12} md={4}>
                     <a href={'/Signup/Insurance'} onclick="console.log('The link was clicked.'); return false">
-                        <InfoArea
-                        title="Insurance Company"
-                        icon={Note}
-                        iconColor="warning"
-                        vertical
-                        />
+                    <InfoArea
+                    title="Patient"
+                    icon={People}
+                    iconColor="info"
+                    vertical
+                    />
                     </a>
-                    </GridItem>
-                    </GridContainer>
-                </div>
+                </GridItem>
+                <GridItem xs={12} sm={12} md={4}>
+                    <a href={'/Signup/Insurance'} onclick="console.log('The link was clicked.'); return false">
+                    <InfoArea
+                    title="Doctor"
+                    icon={LocalHospital}
+                    iconColor="danger"
+                    vertical
+                    />
+                </a>
+                </GridItem>
+                <GridItem xs={12} sm={12} md={4}>
+                <a href={'/Signup/Insurance'} onclick="console.log('The link was clicked.'); return false">
+                    <InfoArea
+                    title="Insurance Company"
+                    icon={Note}
+                    iconColor="warning"
+                    vertical
+                    />
+                </a>
+                </GridItem>
+              </GridContainer>
             </div>
             <CustomLinearProgress
               variant="determinate"
