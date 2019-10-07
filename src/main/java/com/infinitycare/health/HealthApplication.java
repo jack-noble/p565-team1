@@ -7,7 +7,7 @@ import com.infinitycare.health.login.model.*;
 @SpringBootApplication
 public class HealthApplication {
 
-    UserRepository repository;
+    UserRepo repository;
 
     public static void main(String[] args) {
         SpringApplication.run(HealthApplication.class, args);
