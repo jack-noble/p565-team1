@@ -3,7 +3,7 @@ package com.infinitycare.health.login.model;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
-@Document(collection = "users")
+@Document(collection = "UserDetails")
 public class UserDetails {
 
     @Id
@@ -13,12 +13,12 @@ public class UserDetails {
     private String mTypeOfUser;
     private String mToken;
 
-    public UserDetails(int id, String mUserName, String mPassword, String mTypeOfUser, String mToken) {
+    public UserDetails(String mUserName, String mPassword, String mTypeOfUser) {
         this.id = id;
         this.mUserName = mUserName;
         this.mPassword = mPassword;
         this.mTypeOfUser = mTypeOfUser;
-        this.mToken = mToken;
+        this.mToken = "";
     }
 
     public String getUserName() {
