@@ -17,7 +17,7 @@ public class SignupController {
     @Autowired
     UserRepository repository;
 
-    @RequestMapping(value = "/signup/{userType}/")
+    @RequestMapping(value = "/signup/{userType}")
     @ResponseBody
     public String signup(HttpServletRequest request, @PathVariable String userType) {
 
