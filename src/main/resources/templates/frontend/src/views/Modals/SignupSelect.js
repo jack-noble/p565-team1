@@ -1,4 +1,5 @@
 import React from 'react';
+import { Link } from "react-router-dom";
 // material-ui components
 import { makeStyles } from "@material-ui/core/styles";
 import Slide from "@material-ui/core/Slide";
@@ -16,7 +17,6 @@ import Button from "components/CustomButtons/Button.js";
 import GridContainer from "components/Grid/GridContainer.js";
 import GridItem from "components/Grid/GridItem.js";
 import CustomLinearProgress from "components/CustomLinearProgress/CustomLinearProgress.js";
-import SignupForm from "views/Modals/SignupForm.js";
 import InfoArea from "components/InfoArea/InfoArea.js";
 
 import modalStyles from "assets/jss/material-kit-react/modalStyle.js";
@@ -36,9 +36,9 @@ export default function SignupSelect() {
 
   return (
     <div>
-        <Button color="primary" size="sm" simple onClick={() => setModal(true)}>
-          Sign up
-        </Button>
+      <Button color="primary" size="sm" simple onClick={() => setModal(true)}>
+        Sign up
+      </Button>
       <Dialog
         modalClasses={{
           root: modalClasses.center,
@@ -79,34 +79,34 @@ export default function SignupSelect() {
               </GridContainer>
               <GridContainer>
                 <GridItem xs={12} sm={12} md={4}>
-                    <a href={'/Signup/Insurance'} onclick="console.log('The link was clicked.'); return false">
+                  <Link to={"signup/doctor"}>
                     <InfoArea
                     title="Patient"
                     icon={People}
                     iconColor="info"
                     vertical
                     />
-                    </a>
+                  </Link>
                 </GridItem>
                 <GridItem xs={12} sm={12} md={4}>
-                    <a href={'/Signup/Insurance'} onclick="console.log('The link was clicked.'); return false">
+                  <Link to={"signup/doctor"}>
                     <InfoArea
                     title="Doctor"
                     icon={LocalHospital}
                     iconColor="danger"
                     vertical
                     />
-                </a>
+                  </Link>
                 </GridItem>
                 <GridItem xs={12} sm={12} md={4}>
-                <a href={'/Signup/Insurance'} onclick="console.log('The link was clicked.'); return false">
+                  <Link to={"signup/insurance"}>
                     <InfoArea
                     title="Insurance Company"
                     icon={Note}
                     iconColor="warning"
                     vertical
                     />
-                </a>
+                  </Link>
                 </GridItem>
               </GridContainer>
             </div>
