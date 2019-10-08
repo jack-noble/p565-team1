@@ -1,22 +1,10 @@
 import React from 'react';
-import { Link } from "react-router-dom";
 import Axios from "axios";
 // material-ui components
-import { makeStyles } from "@material-ui/core/styles";
-import Slide from "@material-ui/core/Slide";
-import Dialog from "@material-ui/core/Dialog";
-import DialogTitle from "@material-ui/core/DialogTitle";
-import DialogContent from "@material-ui/core/DialogContent";
-import DialogActions from "@material-ui/core/DialogActions";
-import IconButton from "@material-ui/core/IconButton";
 import InputAdornment from "@material-ui/core/InputAdornment";
 import Icon from "@material-ui/core/Icon";
 // @material-ui/icons
-import Close from "@material-ui/icons/Close";
 import Email from "@material-ui/icons/Email";
-import LocalHospital from "@material-ui/icons/LocalHospital";
-import People from "@material-ui/icons/People";
-import Note from "@material-ui/icons/Note";
 // core components
 import Button from "components/CustomButtons/Button.js";
 import Card from "components/Card/Card.js";
@@ -25,11 +13,6 @@ import CardHeader from "components/Card/CardHeader.js";
 import CustomInput from "components/CustomInput/CustomInput.js";
 import GridContainer from "components/Grid/GridContainer.js";
 import GridItem from "components/Grid/GridItem.js";
-import CustomLinearProgress from "components/CustomLinearProgress/CustomLinearProgress.js";
-import InfoArea from "components/InfoArea/InfoArea.js";
-
-import modalStyles from "assets/jss/material-kit-react/modalStyle.js";
-import loginStyles from "assets/jss/material-kit-react/views/loginPage.js";
 
 export default class SignupButton extends React.Component {
     constructor (props) {
@@ -39,6 +22,9 @@ export default class SignupButton extends React.Component {
             password: '',
             cardAnimaton: 'cardHidden',
         };
+        this.handleEmailChange = this.handleEmailChange.bind(this);
+        this.handlePasswordChange = this.handlePasswordChange.bind(this);
+        this.handleSubmit = this.handleSubmit.bind(this);
     };
   
   handleEmailChange = event => {
@@ -56,6 +42,7 @@ export default class SignupButton extends React.Component {
         email: this.state.email,
         password: this.state.password
     };
+    console.log(user);
 
     try {
         const response = Axios.post('https://infinity-care.herokuapp.com/Signup', { user });
@@ -88,14 +75,15 @@ export default class SignupButton extends React.Component {
                         </div>
                     </CardHeader>
                     <CardBody>
-                        <CustomInput onInput={console.log('You added to email', this.email)}
+                        <CustomInput 
                         labelText="Email..."
-                        id="email"
                         formControlProps={{
                             fullWidth: true
                         }}
                         inputProps={{
                             type: "email",
+                            id: "email",
+                            onChange: this.handleEmailChange,
                             endAdornment: (
                             <InputAdornment position="end">
                                 <Email/>
@@ -103,33 +91,32 @@ export default class SignupButton extends React.Component {
                             )
                         }}
                         />
-                        <CustomInput onChange={this.handlePasswordChange}
-                        labelText="Password"
-                        id="pass"
-                        formControlProps={{
-                            fullWidth: true
-                        }}
-                        inputProps={{
-                            type: "password",
-                            endAdornment: (
-                            <InputAdornment position="end">
-                                <Icon>
-                                lock_outline
-                                </Icon>
-                            </InputAdornment>
-                            ),
-                            autoComplete: "off"
-                        }}
+                        <CustomInput 
+                            labelText="Password"
+                            formControlProps={{
+                                fullWidth: true
+                            }}
+                            inputProps={{
+                                type: "password",
+                                id: "password",
+                                onChange: this.handlePasswordChange,
+                                endAdornment: (
+                                <InputAdornment position="end">
+                                    <Icon>
+                                    lock_outline
+                                    </Icon>
+                                </InputAdornment>
+                                ),
+                                autoComplete: "off"
+                            }}
                         />
                     </CardBody>
+                        <Button onClick={this.handleSubmit} style={{minWidth: "70%"}}  color="info">
+                            Sign up
+                        </Button>
                     </form>
                 </Card>
                 </GridItem>
-                <Link to="/">
-                <Button style={{minWidth: "70%"}} onClick={this.handleSubmit} color="info">
-                    Sign up
-                </Button>
-                </Link>
             </GridContainer>
         </div>
     )

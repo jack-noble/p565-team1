@@ -17,7 +17,6 @@ import Button from "components/CustomButtons/Button.js";
 import GridContainer from "components/Grid/GridContainer.js";
 import GridItem from "components/Grid/GridItem.js";
 import CustomLinearProgress from "components/CustomLinearProgress/CustomLinearProgress.js";
-import SignupForm from "views/Modals/SignupForm.js";
 import InfoArea from "components/InfoArea/InfoArea.js";
 
 import modalStyles from "assets/jss/material-kit-react/modalStyle.js";
