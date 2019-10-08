@@ -1,4 +1,5 @@
 import React from 'react';
+import { Link } from "react-router-dom";
 // material-ui components
 import { makeStyles } from "@material-ui/core/styles";
 import Slide from "@material-ui/core/Slide";
@@ -12,6 +13,9 @@ import Icon from "@material-ui/core/Icon";
 // @material-ui/icons
 import Close from "@material-ui/icons/Close";
 import Email from "@material-ui/icons/Email";
+import LocalHospital from "@material-ui/icons/LocalHospital";
+import People from "@material-ui/icons/People";
+import Note from "@material-ui/icons/Note";
 // core components
 import Button from "components/CustomButtons/Button.js";
 import Card from "components/Card/Card.js";
@@ -21,6 +25,7 @@ import CustomInput from "components/CustomInput/CustomInput.js";
 import GridContainer from "components/Grid/GridContainer.js";
 import GridItem from "components/Grid/GridItem.js";
 import CustomLinearProgress from "components/CustomLinearProgress/CustomLinearProgress.js";
+import InfoArea from "components/InfoArea/InfoArea.js";
 
 import modalStyles from "assets/jss/material-kit-react/modalStyle.js";
 import loginStyles from "assets/jss/material-kit-react/views/loginPage.js";
@@ -75,7 +80,7 @@ export default function SignupForm() {
           id="modal-slide-description"
           className={modalClasses.modalBody}
         >
-        <div className={loginClasses.container}>
+        <div className={loginClasses.container} style={{padding: 0}}>
             <GridContainer justify="center">
                 <GridItem xs={12} sm={12} md={4}>
                 <Card className={loginClasses[cardAnimaton]}>
@@ -138,15 +143,17 @@ export default function SignupForm() {
         <DialogActions
           className={modalClasses.modalFooter + " " + modalClasses.modalFooterCenter}
         >
+          <Link to="/">
           <Button style={{minWidth: "70%"}} onClick={() => setModal(false)} color="info">
             Sign up
           </Button>
-          <CustomLinearProgress
+          </Link>
+        </DialogActions>
+        <CustomLinearProgress
             variant="determinate"
             color="primary"
             value={100}
           />
-        </DialogActions>
       </Dialog>
     </div>
   );

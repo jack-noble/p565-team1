@@ -17,6 +17,7 @@ import CardHeader from "components/Card/CardHeader.js";
 import CardFooter from "components/Card/CardFooter.js";
 import CustomInput from "components/CustomInput/CustomInput.js";
 import SignupSelect from "views/Modals/SignupSelect.js";
+import CustomDropdown from "components/CustomDropdown/CustomDropdown.js";
 
 import loginStyles from "assets/jss/material-kit-react/views/loginPage.js";
 
@@ -65,6 +66,15 @@ export default function LoginPage(props) {
                       >
                         <i className={"fab fa-google"} />
                       </Button>
+                      <Button
+                        justIcon
+                        href="#pablo"
+                        target="_blank"
+                        color="transparent"
+                        onClick={e => e.preventDefault()}
+                      >
+                        <i className={loginClasses.socialIcons + " fab fa-facebook"} />
+                      </Button>
                     </div>
                   </CardHeader>
                   <CardBody>
@@ -100,6 +110,19 @@ export default function LoginPage(props) {
                         ),
                         autoComplete: "off"
                       }}
+                    />
+                    <CustomDropdown
+                      noLiPadding
+                      buttonText="Please Select"
+                      buttonProps={{
+                        className: loginClasses.navLink,
+                        color: "transparent"
+                      }}
+                      dropdownList={[
+                        <p>Patient</p>,
+                        <p>Doctor</p>,
+                        <p>Insurance</p>
+                      ]}
                     />
                     <small style={{display: 'flex', justifyContent: 'center'}}>I agree to the Terms and Conditions &amp; Privacy Policy</small>
                   </CardBody>
