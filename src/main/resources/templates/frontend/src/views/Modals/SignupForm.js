@@ -23,7 +23,7 @@ const useModalStyles = makeStyles(modalStyles);
 
 export default function SignupForm() {
   const [modal, setModal] = React.useState(true);
-  const [setCardAnimation] = React.useState("cardHidden");
+  const [cardAnimation, setCardAnimation] = React.useState("cardHidden");
   const modalClasses = useModalStyles();
   setTimeout(function() {
     setCardAnimation("");
