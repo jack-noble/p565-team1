@@ -56,6 +56,9 @@ public class LoginController {
         int searchForUser = repository.find(
                 {"mUserName": enteredUsername, "mPassword": enteredPassword}
         ).toArray().length;
+        // int searchForUser = repository.find(
+        // {"mUserName": enteredUsername, "mPassword": enteredPassword}
+        //.toArray()[0].length; // may need to index into array to get proper count
 
         if(searchForUser == 1)
             return true; // there exists a unique user w/ matching credentials
