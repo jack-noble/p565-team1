@@ -65,6 +65,7 @@ export default function SignupForm() {
           disableTypography
           className={modalClasses.modalHeader}
         >
+          <Link to="/">
           <IconButton
             className={modalClasses.modalCloseButton}
             key="close"
@@ -74,6 +75,7 @@ export default function SignupForm() {
           >
             <Close className={modalClasses.modalClose} />
           </IconButton>
+          </Link>
           <h4 className={modalClasses.modalTitle}>Sign Up</h4>
         </DialogTitle>
         <DialogContent

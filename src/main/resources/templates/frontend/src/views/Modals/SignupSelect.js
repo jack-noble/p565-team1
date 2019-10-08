@@ -80,14 +80,14 @@ export default function SignupSelect() {
               </GridContainer>
               <GridContainer>
                 <GridItem xs={12} sm={12} md={4}>
-                    <a href={'/Signup/Insurance'} onclick="console.log('The link was clicked.'); return false">
+                  <Link to={"signup/doctor"}>
                     <InfoArea
                     title="Patient"
                     icon={People}
                     iconColor="info"
                     vertical
                     />
-                    </a>
+                  </Link>
                 </GridItem>
                 <GridItem xs={12} sm={12} md={4}>
                   <Link to={"signup/doctor"}>
