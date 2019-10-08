@@ -1,4 +1,5 @@
 import React from 'react';
+import { Link } from "react-router-dom";
 // material-ui components
 import { makeStyles } from "@material-ui/core/styles";
 import Slide from "@material-ui/core/Slide";
@@ -36,9 +37,9 @@ export default function SignupSelect() {
 
   return (
     <div>
-        <Button color="primary" size="sm" simple onClick={() => setModal(true)}>
-          Sign up
-        </Button>
+      <Button color="primary" size="sm" simple onClick={() => setModal(true)}>
+        Sign up
+      </Button>
       <Dialog
         modalClasses={{
           root: modalClasses.center,
@@ -89,24 +90,24 @@ export default function SignupSelect() {
                     </a>
                 </GridItem>
                 <GridItem xs={12} sm={12} md={4}>
-                    <a href={'/Signup/Insurance'} onclick="console.log('The link was clicked.'); return false">
+                  <Link to={"signup/doctor"}>
                     <InfoArea
                     title="Doctor"
                     icon={LocalHospital}
                     iconColor="danger"
                     vertical
                     />
-                </a>
+                  </Link>
                 </GridItem>
                 <GridItem xs={12} sm={12} md={4}>
-                <a href={'/Signup/Insurance'} onclick="console.log('The link was clicked.'); return false">
+                  <Link to={"signup/insurance"}>
                     <InfoArea
                     title="Insurance Company"
                     icon={Note}
                     iconColor="warning"
                     vertical
                     />
-                </a>
+                  </Link>
                 </GridItem>
               </GridContainer>
             </div>
