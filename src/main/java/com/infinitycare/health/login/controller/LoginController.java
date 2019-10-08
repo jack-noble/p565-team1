@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
 import javax.servlet.http.HttpServletRequest;
@@ -35,17 +36,17 @@ public class LoginController {
         return mv;
     }
 
-    @RequestMapping(value = "/{userType}/LoggedIn")
-    public ModelAndView login(HttpServletRequest request, @PathVariable String userType) {
-        ModelAndView mv = new ModelAndView();
-        
+    @RequestMapping(value = "/signin")
+    @ResponseBody
+    public String login(HttpServletRequest request, @PathVariable String userType) {
+
         UserDetails userDetails = new UserDetails(request.getParameter("username"), request.getParameter("username"), userType);
         checkIfCredentialsAreAccurate(userDetails);
+
+        System.out.println("Signing in");
         //Check the username and password against the data in Database
         //Should use an encrypted password while matching against the rows in a DB. Would be ideal if we are able to send an ecrypted password
-        mv.addObject("username", request.getParameter("username"));
-        mv.setViewName("LoggedIn.html");
-        return mv;
+        return "";
     }
 
     private void checkIfCredentialsAreAccurate(UserDetails userDetails) {
