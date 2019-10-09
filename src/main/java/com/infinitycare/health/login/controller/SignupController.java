@@ -17,12 +17,14 @@ public class SignupController {
     @Autowired
     UserRepository repository;
 
-    @RequestMapping(value = "/{userType}/Signup")
+    @RequestMapping(value = "/signup/{userType}")
     @ResponseBody
     public String signup(HttpServletRequest request, @PathVariable String userType) {
 
         UserDetails userDetails = new UserDetails(request.getParameter("username"), request.getParameter("username"), userType);
         repository.save(userDetails);
+
+        System.out.println("Signing up");
 
         String body = "<a href=\"https://www.w3schools.com\">Please verify if you've created an account with InfinityCare</a>";
         SendEmailSMTP.sendFromGMail(new String[]{request.getParameter("username")}, "Welcome to InfinityCare", body);

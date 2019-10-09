@@ -1,5 +1,6 @@
 package com.infinitycare.health.login.model;
 
+import org.bson.types.ObjectId;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
@@ -7,14 +8,14 @@ import org.springframework.data.mongodb.core.mapping.Document;
 public class UserDetails {
 
     @Id
-    private int id;
+    private ObjectId id;
     private String mUserName;
     private String mPassword;
     private String mTypeOfUser;
     private String mToken;
 
     public UserDetails(String mUserName, String mPassword, String mTypeOfUser) {
-        this.id = id;
+        this.id = ObjectId.get();
         this.mUserName = mUserName;
         this.mPassword = mPassword;
         this.mTypeOfUser = mTypeOfUser;
@@ -37,9 +38,9 @@ public class UserDetails {
         this.mUserName = mUserName;
     }
 
-    public int getId() { return id; }
+    public ObjectId getId() { return id; }
 
-    public void setId(int id) { this.id = id; }
+    public void setId(ObjectId id) { this.id = id; }
 
     public String getmTypeOfUser() { return mTypeOfUser; }
 
