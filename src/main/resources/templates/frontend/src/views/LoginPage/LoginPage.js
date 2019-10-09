@@ -1,4 +1,5 @@
 import React from "react";
+import { Link } from "react-router-dom";
 // @material-ui/core components
 import { makeStyles } from "@material-ui/core/styles";
 import InputAdornment from "@material-ui/core/InputAdornment";
@@ -16,7 +17,7 @@ import CardBody from "components/Card/CardBody.js";
 import CardHeader from "components/Card/CardHeader.js";
 import CardFooter from "components/Card/CardFooter.js";
 import CustomInput from "components/CustomInput/CustomInput.js";
-import SignupSelect from "views/Modals/SignupSelect.js";
+import TypeSelect from "views/Modals/TypeSelect.js";
 import CustomDropdown from "components/CustomDropdown/CustomDropdown.js";
 
 import loginStyles from "assets/jss/material-kit-react/views/loginPage.js";
@@ -111,19 +112,6 @@ export default function LoginPage(props) {
                         autoComplete: "off"
                       }}
                     />
-                    <CustomDropdown
-                      noLiPadding
-                      buttonText="Please Select"
-                      buttonProps={{
-                        className: loginClasses.navLink,
-                        color: "transparent"
-                      }}
-                      dropdownList={[
-                        <p>Patient</p>,
-                        <p>Doctor</p>,
-                        <p>Insurance</p>
-                      ]}
-                    />
                     <small style={{display: 'flex', justifyContent: 'center'}}>I agree to the Terms and Conditions &amp; Privacy Policy</small>
                   </CardBody>
                   <CardFooter className={loginClasses.cardFooter}>
@@ -132,7 +120,11 @@ export default function LoginPage(props) {
                     </Button>
                   </CardFooter>
                   <div style={{display: 'flex', justifyContent: 'center', alignItems: 'center', marginBottom: 10}}>
-                  <p style={{display: 'flex', justifyContent: 'center', margin: 0}}>Don't have an account?</p><SignupSelect/>
+                  <p style={{display: 'flex', justifyContent: 'center', margin: 0}}>Don't have an account?
+                  <Link to="/signup/">
+                    <Button color="primary" size="sm" simple>
+                      Sign Up
+                    </Button></Link></p>
                   </div>
                 </form>
               </Card>

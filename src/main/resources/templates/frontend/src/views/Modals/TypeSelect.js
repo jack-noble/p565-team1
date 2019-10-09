@@ -29,15 +29,15 @@ const Transition = React.forwardRef(function Transition(props, ref) {
 const useModalStyles = makeStyles(modalStyles);
 const useProductStyles = makeStyles(productStyles);
 
-export default function SignupSelect() {
+export default function TypeSelect() {
   const [modal, setModal] = React.useState(false);
   const modalClasses = useModalStyles();
   const productClasses = useProductStyles();
 
   return (
     <div>
-      <Button color="primary" size="sm" simple onClick={() => setModal(true)}>
-        Sign up
+      <Button color="primary" onClick={() => setModal(true)}>
+        Sign in
       </Button>
       <Dialog
         modalClasses={{
@@ -79,7 +79,7 @@ export default function SignupSelect() {
               </GridContainer>
               <GridContainer>
                 <GridItem xs={12} sm={12} md={4}>
-                  <Link to={"signup/doctor"}>
+                  <Link to={"signin/patient"}>
                     <InfoArea
                     title="Patient"
                     icon={People}
@@ -89,7 +89,7 @@ export default function SignupSelect() {
                   </Link>
                 </GridItem>
                 <GridItem xs={12} sm={12} md={4}>
-                  <Link to={"signup/doctor"}>
+                  <Link to={"signin/doctor"}>
                     <InfoArea
                     title="Doctor"
                     icon={LocalHospital}
@@ -99,7 +99,7 @@ export default function SignupSelect() {
                   </Link>
                 </GridItem>
                 <GridItem xs={12} sm={12} md={4}>
-                  <Link to={"signup/insurance"}>
+                  <Link to={"signin/insurance"}>
                     <InfoArea
                     title="Insurance Company"
                     icon={Note}

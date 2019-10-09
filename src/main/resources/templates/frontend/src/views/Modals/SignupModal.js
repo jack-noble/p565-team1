@@ -21,7 +21,7 @@ const Transition = React.forwardRef(function Transition(props, ref) {
 
 const useModalStyles = makeStyles(modalStyles);
 
-export default function SignupForm() {
+export default function SignupModal() {
   const [modal, setModal] = React.useState(true);
   const [cardAnimation, setCardAnimation] = React.useState("cardHidden");
   const modalClasses = useModalStyles();
