@@ -21,7 +21,7 @@ public class SignupController {
     @ResponseBody
     public String signup(HttpServletRequest request, @PathVariable String userType) {
 
-        UserDetails userDetails = new UserDetails(request.getParameter("username"), request.getParameter("username"), userType);
+        UserDetails userDetails = new UserDetails(request.getParameter("username"), request.getParameter("password"), userType);
         repository.save(userDetails);
 
         System.out.println("Signing up");

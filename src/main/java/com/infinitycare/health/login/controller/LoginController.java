@@ -29,13 +29,20 @@ public class LoginController {
     @RequestMapping(value = "/LoggedIn")
     public ModelAndView test(HttpServletRequest request) {
         ModelAndView mv = new ModelAndView();
+        UserDetails userDetails = new UserDetails(request.getParameter("username"), request.getParameter("password"), "");
+        repository.save(userDetails);
 
-        //Check the username and password against the data in Database
-        //Should use an encrypted password while matching against the rows in a DB. Would be ideal if we are able to send an encrypted password
-        mv.addObject("username", request.getParameter("username"));
-        repository.save(new UserDetails(request.getParameter("username"), request.getParameter("password"), ""));
-        //SendEmail.send();
+        boolean isAccurateCredentials = checkIfCredentialsAreAccurate(userDetails);
+
+        if(!isAccurateCredentials) {
+            mv.setViewName("login.html");
+            return mv;
+        }
+
+        SendEmailSMTP.sendFromGMail(new String[]{request.getParameter("username")}, "Please enter the OTP in the login screen", SendEmailSMTP.generateRandomNumber(1000, 9999));
         mv.setViewName("LoggedIn.html");
+        //Check the username and password against the data in Database
+        //Should use an encrypted password while matching against the rows in a DB. Would be ideal if we are able to send an ecrypted password
         return mv;
     }
 
