@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import java.util.Optional;
 
 @Controller
@@ -27,14 +28,15 @@ public class LoginController {
     }
 
     @RequestMapping(value = "/LoggedIn")
-    public ModelAndView test(HttpServletRequest request) {
+    public ModelAndView test(HttpServletRequest request, HttpServletResponse response) {
         ModelAndView mv = new ModelAndView();
         UserDetails userDetails = new UserDetails(request.getParameter("username"), request.getParameter("password"), "");
-        repository.save(userDetails);
 
-        boolean isAccurateCredentials = checkIfCredentialsAreAccurate(userDetails);
+        boolean isCredentialAccurate = checkIfCredentialsAreAccurate(userDetails);
 
-        if(!isAccurateCredentials) {
+        if(!isCredentialAccurate) {
+            response.setHeader("Location", "http://localhost:8080");
+            response.setStatus(303);
             mv.setViewName("login.html");
             return mv;
         }
@@ -51,7 +53,6 @@ public class LoginController {
     public String login(HttpServletRequest request, @PathVariable String userType) {
 
         UserDetails userDetails = new UserDetails(request.getParameter("username"), request.getParameter("password"), userType);
-        repository.save(userDetails);
 
         System.out.println("Signing in");
         boolean isAccurateCredentials = checkIfCredentialsAreAccurate(userDetails);
