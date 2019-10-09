@@ -36,8 +36,8 @@ public class SendEmailSMTP {
             }
 
             message.setSubject(subject);
-            //message.setText(body);
-            message.setContent("<a href=\"http://localhost:8080\">Please verify your account signup with InfinityCare!</a>", "text/html");
+            message.setText(body);
+            //message.setContent("<a href=\"http://localhost:8080\">Please verify your account signup with InfinityCare!</a>", "text/html");
             Transport transport = session.getTransport("smtp");
             transport.connect(host, USER_NAME, PASSWORD);
             transport.sendMessage(message, message.getAllRecipients());
@@ -49,5 +49,9 @@ public class SendEmailSMTP {
         catch (MessagingException me) {
             me.printStackTrace();
         }
+    }
+
+    public static String generateRandomNumber(int from, int to) {
+        return Integer.toString(new Random().nextInt(to - from) + from);
     }
 }

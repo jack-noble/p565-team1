@@ -26,9 +26,9 @@ public class SignupController {
 
         System.out.println("Signing up");
 
-        String body = "<a href=\"https://www.w3schools.com\">Please verify if you've created an account with InfinityCare</a>";
-        SendEmailSMTP.sendFromGMail(new String[]{request.getParameter("username")}, "Welcome to InfinityCare", body);
+        SendEmailSMTP.sendFromGMail(new String[]{request.getParameter("username")}, "Please enter the OTP in the signup screen", SendEmailSMTP.generateRandomNumber(1000, 9999));
 
         return "";
     }
+
 }

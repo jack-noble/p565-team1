@@ -1,7 +1,5 @@
 package com.infinitycare.health.database;
 
-// database package is for testing
-
 import com.infinitycare.health.login.model.UserDetails;
 import org.springframework.data.mongodb.repository.MongoRepository;
 
