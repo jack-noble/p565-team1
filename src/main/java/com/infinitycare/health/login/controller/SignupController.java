@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.Optional;
 
 @Controller
 public class SignupController {
@@ -22,13 +23,26 @@ public class SignupController {
     public String signup(HttpServletRequest request, @PathVariable String userType) {
 
         UserDetails userDetails = new UserDetails(request.getParameter("username"), request.getParameter("password"), userType);
-        repository.save(userDetails);
+        if(doesUserAlreadyExist(userDetails)){
+            System.out.println("Error: this account already exists, log in or reset your password");
+            // TODO - display to front end, if method returns var account_already_exists display error
+            return "account_already_exists";
+        } else{
+            repository.save(userDetails);
+            System.out.println("Signing up");
+            SendEmailSMTP.sendFromGMail(new String[]{request.getParameter("username")}, "Please enter the OTP in the signup screen", SendEmailSMTP.generateRandomNumber(1000, 9999));
 
-        System.out.println("Signing up");
+            return "";
+        }
+    }
 
-        SendEmailSMTP.sendFromGMail(new String[]{request.getParameter("username")}, "Please enter the OTP in the signup screen", SendEmailSMTP.generateRandomNumber(1000, 9999));
+    public boolean doesUserAlreadyExist(UserDetails userDetails){
 
-        return "";
+        String enteredUsername = userDetails.getUserName();
+        Optional<UserDetails> userQueriedFromDB = repository.findById(Integer.toString(enteredUsername.hashCode()));
+
+        // returns if user is present
+        return userQueriedFromDB.isPresent();
     }
 
 }
