@@ -2,25 +2,41 @@ package com.infinitycare.health.login.model;
 
 import org.springframework.data.mongodb.core.mapping.Document;
 
-@Document(collection = "UserDetails")
-public class UserDetails {
+@Document(collection = "DoctorDetails")
+public class DoctorDetails {
 
     private String id;
     private String mUserName;
+    private String mEmail;
     private String mPassword;
-    private String mTypeOfUser;
+    private String mFirstName;
+    private String mLastName;
+    private String mEducation;
+    private String mExperience;
+    private String mSpecialization;
+    private String mPersonalBio;
     private String mToken;
 
-    public UserDetails(String mUserName, String mPassword, String mTypeOfUser) {
+    public DoctorDetails(String mUserName, String mPassword) {
         this.mUserName = mUserName;
+        this.mEmail = "";
         this.id = Integer.toString(mUserName.hashCode());
         this.mPassword = mPassword;
-        this.mTypeOfUser = mTypeOfUser;
+        this.mFirstName = "";
+        this.mLastName = "";
+        this.mEducation = "";
+        this.mExperience = "";
+        this.mSpecialization = "";
+        this.mPersonalBio = "";
         this.mToken = "";
     }
 
     public String getUserName() {
         return mUserName;
+    }
+
+    public String getEmail() {
+        return mEmail;
     }
 
     public String getPassword() {
@@ -38,10 +54,6 @@ public class UserDetails {
     public String getId() { return id; }
 
     public void setId(String id) { this.id = id; }
-
-    public String getmTypeOfUser() { return mTypeOfUser; }
-
-    public void setmTypeOfUser(String mTypeOfUser) { this.mTypeOfUser = mTypeOfUser; }
 
     public String getmToken() { return mToken; }
 
