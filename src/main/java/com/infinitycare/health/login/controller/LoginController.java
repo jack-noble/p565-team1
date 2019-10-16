@@ -8,15 +8,15 @@ import com.infinitycare.health.login.model.IPDetails;
 import com.infinitycare.health.login.model.PatientDetails;
 import com.infinitycare.health.database.DoctorRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Optional;
-
-// TODO create an abstract class for the 3 user types instead of 6 extra methods!
 
 @Controller
 public class LoginController {
@@ -30,10 +30,6 @@ public class LoginController {
     @Autowired
     IpRepository ipRepository;
 
-    String retainedPatientUsername;
-    String retainedDoctorUsername;
-    String retainedIpUsername;
-
     @RequestMapping("/")
     public ModelAndView home() {
         ModelAndView mv = new ModelAndView();
@@ -41,153 +37,83 @@ public class LoginController {
         return mv;
     }
 
-    @RequestMapping(value = "/LoggedIn/{userType}")
-    public ModelAndView test(HttpServletRequest request, HttpServletResponse response, @PathVariable String userType) {
-        ModelAndView mv = new ModelAndView();
-        boolean isCredentialAccurate = false;
+    @GetMapping(value = "/LoggedIn/{userType}")
+    public ResponseEntity<?> validateCredentails(HttpServletRequest request, @PathVariable String userType) {
+        boolean isCredentialsAccurate = false;
+        boolean sentOtp = false;
+        String otp = SendEmailSMTP.generateRandomNumber(1000, 9999);
+        Map<String, Object> result = new HashMap<>();
+        result.put("isCredentailsAccurate", isCredentialsAccurate);
+        result.put("sentOtp", sentOtp);
 
         if(userType.equals("patient")) {
             PatientDetails patientDetails = new PatientDetails(request.getParameter("username"), request.getParameter("password"));
-            retainedPatientUsername = retainPatientUsername(patientDetails);
-            isCredentialAccurate = checkIfPatientCredentialsAreAccurate(patientDetails);
-            String otp = SendEmailSMTP.generateRandomNumber(1000, 9999);
+            isCredentialsAccurate = checkIfPatientCredentialsAreAccurate(patientDetails);
             patientDetails.setmToken(otp);
             patientRepository.save(patientDetails);
-            SendEmailSMTP.sendFromGMail(new String[]{request.getParameter("username")}, "Please enter the OTP in the login screen", otp);
         }
 
         if(userType.equals("doctor")) {
             DoctorDetails doctorDetails = new DoctorDetails(request.getParameter("username"), request.getParameter("password"));
-            retainedDoctorUsername = retainDoctorUsername(doctorDetails);
-            isCredentialAccurate = checkIfDoctorCredentialsAreAccurate(doctorDetails);
-            String otp = SendEmailSMTP.generateRandomNumber(1000, 9999);
+            isCredentialsAccurate = checkIfDoctorCredentialsAreAccurate(doctorDetails);
             doctorDetails.setmToken(otp);
             doctorRepository.save(doctorDetails);
-            SendEmailSMTP.sendFromGMail(new String[]{request.getParameter("username")}, "Please enter the OTP in the login screen", otp);
         }
 
         if(userType.equals("insurance")) {
             IPDetails ipDetails = new IPDetails(request.getParameter("username"), request.getParameter("password"));
-            retainedIpUsername = retainIpUsername(ipDetails);
-            isCredentialAccurate = checkIfIpCredentialsAreAccurate(ipDetails);
-            String otp = SendEmailSMTP.generateRandomNumber(1000, 9999);
+            isCredentialsAccurate = checkIfIpCredentialsAreAccurate(ipDetails);
             ipDetails.setmToken(otp);
             ipRepository.save(ipDetails);
-            SendEmailSMTP.sendFromGMail(new String[]{request.getParameter("username")}, "Please enter the OTP in the login screen", otp);
         }
 
-        if(!isCredentialAccurate) {
-            response.setHeader("Location", "/");
-            response.setStatus(303);
-            mv.setViewName("login.html");
-            return mv;
-        }
+        SendEmailSMTP.sendFromGMail(new String[]{request.getParameter("username")}, "Please enter the OTP in the login screen", otp);
+        sentOtp = true;
+        result.put("isCredentailsAccurate", isCredentialsAccurate);
+        result.put("sentOtp", sentOtp);
 
-        mv.setViewName("LoggedIn.html");
-        //Check the username and password against the data in Database
+        return ResponseEntity.ok(result);
         //Should use an encrypted password while matching against the rows in a DB. Would be ideal if we are able to send an encrypted password
-        return mv;
     }
 
-    @RequestMapping(value = "/otp/{userType}", method = RequestMethod.GET)
-    @ResponseBody
-    public ModelAndView testOtp(HttpServletResponse response, @PathVariable String userType, @RequestParam("otp") String enteredOtp) {
-        ModelAndView mv = new ModelAndView();
+    @GetMapping(value = "/otp/{userType}")
+    public ResponseEntity<?> validateOtp(HttpServletRequest request, @PathVariable String userType, @RequestParam("otp") String enteredOtp) {
         boolean isOtpAccurate = false;
         String userOtpFromDB = "";
-
-        if(userType.equals("patient")) {
-            String retainedUsername = retainedPatientUsername;
-
-            Optional<PatientDetails> userFromDB = patientRepository.findById(Integer.toString(retainedUsername.hashCode()));
-            PatientDetails userDetails = userFromDB.get();
-            userOtpFromDB = userDetails.getmToken();
-
-            if(userOtpFromDB.equals(enteredOtp))
-            {
-                isOtpAccurate = true;
-            }
-        }
-
-        if(userType.equals("doctor")) {
-            String retainedUsername = retainedDoctorUsername;
-
-            Optional<DoctorDetails> userFromDB = doctorRepository.findById(Integer.toString(retainedUsername.hashCode()));
-            DoctorDetails userDetails = userFromDB.get();
-            userOtpFromDB = userDetails.getmToken();
-
-            System.out.println("OTP from DB: " + userOtpFromDB);
-            if(userOtpFromDB.equals(enteredOtp))
-            {
-                isOtpAccurate = true;
-            }
-        }
-
-        if(userType.equals("insurance")) {
-            String retainedUsername = retainedIpUsername;
-
-            Optional<IPDetails> userFromDB = ipRepository.findById(Integer.toString(retainedUsername.hashCode()));
-            IPDetails userDetails = userFromDB.get();
-            userOtpFromDB = userDetails.getmToken();
-
-            System.out.println("OTP from DB: " + userOtpFromDB);
-            if(userOtpFromDB.equals(enteredOtp))
-            {
-                isOtpAccurate = true;
-            }
-        }
-
-        if(!isOtpAccurate) {
-            response.setHeader("Location", "/");
-            response.setStatus(303);
-            mv.setViewName("login.html");
-            return mv;
-        }
-
-        mv.setViewName("Welcome.html");
-        //Check the username and password against the data in Database
-        //Should use an encrypted password while matching against the rows in a DB. Would be ideal if we are able to send an encrypted password
-        return mv;
-    }
-
-    @RequestMapping(value = "/signin/{userType}")
-    @ResponseBody
-    public String login(HttpServletRequest request, @PathVariable String userType) {
-
-        boolean isAccurateCredentials = false;
+        Map<String, Object> result = new HashMap<>();
+        result.put("isOtpAccurate", isOtpAccurate);
 
         if(userType.equals("patient")) {
             PatientDetails patientDetails = new PatientDetails(request.getParameter("username"), request.getParameter("password"));
-            isAccurateCredentials = checkIfPatientCredentialsAreAccurate(patientDetails);
+
+            Optional<PatientDetails> userFromDB = patientRepository.findById(Integer.toString(patientDetails.getUserName().hashCode()));
+            PatientDetails userDetails = userFromDB.get();
+            userOtpFromDB = userDetails.getmToken();
         }
 
-        System.out.println("Signing in");
+        if(userType.equals("doctor")) {
+            DoctorDetails doctorDetails = new DoctorDetails(request.getParameter("username"), request.getParameter("password"));
 
-        if(!isAccurateCredentials)
-            return "isCredentialsCorrect:" + isAccurateCredentials;
+            Optional<DoctorDetails> userFromDB = doctorRepository.findById(Integer.toString(doctorDetails.getUserName().hashCode()));
+            DoctorDetails userDetails = userFromDB.get();
+            userOtpFromDB = userDetails.getmToken();
+        }
 
-        String otp = SendEmailSMTP.generateRandomNumber(1000, 9999);
-        SendEmailSMTP.sendFromGMail(new String[]{request.getParameter("username")}, "Please enter the OTP in the login screen", otp);
+        if(userType.equals("insurance")) {
+            IPDetails ipDetails = new IPDetails(request.getParameter("username"), request.getParameter("password"));
 
-        //Check the username and password against the data in Database
-        //Should use an encrypted password while matching against the rows in a DB. Would be ideal if we are able to send an encrypted password
-        return "isCredentialsCorrect:" + isAccurateCredentials;
-    }
+            Optional<IPDetails> userFromDB = ipRepository.findById(Integer.toString(ipDetails.getUserName().hashCode()));
+            IPDetails userDetails = userFromDB.get();
+            userOtpFromDB = userDetails.getmToken();
+        }
 
-    // To retain username between the /login page and the /otp page
-    private static String retainPatientUsername(PatientDetails patientDetails) {
+        if(userOtpFromDB.equals(enteredOtp))
+        {
+            isOtpAccurate = true;
+            result.put("isOtpAccurate", isOtpAccurate);
+        }
 
-        return patientDetails.getUserName();
-    }
-
-    private static String retainDoctorUsername(DoctorDetails doctorDetails) {
-
-        return doctorDetails.getUserName();
-    }
-
-    private static String retainIpUsername(IPDetails ipDetails) {
-
-        return ipDetails.getUserName();
+        return ResponseEntity.ok(result);
     }
 
     private boolean checkIfPatientCredentialsAreAccurate(PatientDetails patientDetails) {
@@ -221,3 +147,4 @@ public class LoginController {
     }
 
 }
+

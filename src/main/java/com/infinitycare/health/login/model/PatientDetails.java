@@ -18,6 +18,7 @@ public class PatientDetails {
     private String mInsurancePlanName;
     private String mInsuranceProvider;
     private String mMedicalHistory;
+    private boolean mActive;
     private String mToken;
 
     public PatientDetails(String mUserName, String mPassword) {
@@ -34,6 +35,7 @@ public class PatientDetails {
         this.mInsurancePlanName = "";
         this.mInsuranceProvider = "";
         this.mMedicalHistory = "";
+        this.mActive = false;
         this.mToken = "";
     }
 

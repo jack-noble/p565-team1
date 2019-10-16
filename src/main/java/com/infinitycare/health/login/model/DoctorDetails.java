@@ -15,6 +15,7 @@ public class DoctorDetails {
     private String mExperience;
     private String mSpecialization;
     private String mPersonalBio;
+    private boolean mActive;
     private String mToken;
 
     public DoctorDetails(String mUserName, String mPassword) {
@@ -28,6 +29,7 @@ public class DoctorDetails {
         this.mExperience = "";
         this.mSpecialization = "";
         this.mPersonalBio = "";
+        this.mActive = false;
         this.mToken = "";
     }
 
