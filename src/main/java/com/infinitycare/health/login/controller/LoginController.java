@@ -77,7 +77,7 @@ public class LoginController {
         }
 
         if(!isCredentialAccurate) {
-            response.setHeader("Location", "http://localhost:8080");
+            response.setHeader("Location", "/");
             response.setStatus(303);
             mv.setViewName("login.html");
             return mv;
@@ -154,7 +154,7 @@ public class LoginController {
         }
 
         if(!isOtpAccurate) {
-            response.setHeader("Location", "http://localhost:8080");
+            response.setHeader("Location", "/");
             response.setStatus(303);
             mv.setViewName("login.html");
             return mv;
