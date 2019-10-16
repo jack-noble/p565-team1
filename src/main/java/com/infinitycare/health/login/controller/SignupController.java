@@ -8,17 +8,22 @@ import com.infinitycare.health.login.model.IPDetails;
 import com.infinitycare.health.login.model.PatientDetails;
 import com.infinitycare.health.database.PatientRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Optional;
+
+// TODO Add /otp method for this SignUpController
+// TODO Refractor all the methods into service folder and declare @Service classes to reuse code
 
 @Controller
 public class SignupController {
-
     @Autowired
     PatientRepository patientRepository;
 
@@ -30,51 +35,42 @@ public class SignupController {
 
     @RequestMapping(value = "/signup/{userType}")
     @ResponseBody
-    public String signup(HttpServletRequest request, @PathVariable String userType) {
+    public ResponseEntity<?> signup(HttpServletRequest request, @PathVariable String userType) {
 
-        String msg = "";
+        boolean isNewUser = false;
+        String otp = SendEmailSMTP.generateRandomNumber(1000, 9999);
+        Map<String, Object> result = new HashMap<>();
+
         if(userType.equals("patient")) {
             PatientDetails patientDetails = new PatientDetails(request.getParameter("username"), request.getParameter("password"));
-            if(doesPatientAlreadyExist(patientDetails)){
-                System.out.println("Error: this account already exists, log in or reset your password");
-                // TODO - display to front end, if method returns var account_already_exists display error
-                msg = "account_already_exists";
-            }
-            else{
+            if(!doesPatientAlreadyExist(patientDetails)){
+                patientDetails.setmToken(otp);
                 patientRepository.save(patientDetails);
-                System.out.println("Signing up");
-                SendEmailSMTP.sendFromGMail(new String[]{request.getParameter("username")}, "Please enter the OTP in the signup screen", SendEmailSMTP.generateRandomNumber(1000, 9999));
+                isNewUser = true;
             }
         }
 
         if (userType.equals("doctor")) {
             DoctorDetails doctorDetails = new DoctorDetails(request.getParameter("username"), request.getParameter("password"));
-            if(doesDoctorAlreadyExist(doctorDetails)){
-                System.out.println("Error: this account already exists, log in or reset your password");
-                // TODO - display to front end, if method returns var account_already_exists display error
-                msg = "account_already_exists";
-            }
-            else{
+            if(!doesDoctorAlreadyExist(doctorDetails)){
+                doctorDetails.setmToken(otp);
                 doctorRepository.save(doctorDetails);
-                System.out.println("Signing up");
-                SendEmailSMTP.sendFromGMail(new String[]{request.getParameter("username")}, "Please enter the OTP in the signup screen", SendEmailSMTP.generateRandomNumber(1000, 9999));
+                isNewUser = true;
             }
         }
 
         if(userType.equals("insurance")) {
             IPDetails ipDetails = new IPDetails(request.getParameter("username"), request.getParameter("password"));
-            if(doesIpAlreadyExist(ipDetails)){
-                System.out.println("Error: this account already exists, log in or reset your password");
-                // TODO - display to front end, if method returns var account_already_exists display error
-                msg = "account_already_exists";
-            }
-            else{
+            if(!doesIpAlreadyExist(ipDetails)){
+                ipDetails.setmToken(otp);
                 ipRepository.save(ipDetails);
-                System.out.println("Signing up");
-                SendEmailSMTP.sendFromGMail(new String[]{request.getParameter("username")}, "Please enter the OTP in the signup screen", SendEmailSMTP.generateRandomNumber(1000, 9999));
+                isNewUser = true;
             }
         }
-        return msg;
+
+        if(isNewUser) { SendEmailSMTP.sendFromGMail(new String[]{request.getParameter("username")}, "Please enter the OTP in the signup screen", otp); }
+        result.put("isNewUser", isNewUser);
+        return ResponseEntity.ok(result);
     }
 
     private boolean doesPatientAlreadyExist(PatientDetails patientDetails){
@@ -103,5 +99,4 @@ public class SignupController {
         // returns if user is present
         return userQueriedFromDB.isPresent();
     }
-
 }
