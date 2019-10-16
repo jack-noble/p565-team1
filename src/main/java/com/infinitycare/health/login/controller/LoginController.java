@@ -30,9 +30,9 @@ public class LoginController {
     @Autowired
     IpRepository ipRepository;
 
-    String retainedPatientDetails[];
-    String retainedDoctorDetails[];
-    String retainedIpDetails[];
+    String retainedPatientUsername;
+    String retainedDoctorUsername;
+    String retainedIpUsername;
 
     @RequestMapping("/")
     public ModelAndView home() {
@@ -48,7 +48,7 @@ public class LoginController {
 
         if(userType.equals("patient")) {
             PatientDetails patientDetails = new PatientDetails(request.getParameter("username"), request.getParameter("password"));
-            retainedPatientDetails = retainPatientDetails(patientDetails);
+            retainedPatientUsername = retainPatientUsername(patientDetails);
             isCredentialAccurate = checkIfPatientCredentialsAreAccurate(patientDetails);
             String otp = SendEmailSMTP.generateRandomNumber(1000, 9999);
             patientDetails.setmToken(otp);
@@ -58,7 +58,7 @@ public class LoginController {
 
         if(userType.equals("doctor")) {
             DoctorDetails doctorDetails = new DoctorDetails(request.getParameter("username"), request.getParameter("password"));
-            retainedDoctorDetails = retainDoctorDetails(doctorDetails);
+            retainedDoctorUsername = retainDoctorUsername(doctorDetails);
             isCredentialAccurate = checkIfDoctorCredentialsAreAccurate(doctorDetails);
             String otp = SendEmailSMTP.generateRandomNumber(1000, 9999);
             doctorDetails.setmToken(otp);
@@ -68,7 +68,7 @@ public class LoginController {
 
         if(userType.equals("insurance")) {
             IPDetails ipDetails = new IPDetails(request.getParameter("username"), request.getParameter("password"));
-            retainedIpDetails = retainIpDetails(ipDetails);
+            retainedIpUsername = retainIpUsername(ipDetails);
             isCredentialAccurate = checkIfIpCredentialsAreAccurate(ipDetails);
             String otp = SendEmailSMTP.generateRandomNumber(1000, 9999);
             ipDetails.setmToken(otp);
@@ -94,61 +94,45 @@ public class LoginController {
     public ModelAndView testOtp(HttpServletResponse response, @PathVariable String userType, @RequestParam("otp") String enteredOtp) {
         ModelAndView mv = new ModelAndView();
         boolean isOtpAccurate = false;
-        // System.out.println("OTP from URL: " + enteredOtp);
+        String userOtpFromDB = "";
 
         if(userType.equals("patient")) {
-            String retainedUsername = retainedPatientDetails[0];
-            String retainedPassword = retainedPatientDetails[1];
+            String retainedUsername = retainedPatientUsername;
 
-            // System.out.println(retainedUsername + retainedPassword);
+            Optional<PatientDetails> userFromDB = patientRepository.findById(Integer.toString(retainedUsername.hashCode()));
+            PatientDetails userDetails = userFromDB.get();
+            userOtpFromDB = userDetails.getmToken();
 
-            PatientDetails patientDetails = new PatientDetails(retainedUsername, retainedPassword);
-
-            String userOtpFromDB = patientDetails.getmToken();
-            // TODO use findOne() and retrieve OTP from db. For now, it just gives empty string. Fix this!
-
-            System.out.println("OTP from DB: " + userOtpFromDB);
             if(userOtpFromDB.equals(enteredOtp))
             {
-                System.out.println("OTP Verified!");
                 isOtpAccurate = true;
             }
         }
 
         if(userType.equals("doctor")) {
-            String retainedUsername = retainedDoctorDetails[0];
-            String retainedPassword = retainedDoctorDetails[1];
+            String retainedUsername = retainedDoctorUsername;
 
-            // System.out.println(retainedUsername + retainedPassword);
-
-            DoctorDetails doctorDetails = new DoctorDetails(retainedUsername, retainedPassword);
-
-            String userOtpFromDB = doctorDetails.getmToken();
-            // TODO use findOne() and retrieve OTP from db. For now, it just gives empty string. Fix this!
+            Optional<DoctorDetails> userFromDB = doctorRepository.findById(Integer.toString(retainedUsername.hashCode()));
+            DoctorDetails userDetails = userFromDB.get();
+            userOtpFromDB = userDetails.getmToken();
 
             System.out.println("OTP from DB: " + userOtpFromDB);
             if(userOtpFromDB.equals(enteredOtp))
             {
-                System.out.println("OTP Verified!");
                 isOtpAccurate = true;
             }
         }
 
         if(userType.equals("insurance")) {
-            String retainedUsername = retainedIpDetails[0];
-            String retainedPassword = retainedIpDetails[1];
+            String retainedUsername = retainedIpUsername;
 
-            // System.out.println(retainedUsername + retainedPassword);
-
-            IPDetails ipDetails = new IPDetails(retainedUsername, retainedPassword);
-
-            String userOtpFromDB = ipDetails.getmToken();
-            // TODO use findOne() and retrieve OTP from db. For now, it just gives empty string. Fix this!
+            Optional<IPDetails> userFromDB = ipRepository.findById(Integer.toString(retainedUsername.hashCode()));
+            IPDetails userDetails = userFromDB.get();
+            userOtpFromDB = userDetails.getmToken();
 
             System.out.println("OTP from DB: " + userOtpFromDB);
             if(userOtpFromDB.equals(enteredOtp))
             {
-                System.out.println("OTP Verified!");
                 isOtpAccurate = true;
             }
         }
@@ -160,7 +144,7 @@ public class LoginController {
             return mv;
         }
 
-        mv.setViewName("LoggedIn.html");
+        mv.setViewName("Welcome.html");
         //Check the username and password against the data in Database
         //Should use an encrypted password while matching against the rows in a DB. Would be ideal if we are able to send an encrypted password
         return mv;
@@ -190,26 +174,20 @@ public class LoginController {
         return "isCredentialsCorrect:" + isAccurateCredentials;
     }
 
-    // To retain details between the /login page and the /otp page
-    public static String[] retainPatientDetails(PatientDetails patientDetails) {
-        String retainedUsername = patientDetails.getUserName();
-        String retainedPassword = patientDetails.getPassword();
+    // To retain username between the /login page and the /otp page
+    private static String retainPatientUsername(PatientDetails patientDetails) {
 
-        return new String[] {retainedUsername, retainedPassword};
+        return patientDetails.getUserName();
     }
 
-    public static String[] retainDoctorDetails(DoctorDetails doctorDetails) {
-        String retainedUsername = doctorDetails.getUserName();
-        String retainedPassword = doctorDetails.getPassword();
+    private static String retainDoctorUsername(DoctorDetails doctorDetails) {
 
-        return new String[] {retainedUsername, retainedPassword};
+        return doctorDetails.getUserName();
     }
 
-    public static String[] retainIpDetails(IPDetails ipDetails) {
-        String retainedUsername = ipDetails.getUserName();
-        String retainedPassword = ipDetails.getPassword();
+    private static String retainIpUsername(IPDetails ipDetails) {
 
-        return new String[] {retainedUsername, retainedPassword};
+        return ipDetails.getUserName();
     }
 
     private boolean checkIfPatientCredentialsAreAccurate(PatientDetails patientDetails) {
