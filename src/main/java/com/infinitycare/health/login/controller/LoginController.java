@@ -7,19 +7,34 @@ import com.infinitycare.health.login.model.DoctorDetails;
 import com.infinitycare.health.login.model.IPDetails;
 import com.infinitycare.health.login.model.PatientDetails;
 import com.infinitycare.health.database.DoctorRepository;
+import com.infinitycare.health.security.TextSecurer;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
+import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 
+import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 
 @Controller
 public class LoginController {
+
+    public static final String SESSIONID = "sessionid";
+    public static final String USERNAME = "username";
+    public static final String PASSWORD = "password";
+    public static final String PATIENT = "patient";
+    public static final String DOCTOR = "doctor";
+    public static final String INSURANCE_PROVIDER = "insurance";
+    public static final String IS_CREDENTIALS_ACCURATE = "isCredentialsAccurate";
+    public static final String IS_OTP_SENT = "isOtpSent";
+    public static final String IS_OTP_ACCURATE = "isOtpAccurate";
+    public static final String IS_COOKIE_TAMPERED = "isCookieTampered";
 
     @Autowired
     PatientRepository patientRepository;
@@ -38,42 +53,58 @@ public class LoginController {
     }
 
     @GetMapping(value = "/LoggedIn/{userType}")
-    public ResponseEntity<?> validateCredentails(HttpServletRequest request, @PathVariable String userType) {
+    public ResponseEntity<?> validateCredentials(HttpServletRequest request, HttpServletResponse response, @PathVariable String userType) {
         boolean isCredentialsAccurate = false;
         boolean sentOtp = false;
+
         String otp = SendEmailSMTP.generateRandomNumber(1000, 9999);
         Map<String, Object> result = new HashMap<>();
-        result.put("isCredentailsAccurate", isCredentialsAccurate);
-        result.put("sentOtp", sentOtp);
+        result.put(IS_CREDENTIALS_ACCURATE, isCredentialsAccurate);
+        result.put(IS_OTP_SENT, sentOtp);
 
-        if(userType.equals("patient")) {
-            PatientDetails patientDetails = new PatientDetails(request.getParameter("username"), request.getParameter("password"));
+        String username = request.getParameter(USERNAME);
+        String password = request.getParameter(PASSWORD);
+        if(userType.equals(PATIENT)) {
+            PatientDetails patientDetails = new PatientDetails(username, password);
             isCredentialsAccurate = checkIfPatientCredentialsAreAccurate(patientDetails);
-            patientDetails.setmToken(otp);
+            patientDetails.setMFAToken(otp);
             patientRepository.save(patientDetails);
         }
 
-        if(userType.equals("doctor")) {
-            DoctorDetails doctorDetails = new DoctorDetails(request.getParameter("username"), request.getParameter("password"));
+        if(userType.equals(DOCTOR)) {
+            DoctorDetails doctorDetails = new DoctorDetails(username, password);
             isCredentialsAccurate = checkIfDoctorCredentialsAreAccurate(doctorDetails);
-            doctorDetails.setmToken(otp);
+            doctorDetails.setMFAToken(otp);
             doctorRepository.save(doctorDetails);
         }
 
-        if(userType.equals("insurance")) {
-            IPDetails ipDetails = new IPDetails(request.getParameter("username"), request.getParameter("password"));
+        if(userType.equals(INSURANCE_PROVIDER)) {
+            IPDetails ipDetails = new IPDetails(username, password);
             isCredentialsAccurate = checkIfIpCredentialsAreAccurate(ipDetails);
-            ipDetails.setmToken(otp);
+            ipDetails.setMFAToken(otp);
             ipRepository.save(ipDetails);
         }
 
-        SendEmailSMTP.sendFromGMail(new String[]{request.getParameter("username")}, "Please enter the OTP in the login screen", otp);
+        SendEmailSMTP.sendFromGMail(new String[]{username}, "Please enter the OTP in the login screen", otp);
         sentOtp = true;
-        result.put("isCredentailsAccurate", isCredentialsAccurate);
-        result.put("sentOtp", sentOtp);
+        result.put(IS_CREDENTIALS_ACCURATE, isCredentialsAccurate);
+        result.put(IS_OTP_SENT, sentOtp);
 
+        setEncryptedSessionId(request, response, username, userType);
         return ResponseEntity.ok(result);
-        //Should use an encrypted password while matching against the rows in a DB. Would be ideal if we are able to send an encrypted password
+    }
+
+    private void setEncryptedSessionId(HttpServletRequest request, HttpServletResponse response, String username, String userType) {
+        String encryptedSessionId = TextSecurer.encrypt(username);
+        String servletPath = request.getServletPath();
+        String cookiePath = servletPath.substring(0, servletPath.indexOf(userType) + userType.length());
+
+        Cookie cookie = new Cookie(SESSIONID, encryptedSessionId);
+        cookie.setHttpOnly(true);
+        cookie.setMaxAge(-1);
+        cookie.setPath(cookiePath);
+
+        response.addCookie(cookie);
     }
 
     @GetMapping(value = "/otp/{userType}")
@@ -81,39 +112,42 @@ public class LoginController {
         boolean isOtpAccurate = false;
         String userOtpFromDB = "";
         Map<String, Object> result = new HashMap<>();
-        result.put("isOtpAccurate", isOtpAccurate);
+        result.put(IS_OTP_ACCURATE, isOtpAccurate);
 
-        if(userType.equals("patient")) {
-            PatientDetails patientDetails = new PatientDetails(request.getParameter("username"), request.getParameter("password"));
+        String username = getUsername(request);
 
-            Optional<PatientDetails> userFromDB = patientRepository.findById(Integer.toString(patientDetails.getUserName().hashCode()));
-            PatientDetails userDetails = userFromDB.get();
-            userOtpFromDB = userDetails.getmToken();
+        if(null == username) {
+            result.put(IS_COOKIE_TAMPERED, "true");
+        } else if(userType.equals(PATIENT)) {
+            Optional<PatientDetails> userFromDB = patientRepository.findById(Integer.toString(username.hashCode()));
+            userOtpFromDB = userFromDB.isPresent() ? userFromDB.get().getMFAToken() : "";
+        } else if(userType.equals(DOCTOR)) {
+            Optional<DoctorDetails> userFromDB = doctorRepository.findById(Integer.toString(username.hashCode()));
+            userOtpFromDB = userFromDB.isPresent() ? userFromDB.get().getMFAToken() : "";
+        } else if(userType.equals(INSURANCE_PROVIDER)) {
+            Optional<IPDetails> userFromDB = ipRepository.findById(Integer.toString(username.hashCode()));
+            userOtpFromDB = userFromDB.isPresent() ? userFromDB.get().getMFAToken() : "";
         }
 
-        if(userType.equals("doctor")) {
-            DoctorDetails doctorDetails = new DoctorDetails(request.getParameter("username"), request.getParameter("password"));
-
-            Optional<DoctorDetails> userFromDB = doctorRepository.findById(Integer.toString(doctorDetails.getUserName().hashCode()));
-            DoctorDetails userDetails = userFromDB.get();
-            userOtpFromDB = userDetails.getmToken();
-        }
-
-        if(userType.equals("insurance")) {
-            IPDetails ipDetails = new IPDetails(request.getParameter("username"), request.getParameter("password"));
-
-            Optional<IPDetails> userFromDB = ipRepository.findById(Integer.toString(ipDetails.getUserName().hashCode()));
-            IPDetails userDetails = userFromDB.get();
-            userOtpFromDB = userDetails.getmToken();
-        }
-
-        if(userOtpFromDB.equals(enteredOtp))
-        {
+        if(StringUtils.isEmpty(userOtpFromDB)) {
+            result.put(IS_COOKIE_TAMPERED, "true");
+        } else if(userOtpFromDB.equals(enteredOtp)) {
             isOtpAccurate = true;
-            result.put("isOtpAccurate", isOtpAccurate);
+            result.put(IS_OTP_ACCURATE, isOtpAccurate);
         }
 
         return ResponseEntity.ok(result);
+    }
+
+    private String getUsername(HttpServletRequest request) {
+        Cookie[] cookies = request.getCookies();
+        for(Cookie c : cookies) {
+            if(SESSIONID.equals(c.getName())) {
+                return TextSecurer.decrypt(c.getValue());
+            }
+        }
+
+        return null;
     }
 
     private boolean checkIfPatientCredentialsAreAccurate(PatientDetails patientDetails) {

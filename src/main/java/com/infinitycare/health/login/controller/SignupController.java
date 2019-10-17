@@ -44,7 +44,7 @@ public class SignupController {
         if(userType.equals("patient")) {
             PatientDetails patientDetails = new PatientDetails(request.getParameter("username"), request.getParameter("password"));
             if(!doesPatientAlreadyExist(patientDetails)){
-                patientDetails.setmToken(otp);
+                patientDetails.setMFAToken(otp);
                 patientRepository.save(patientDetails);
                 isNewUser = true;
             }
@@ -53,7 +53,7 @@ public class SignupController {
         if (userType.equals("doctor")) {
             DoctorDetails doctorDetails = new DoctorDetails(request.getParameter("username"), request.getParameter("password"));
             if(!doesDoctorAlreadyExist(doctorDetails)){
-                doctorDetails.setmToken(otp);
+                doctorDetails.setMFAToken(otp);
                 doctorRepository.save(doctorDetails);
                 isNewUser = true;
             }
@@ -62,7 +62,7 @@ public class SignupController {
         if(userType.equals("insurance")) {
             IPDetails ipDetails = new IPDetails(request.getParameter("username"), request.getParameter("password"));
             if(!doesIpAlreadyExist(ipDetails)){
-                ipDetails.setmToken(otp);
+                ipDetails.setMFAToken(otp);
                 ipRepository.save(ipDetails);
                 isNewUser = true;
             }
