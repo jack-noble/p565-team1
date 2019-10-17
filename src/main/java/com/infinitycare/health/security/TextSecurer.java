@@ -22,7 +22,7 @@ public class TextSecurer {
 
         MessageDigest sha = null;
         try {
-            key = "vivekjamesmaanvitajack".getBytes("UTF-8");
+            key = "vivekjamesmaanvithajack".getBytes("UTF-8");
             sha = MessageDigest.getInstance("SHA-1");
             key = sha.digest(key);
             key = Arrays.copyOf(key, 16);

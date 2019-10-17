@@ -45,13 +45,6 @@ public class LoginController {
     @Autowired
     IpRepository ipRepository;
 
-    @RequestMapping("/")
-    public ModelAndView home() {
-        ModelAndView mv = new ModelAndView();
-        mv.setViewName("login.html");
-        return mv;
-    }
-
     @GetMapping(value = "/LoggedIn/{userType}")
     public ResponseEntity<?> validateCredentials(HttpServletRequest request, HttpServletResponse response, @PathVariable String userType) {
         boolean isCredentialsAccurate = false;

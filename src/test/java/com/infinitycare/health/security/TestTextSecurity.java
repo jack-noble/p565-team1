@@ -13,10 +13,10 @@ public class TestTextSecurity {
         Assert.assertNotEquals(encryptedString, decryptedString);
         Assert.assertEquals("vijay", decryptedString);
 
-        encryptedString = TextSecurer.encrypt("vivekjamesmaanvitajack");
+        encryptedString = TextSecurer.encrypt("vivekjamesmaanvithajack");
         decryptedString = TextSecurer.decrypt(encryptedString);
 
         Assert.assertNotEquals(encryptedString, decryptedString);
-        Assert.assertEquals("vivekjamesmaanvitajack", decryptedString);
+        Assert.assertEquals("vivekjamesmaanvithajack", decryptedString);
     }
 }
