@@ -12,10 +12,10 @@ public class DoctorDetails extends UserDetails {
     private boolean mActive;
 
     public DoctorDetails(String mUserName, String mPassword) {
-        mUserName = mUserName;
+        this.mUserName = mUserName;
         mEmail = "";
         id = Integer.toString(mUserName.hashCode());
-        mPassword = mPassword;
+        this.mPassword = mPassword;
         mFirstName = "";
         mLastName = "";
         mEducation = "";

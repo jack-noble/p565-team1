@@ -14,11 +14,11 @@ public class PatientDetails extends UserDetails {
     public String mMedicalHistory;
     public boolean mActive;
 
-    public PatientDetails(String aUserName, String aPassword) {
-        mUserName = aUserName;
+    public PatientDetails(String mUserName, String mPassword) {
+        this.mUserName = mUserName;
         mEmail = "";
         id = Integer.toString(mUserName.hashCode());
-        mPassword = aPassword;
+        this.mPassword = mPassword;
         mFirstName = "";
         mLastName = "";
         mDOB = "";
