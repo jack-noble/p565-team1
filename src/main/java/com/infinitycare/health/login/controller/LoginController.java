@@ -13,7 +13,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.servlet.ModelAndView;
 
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
@@ -22,7 +21,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 
-@Controller
+/* @Controller
 public class LoginController {
 
     public static final String SESSIONID = "sessionid";
@@ -52,11 +51,10 @@ public class LoginController {
 
         String otp = SendEmailSMTP.generateRandomNumber(1000, 9999);
         Map<String, Object> result = new HashMap<>();
-        result.put(IS_CREDENTIALS_ACCURATE, isCredentialsAccurate);
-        result.put(IS_OTP_SENT, sentOtp);
 
         String username = request.getParameter(USERNAME);
         String password = request.getParameter(PASSWORD);
+
         if(userType.equals(PATIENT)) {
             PatientDetails patientDetails = new PatientDetails(username, password);
             isCredentialsAccurate = checkIfPatientCredentialsAreAccurate(patientDetails);
@@ -78,8 +76,11 @@ public class LoginController {
             ipRepository.save(ipDetails);
         }
 
-        SendEmailSMTP.sendFromGMail(new String[]{username}, "Please enter the OTP in the login screen", otp);
-        sentOtp = true;
+        if(isCredentialsAccurate) {
+            SendEmailSMTP.sendFromGMail(new String[]{username}, "Please enter the OTP in the login screen", otp);
+            sentOtp = true;
+        }
+
         result.put(IS_CREDENTIALS_ACCURATE, isCredentialsAccurate);
         result.put(IS_OTP_SENT, sentOtp);
 
@@ -173,5 +174,5 @@ public class LoginController {
         return userQueriedFromDB.map(details -> details.getPassword().equals(enteredPassword)).orElse(false);
     }
 
-}
+} */
 

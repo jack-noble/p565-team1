@@ -12,7 +12,6 @@ public class PatientDetails extends UserDetails {
     public String mInsurancePlanName;
     public String mInsuranceProvider;
     public String mMedicalHistory;
-    public boolean mActive;
 
     public PatientDetails(String mUserName, String mPassword) {
         this.mUserName = mUserName;
@@ -29,5 +28,6 @@ public class PatientDetails extends UserDetails {
         mInsuranceProvider = "";
         mMedicalHistory = "";
         mActive = false;
+        mMFAToken = "";
     }
 }

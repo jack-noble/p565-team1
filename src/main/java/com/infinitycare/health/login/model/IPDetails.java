@@ -15,6 +15,7 @@ public class IPDetails extends UserDetails {
         mFirstName = "";
         mLastName = "";
         mCompany = "";
+        mActive = false;
         mMFAToken = "";
     }
 

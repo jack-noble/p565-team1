@@ -8,6 +8,7 @@ public class UserDetails {
     public String mPassword;
     public String mFirstName;
     public String mLastName;
+    public boolean mActive;
     public String mMFAToken;
 
     public String getUserName() {
@@ -37,5 +38,9 @@ public class UserDetails {
     public void setMFAToken(String mToken) { mToken = mToken; }
 
     public String getMFAToken() { return mMFAToken; }
+
+    public void setmActive(boolean mActive) { mActive = mActive; }
+
+    public boolean getmActive() { return mActive; }
 
 }
