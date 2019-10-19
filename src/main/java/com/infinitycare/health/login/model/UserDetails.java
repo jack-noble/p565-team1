@@ -34,7 +34,7 @@ public class UserDetails {
 
     public void setId(String id) { id = id; }
 
-    public void setMFAToken(String mToken) { mToken = mToken; }
+    public void setMFAToken(String mToken) { this.mMFAToken = mToken; }
 
     public String getMFAToken() { return mMFAToken; }
 

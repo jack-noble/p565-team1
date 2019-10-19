@@ -13,7 +13,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.servlet.ModelAndView;
 
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
@@ -107,7 +106,8 @@ public class LoginController {
         Map<String, Object> result = new HashMap<>();
         result.put(IS_OTP_ACCURATE, isOtpAccurate);
 
-        String username = getUsername(request);
+        // String username = getUsername(request);
+        String username = request.getParameter("username");
 
         if(null == username) {
             result.put(IS_COOKIE_TAMPERED, "true");

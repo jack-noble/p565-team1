@@ -29,5 +29,6 @@ public class PatientDetails extends UserDetails {
         mInsuranceProvider = "";
         mMedicalHistory = "";
         mActive = false;
+        mMFAToken = "";
     }
 }
