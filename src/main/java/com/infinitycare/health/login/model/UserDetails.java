@@ -14,31 +14,21 @@ public class UserDetails {
     public boolean mActive;
     public String mMFAToken;
 
-    public String getUserName() {
-        return mUserName;
-    }
+    public String getUserName() { return mUserName; }
 
-    public String getEmail() {
-        return mEmail;
-    }
+    public String getEmail() { return mEmail; }
 
-    public String getPassword() {
-        return mPassword;
-    }
+    public String getPassword() { return mPassword; }
 
-    public void setPassword(String mPassword) {
-        mPassword = mPassword;
-    }
+    public void setPassword(String mPassword) { mPassword = mPassword; }
 
-    public void setUserName(String mUserName) {
-        mUserName = mUserName;
-    }
+    public void setUserName(String mUserName) { mUserName = mUserName; }
 
     public String getId() { return id; }
 
     public void setId(String id) { id = id; }
 
-    public void setMFAToken(String mMFAToken) { mMFAToken = mMFAToken; }
+    public void setMFAToken(String mMFAToken) { this.mMFAToken = mMFAToken; }
 
     public String getMFAToken() { return mMFAToken; }
 
