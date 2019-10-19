@@ -33,13 +33,20 @@ public class OtpService extends CookieDetails {
     @Autowired
     public IpRepository ipRepository;
 
+    public OtpService(PatientRepository patientRepository, DoctorRepository doctorRepository, IpRepository ipRepository){
+        this.patientRepository = patientRepository;
+        this.doctorRepository = doctorRepository;
+        this.ipRepository = ipRepository;
+    }
+
     public ResponseEntity<?> validateOtp(HttpServletRequest request, String userType, String enteredOtp) {
         boolean isOtpAccurate = false;
         String userOtpFromDB = "";
         Map<String, Object> result = new HashMap<>();
         result.put(IS_OTP_ACCURATE, isOtpAccurate);
 
-        String username = getUsername(request);
+        // String username = getUsername(request);
+        String username = request.getParameter("username");
 
         if(null == username) {
             result.put(IS_COOKIE_TAMPERED, "true");

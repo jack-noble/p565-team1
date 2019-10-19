@@ -10,6 +10,7 @@ import com.infinitycare.health.login.model.IPDetails;
 import com.infinitycare.health.login.model.PatientDetails;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.stereotype.Service;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -17,6 +18,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 
+@Service
 public class SignUpService extends CookieDetails {
 
     @Autowired
@@ -27,6 +29,12 @@ public class SignUpService extends CookieDetails {
 
     @Autowired
     public IpRepository ipRepository;
+
+    public SignUpService(PatientRepository patientRepository, DoctorRepository doctorRepository, IpRepository ipRepository){
+        this.patientRepository = patientRepository;
+        this.doctorRepository = doctorRepository;
+        this.ipRepository = ipRepository;
+    }
 
     public ResponseEntity<?> signup(HttpServletRequest request, HttpServletResponse response, String userType) {
 

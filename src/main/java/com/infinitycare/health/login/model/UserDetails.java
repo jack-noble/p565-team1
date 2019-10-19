@@ -1,7 +1,10 @@
 package com.infinitycare.health.login.model;
 
+import org.springframework.data.annotation.Id;
+
 public class UserDetails {
 
+    @Id
     public String id;
     public String mUserName;
     public String mEmail;
@@ -35,7 +38,7 @@ public class UserDetails {
 
     public void setId(String id) { id = id; }
 
-    public void setMFAToken(String mToken) { mToken = mToken; }
+    public void setMFAToken(String mMFAToken) { mMFAToken = mMFAToken; }
 
     public String getMFAToken() { return mMFAToken; }
 

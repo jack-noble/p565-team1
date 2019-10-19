@@ -30,6 +30,12 @@ public class LoginService extends CookieDetails {
     @Autowired
     public IpRepository ipRepository;
 
+    public LoginService(PatientRepository patientRepository, DoctorRepository doctorRepository, IpRepository ipRepository){
+        this.patientRepository = patientRepository;
+        this.doctorRepository = doctorRepository;
+        this.ipRepository = ipRepository;
+    }
+
     public ResponseEntity<?> validateCredentials(HttpServletRequest request, HttpServletResponse response, String userType) {
         boolean isCredentialsAccurate = false;
         boolean sentOtp = false;
@@ -98,7 +104,6 @@ public class LoginService extends CookieDetails {
         String enteredPassword = ipDetails.getPassword();
 
         Optional<IPDetails> userQueriedFromDB = ipRepository.findById(Integer.toString(enteredUsername.hashCode()));
-
         // user not found in database
         return userQueriedFromDB.map(details -> details.getPassword().equals(enteredPassword)).orElse(false);
     }
