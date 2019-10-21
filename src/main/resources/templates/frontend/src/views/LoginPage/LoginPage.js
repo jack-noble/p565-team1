@@ -63,13 +63,12 @@ export default function LoginPage(props) {
                     <div className={loginClasses.socialLine}>
                       <FacebookLogin
                         appId="523513645103749"
-                        autoLoad
+                        autoLoad={false}
                         fields="name,email,picture"
                         callback={responseFacebook}
                         render={renderProps => ( 
                           <Button
                             justIcon
-                            href="#pablo"
                             target="_blank"
                             color="transparent"
                             onClick={renderProps.onClick}
@@ -81,6 +80,10 @@ export default function LoginPage(props) {
                     </div>
                   </CardHeader>
                   <CardBody>
+                    <div style={{display: 'flex', justifyContent: 'center', alignItems: 'center', marginBottom: 10}}>
+                      <p style={{display: 'flex', justifyContent: 'center', margin: 0}}>Don't have an account?</p>
+                      <TypeSelect />
+                    </div>
                     <CustomInput
                       labelText="Email..."
                       id="email"
@@ -98,7 +101,7 @@ export default function LoginPage(props) {
                     />
                     <CustomInput
                       labelText="Password"
-                      id="pass"
+                      id="password"
                       formControlProps={{
                         fullWidth: true
                       }}
@@ -114,6 +117,11 @@ export default function LoginPage(props) {
                         autoComplete: "off"
                       }}
                     />
+                    <div style={{display: 'flex', justifyContent: 'right', alignItems: 'center', marginBottom: 10}}>
+                      <Button color="primary" simple>
+                        Forgot password?
+                      </Button>
+                    </div>
                     <small style={{display: 'flex', justifyContent: 'center'}}>I agree to the Terms and Conditions &amp; Privacy Policy</small>
                   </CardBody>
                   <CardFooter className={loginClasses.cardFooter}>
@@ -121,10 +129,6 @@ export default function LoginPage(props) {
                       Sign In
                     </Button>
                   </CardFooter>
-                  <div style={{display: 'flex', justifyContent: 'center', alignItems: 'center', marginBottom: 10}}>
-                  <p style={{display: 'flex', justifyContent: 'center', margin: 0}}>Don't have an account?</p>
-                  <TypeSelect />
-                  </div>
                 </form>
               </Card>
             </GridItem>
