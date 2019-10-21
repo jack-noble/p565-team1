@@ -4,7 +4,10 @@ import com.infinitycare.health.database.DoctorRepository;
 import com.infinitycare.health.database.IpRepository;
 import com.infinitycare.health.database.PatientRepository;
 import com.infinitycare.health.login.SendEmailSMTP;
-import com.infinitycare.health.login.model.*;
+import com.infinitycare.health.login.model.CookieDetails;
+import com.infinitycare.health.login.model.DoctorDetails;
+import com.infinitycare.health.login.model.IPDetails;
+import com.infinitycare.health.login.model.PatientDetails;
 import com.infinitycare.health.security.TextSecurer;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -46,21 +49,21 @@ public class LoginService extends CookieDetails {
 
         if(userType.equals(PATIENT)) {
             PatientDetails patientDetails = new PatientDetails(username, password);
-            isCredentialsAccurate = checkIfUserCredentialsAreAccurate(patientDetails);
+            isCredentialsAccurate = checkIfPatientCredentialsAreAccurate(patientDetails);
             patientDetails.setMFAToken(otp);
             patientRepository.save(patientDetails);
         }
 
         if(userType.equals(DOCTOR)) {
             DoctorDetails doctorDetails = new DoctorDetails(username, password);
-            isCredentialsAccurate = checkIfUserCredentialsAreAccurate(doctorDetails);
+            isCredentialsAccurate = checkIfDoctorCredentialsAreAccurate(doctorDetails);
             doctorDetails.setMFAToken(otp);
             doctorRepository.save(doctorDetails);
         }
 
         if(userType.equals(INSURANCE_PROVIDER)) {
             IPDetails ipDetails = new IPDetails(username, password);
-            isCredentialsAccurate = checkIfUserCredentialsAreAccurate(ipDetails);
+            isCredentialsAccurate = checkIfIpCredentialsAreAccurate(ipDetails);
             ipDetails.setMFAToken(otp);
             ipRepository.save(ipDetails);
         }
@@ -77,7 +80,7 @@ public class LoginService extends CookieDetails {
         return ResponseEntity.ok(result);
     }
 
-    private boolean checkIfUserCredentialsAreAccurate(UserDetails patientDetails) {
+    private boolean checkIfPatientCredentialsAreAccurate(PatientDetails patientDetails) {
         String enteredUsername = patientDetails.getUserName();
         String enteredPassword = patientDetails.getPassword();
 
@@ -87,4 +90,22 @@ public class LoginService extends CookieDetails {
         return userQueriedFromDB.map(details -> details.getPassword().equals(enteredPassword)).orElse(false);
     }
 
+    private boolean checkIfDoctorCredentialsAreAccurate(DoctorDetails doctorDetails) {
+        String enteredUsername = doctorDetails.getUserName();
+        String enteredPassword = doctorDetails.getPassword();
+
+        Optional<DoctorDetails> userQueriedFromDB = doctorRepository.findById(Integer.toString(enteredUsername.hashCode()));
+
+        // user not found in database
+        return userQueriedFromDB.map(details -> details.getPassword().equals(enteredPassword)).orElse(false);
+    }
+
+    private boolean checkIfIpCredentialsAreAccurate(IPDetails ipDetails) {
+        String enteredUsername = ipDetails.getUserName();
+        String enteredPassword = ipDetails.getPassword();
+
+        Optional<IPDetails> userQueriedFromDB = ipRepository.findById(Integer.toString(enteredUsername.hashCode()));
+        // user not found in database
+        return userQueriedFromDB.map(details -> details.getPassword().equals(enteredPassword)).orElse(false);
+    }
 }
