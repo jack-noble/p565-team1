@@ -14,6 +14,7 @@ import CardHeader from "components/Card/CardHeader.js";
 import CustomInput from "components/CustomInput/CustomInput.js";
 import GridContainer from "components/Grid/GridContainer.js";
 import GridItem from "components/Grid/GridItem.js";
+import CardFooter from "components/Card/CardFooter";
 
 export default class SignupButton extends React.Component {
   constructor(props) {
@@ -23,11 +24,13 @@ export default class SignupButton extends React.Component {
       email: "",
       password: "",
       userType: "insurance",
+      company: "",
       cardAnimaton: "cardHidden"
     };
     this.handleUsernameChange = this.handleUsernameChange.bind(this);
     this.handleEmailChange = this.handleEmailChange.bind(this);
     this.handlePasswordChange = this.handlePasswordChange.bind(this);
+    this.handleCompanyChange = this.handleCompanyChange.bind(this);
     this.handleSubmit = this.handleSubmit.bind(this);
   }
 
@@ -43,6 +46,10 @@ export default class SignupButton extends React.Component {
     this.setState({ password: event.target.value });
   };
 
+  handleCompanyChange = event => {
+    this.setState({ company: event.target.value });
+  };
+
   handleSubmit = event => {
     event.preventDefault();
 
@@ -50,7 +57,8 @@ export default class SignupButton extends React.Component {
       username: this.state.username,
       email: this.state.email,
       password: this.state.password,
-      userType: this.state.userType
+      userType: this.state.userType,
+      company: this.state.company
     };
     console.log(user);
 
@@ -126,6 +134,17 @@ export default class SignupButton extends React.Component {
             }}
           />
           <CustomInput
+            labelText="Company..."
+            id="Company"
+            formControlProps={{
+              fullWidth: true
+            }}
+            inputProps={{
+              type: "text",
+              onChange: this.handleCompanyChange
+            }}
+          />
+          <CustomInput
             labelText="Password"
             id="password"
             formControlProps={{
@@ -143,6 +162,7 @@ export default class SignupButton extends React.Component {
             }}
           />
         </CardBody>
+        <CardFooter style={{display: 'flex', justifyContent: 'center', margin: 0}}>
         <Button
           onClick={this.handleSubmit}
           style={{ minWidth: "70%" }}
@@ -150,6 +170,7 @@ export default class SignupButton extends React.Component {
         >
           Sign up
         </Button>
+        </CardFooter>
       </form>
     );
   }

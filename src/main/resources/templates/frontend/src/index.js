@@ -8,9 +8,13 @@ import "assets/scss/material-kit-react.scss?v=1.8.0";
 // pages for this product
 import Components from "views/Components/Components.js";
 import LandingPage from "views/LandingPage/LandingPage.js";
-import ProfilePage from "views/ProfilePage/ProfilePage.js";
 import Login from "views/LoginPage/LoginPage.js";
-import Signup from "views/SignupPage/SignupPage.js";
+import DoctorSignup from "views/SignupPage/DoctorSignupPage.js";
+import InsuranceSignup from "views/SignupPage/InsuranceSignupPage.js";
+import PatientSignup from "views/SignupPage/PatientSignupPage.js";
+import DoctorDashboard from "views/Dashboards/DoctorDashboard";
+import InsuranceDashboard from "views/Dashboards/InsuranceDashboard";
+import PatientDashboard from "views/Dashboards/PatientDashboard";
 
 var hist = createBrowserHistory();
 
@@ -18,9 +22,13 @@ ReactDOM.render(
   <Router history={hist}>
     <Switch>
       <Route path="/components" component={Components} />
-      <Route path="/profile-page" component={ProfilePage} />
+      <Route path="/doctor/signup" component={DoctorSignup}/>
+      <Route path="/insurance/signup" component={InsuranceSignup}/>
+      <Route path="/patient/signup" component={PatientSignup}/>
+      <Route path="/doctor" component={DoctorDashboard} />
+      <Route path="/insurance" component={InsuranceDashboard} />
+      <Route path="/patient" component={PatientDashboard} />
       <Route path="/signin" component={Login}/>
-      <Route path="/signup" component={Signup}/>
       <Route path="/" component={LandingPage} />
     </Switch>
   </Router>,

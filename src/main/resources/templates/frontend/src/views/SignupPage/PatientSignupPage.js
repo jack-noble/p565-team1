@@ -8,7 +8,7 @@ import HeaderLinks from "components/Header/HeaderLinks.js";
 import GridContainer from "components/Grid/GridContainer.js";
 import GridItem from "components/Grid/GridItem.js";
 import Card from "components/Card/Card.js";
-import SignupForm from "views/SignupPage/SignupForm.js";
+import PatientSignupForm from "views/SignupPage/PatientSignupForm.js";
 
 import loginStyles from "assets/jss/material-kit-react/views/loginPage.js";
 
@@ -16,7 +16,7 @@ import image from "assets/img/bg7.jpg";
 
 const useLoginStyles = makeStyles(loginStyles);
 
-export default function SignupPage(props) {
+export default function PatientSignupPage(props) {
   const [cardAnimaton, setCardAnimation] = React.useState("cardHidden");
   setTimeout(function() {
     setCardAnimation("");
@@ -44,7 +44,7 @@ export default function SignupPage(props) {
           <GridContainer justify="center">
             <GridItem xs={12} sm={12} md={4}>
               <Card className={loginClasses[cardAnimaton]}>
-                <SignupForm />
+                <PatientSignupForm />
               </Card>
             </GridItem>
           </GridContainer>

@@ -120,11 +120,8 @@ export default function LoginPage(props) {
                     </Button>
                   </CardFooter>
                   <div style={{display: 'flex', justifyContent: 'center', alignItems: 'center', marginBottom: 10}}>
-                  <p style={{display: 'flex', justifyContent: 'center', margin: 0}}>Don't have an account?
-                  <Link to="/signup/">
-                    <Button color="primary" size="sm" simple>
-                      Sign Up
-                    </Button></Link></p>
+                  <p style={{display: 'flex', justifyContent: 'center', margin: 0}}>Don't have an account?</p>
+                  <TypeSelect />
                   </div>
                 </form>
               </Card>
