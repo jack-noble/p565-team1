@@ -1,56 +1,42 @@
-package com.infinitycare.health.login.controller;
+package com.infinitycare.health.login.service;
 
 import com.infinitycare.health.database.DoctorRepository;
 import com.infinitycare.health.database.IpRepository;
+import com.infinitycare.health.database.PatientRepository;
 import com.infinitycare.health.login.SendEmailSMTP;
+import com.infinitycare.health.login.model.CookieDetails;
 import com.infinitycare.health.login.model.DoctorDetails;
 import com.infinitycare.health.login.model.IPDetails;
 import com.infinitycare.health.login.model.PatientDetails;
-import com.infinitycare.health.database.PatientRepository;
-import com.infinitycare.health.security.TextSecurer;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.stereotype.Service;
 
-import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 
-// TODO Add /otp method for this SignUpController
-// TODO Refractor all the methods into service folder and declare @Service classes to reuse code
-
-/* @Controller
-public class SignupController {
-
-    public static final String SESSIONID = "sessionid";
-    public static final String USERNAME = "username";
-    public static final String PASSWORD = "password";
-    public static final String PATIENT = "patient";
-    public static final String DOCTOR = "doctor";
-    public static final String INSURANCE_PROVIDER = "insurance";
-    public static final String IS_NEW_USER = "isNewUser";
-    public static final String IS_OTP_SENT = "isOtpSent";
-    public static final String IS_OTP_ACCURATE = "isOtpAccurate";
-    public static final String IS_COOKIE_TAMPERED = "isCookieTampered";
+@Service
+public class SignUpService extends CookieDetails {
 
     @Autowired
-    PatientRepository patientRepository;
+    public PatientRepository patientRepository;
 
     @Autowired
-    DoctorRepository doctorRepository;
+    public DoctorRepository doctorRepository;
 
     @Autowired
-    IpRepository ipRepository;
+    public IpRepository ipRepository;
 
-    @RequestMapping(value = "/signup/{userType}")
-    @ResponseBody
-    public ResponseEntity<?> signup(HttpServletRequest request, HttpServletResponse response, @PathVariable String userType) {
+    public SignUpService(PatientRepository patientRepository, DoctorRepository doctorRepository, IpRepository ipRepository){
+        this.patientRepository = patientRepository;
+        this.doctorRepository = doctorRepository;
+        this.ipRepository = ipRepository;
+    }
+
+    public ResponseEntity<?> signup(HttpServletRequest request, HttpServletResponse response, String userType) {
 
         boolean isNewUser = false;
         boolean isOtpSent = false;
@@ -91,21 +77,8 @@ public class SignupController {
         result.put(IS_NEW_USER, isNewUser);
         result.put(IS_OTP_SENT, isOtpSent);
 
-        setEncryptedSessionId(request, response, username, userType);
+        SetEncryptedSessionId.setEncryptedSessionId(request, response, username, userType);
         return ResponseEntity.ok(result);
-    }
-
-    private void setEncryptedSessionId(HttpServletRequest request, HttpServletResponse response, String username, String userType) {
-        String encryptedSessionId = TextSecurer.encrypt(username);
-        String servletPath = request.getServletPath();
-        String cookiePath = servletPath.substring(0, servletPath.indexOf(userType) + userType.length());
-
-        Cookie cookie = new Cookie(SESSIONID, encryptedSessionId);
-        cookie.setHttpOnly(true);
-        cookie.setMaxAge(-1);
-        cookie.setPath(cookiePath);
-
-        response.addCookie(cookie);
     }
 
     private boolean doesPatientAlreadyExist(PatientDetails patientDetails){
@@ -134,4 +107,4 @@ public class SignupController {
         // returns if user is present
         return userQueriedFromDB.isPresent();
     }
-} */
+}
