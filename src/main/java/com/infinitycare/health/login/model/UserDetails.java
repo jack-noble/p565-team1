@@ -1,29 +1,21 @@
 package com.infinitycare.health.login.model;
 
-import org.bson.types.ObjectId;
-import org.springframework.data.annotation.Id;
-import org.springframework.data.mongodb.core.mapping.Document;
-
-@Document(collection = "UserDetails")
 public class UserDetails {
 
-    @Id
-    private ObjectId id;
-    private String mUserName;
-    private String mPassword;
-    private String mTypeOfUser;
-    private String mToken;
-
-    public UserDetails(String mUserName, String mPassword, String mTypeOfUser) {
-        this.id = ObjectId.get();
-        this.mUserName = mUserName;
-        this.mPassword = mPassword;
-        this.mTypeOfUser = mTypeOfUser;
-        this.mToken = "";
-    }
+    public String id;
+    public String mUserName;
+    public String mEmail;
+    public String mPassword;
+    public String mFirstName;
+    public String mLastName;
+    public String mMFAToken;
 
     public String getUserName() {
         return mUserName;
+    }
+
+    public String getEmail() {
+        return mEmail;
     }
 
     public String getPassword() {
@@ -31,22 +23,19 @@ public class UserDetails {
     }
 
     public void setPassword(String mPassword) {
-        this.mPassword = mPassword;
+        mPassword = mPassword;
     }
 
     public void setUserName(String mUserName) {
-        this.mUserName = mUserName;
+        mUserName = mUserName;
     }
 
-    public ObjectId getId() { return id; }
+    public String getId() { return id; }
 
-    public void setId(ObjectId id) { this.id = id; }
+    public void setId(String id) { id = id; }
 
-    public String getmTypeOfUser() { return mTypeOfUser; }
+    public void setMFAToken(String mToken) { this.mMFAToken = mToken; }
 
-    public void setmTypeOfUser(String mTypeOfUser) { this.mTypeOfUser = mTypeOfUser; }
+    public String getMFAToken() { return mMFAToken; }
 
-    public String getmToken() { return mToken; }
-
-    public void setmToken(String mToken) { this.mToken = mToken; }
 }

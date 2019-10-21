@@ -1,72 +1,177 @@
 package com.infinitycare.health.login.controller;
 
-import com.infinitycare.health.database.UserRepository;
-import com.infinitycare.health.login.model.UserDetails;
+import com.infinitycare.health.database.IpRepository;
+import com.infinitycare.health.database.PatientRepository;
+import com.infinitycare.health.login.SendEmailSMTP;
+import com.infinitycare.health.login.model.DoctorDetails;
+import com.infinitycare.health.login.model.IPDetails;
+import com.infinitycare.health.login.model.PatientDetails;
+import com.infinitycare.health.database.DoctorRepository;
+import com.infinitycare.health.security.TextSecurer;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.mongodb.core.query.Query;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.servlet.ModelAndView;
-import static org.springframework.data.mongodb.core.query.Criteria.where;
+import org.springframework.util.StringUtils;
+import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Optional;
 
 @Controller
 public class LoginController {
 
+    public static final String SESSIONID = "sessionid";
+    public static final String USERNAME = "username";
+    public static final String PASSWORD = "password";
+    public static final String PATIENT = "patient";
+    public static final String DOCTOR = "doctor";
+    public static final String INSURANCE_PROVIDER = "insurance";
+    public static final String IS_CREDENTIALS_ACCURATE = "isCredentialsAccurate";
+    public static final String IS_OTP_SENT = "isOtpSent";
+    public static final String IS_OTP_ACCURATE = "isOtpAccurate";
+    public static final String IS_COOKIE_TAMPERED = "isCookieTampered";
+
     @Autowired
-    UserRepository repository;
+    PatientRepository patientRepository;
 
-    @RequestMapping("/")
-    public ModelAndView home() {
-        ModelAndView mv = new ModelAndView();
-        mv.setViewName("login.html");
-        return mv;
+    @Autowired
+    DoctorRepository doctorRepository;
+
+    @Autowired
+    IpRepository ipRepository;
+
+    @GetMapping(value = "/LoggedIn/{userType}")
+    public ResponseEntity<?> validateCredentials(HttpServletRequest request, HttpServletResponse response, @PathVariable String userType) {
+        boolean isCredentialsAccurate = false;
+        boolean sentOtp = false;
+
+        String otp = SendEmailSMTP.generateRandomNumber(1000, 9999);
+        Map<String, Object> result = new HashMap<>();
+        result.put(IS_CREDENTIALS_ACCURATE, isCredentialsAccurate);
+        result.put(IS_OTP_SENT, sentOtp);
+
+        String username = request.getParameter(USERNAME);
+        String password = request.getParameter(PASSWORD);
+        if(userType.equals(PATIENT)) {
+            PatientDetails patientDetails = new PatientDetails(username, password);
+            isCredentialsAccurate = checkIfPatientCredentialsAreAccurate(patientDetails);
+            patientDetails.setMFAToken(otp);
+            patientRepository.save(patientDetails);
+        }
+
+        if(userType.equals(DOCTOR)) {
+            DoctorDetails doctorDetails = new DoctorDetails(username, password);
+            isCredentialsAccurate = checkIfDoctorCredentialsAreAccurate(doctorDetails);
+            doctorDetails.setMFAToken(otp);
+            doctorRepository.save(doctorDetails);
+        }
+
+        if(userType.equals(INSURANCE_PROVIDER)) {
+            IPDetails ipDetails = new IPDetails(username, password);
+            isCredentialsAccurate = checkIfIpCredentialsAreAccurate(ipDetails);
+            ipDetails.setMFAToken(otp);
+            ipRepository.save(ipDetails);
+        }
+
+        SendEmailSMTP.sendFromGMail(new String[]{username}, "Please enter the OTP in the login screen", otp);
+        sentOtp = true;
+        result.put(IS_CREDENTIALS_ACCURATE, isCredentialsAccurate);
+        result.put(IS_OTP_SENT, sentOtp);
+
+        setEncryptedSessionId(request, response, username, userType);
+        return ResponseEntity.ok(result);
     }
 
-    @RequestMapping(value = "/LoggedIn")
-    public ModelAndView test(HttpServletRequest request) {
-        ModelAndView mv = new ModelAndView();
+    private void setEncryptedSessionId(HttpServletRequest request, HttpServletResponse response, String username, String userType) {
+        String encryptedSessionId = TextSecurer.encrypt(username);
+        String servletPath = request.getServletPath();
+        String cookiePath = servletPath.substring(0, servletPath.indexOf(userType) + userType.length());
 
-        //Check the username and password against the data in Database
-        //Should use an encrypted password while matching against the rows in a DB. Would be ideal if we are able to send an encrypted password
-        mv.addObject("username", request.getParameter("username"));
-        repository.save(new UserDetails(request.getParameter("username"), request.getParameter("password"), ""));
-        //SendEmail.send();
-        mv.setViewName("LoggedIn.html");
-        return mv;
+        Cookie cookie = new Cookie(SESSIONID, encryptedSessionId);
+        cookie.setHttpOnly(true);
+        cookie.setMaxAge(-1);
+        cookie.setPath(cookiePath);
+
+        response.addCookie(cookie);
     }
 
-    @RequestMapping(value = "/signin/{userType}")
-    @ResponseBody
-    public String login(HttpServletRequest request, @PathVariable String userType) {
+    @GetMapping(value = "/otp/{userType}")
+    public ResponseEntity<?> validateOtp(HttpServletRequest request, @PathVariable String userType, @RequestParam("otp") String enteredOtp) {
+        boolean isOtpAccurate = false;
+        String userOtpFromDB = "";
+        Map<String, Object> result = new HashMap<>();
+        result.put(IS_OTP_ACCURATE, isOtpAccurate);
 
-        UserDetails userDetails = new UserDetails(request.getParameter("username"), request.getParameter("password"), userType);
-        repository.save(userDetails);
-        checkIfCredentialsAreAccurate(userDetails);
+        // String username = getUsername(request);
+        String username = request.getParameter("username");
 
-        System.out.println("Signing in");
-        //Check the username and password against the data in Database
-        //Should use an encrypted password while matching against the rows in a DB. Would be ideal if we are able to send an ecrypted password
-        return "";
+        if(null == username) {
+            result.put(IS_COOKIE_TAMPERED, "true");
+        } else if(userType.equals(PATIENT)) {
+            Optional<PatientDetails> userFromDB = patientRepository.findById(Integer.toString(username.hashCode()));
+            userOtpFromDB = userFromDB.isPresent() ? userFromDB.get().getMFAToken() : "";
+        } else if(userType.equals(DOCTOR)) {
+            Optional<DoctorDetails> userFromDB = doctorRepository.findById(Integer.toString(username.hashCode()));
+            userOtpFromDB = userFromDB.isPresent() ? userFromDB.get().getMFAToken() : "";
+        } else if(userType.equals(INSURANCE_PROVIDER)) {
+            Optional<IPDetails> userFromDB = ipRepository.findById(Integer.toString(username.hashCode()));
+            userOtpFromDB = userFromDB.isPresent() ? userFromDB.get().getMFAToken() : "";
+        }
+
+        if(StringUtils.isEmpty(userOtpFromDB)) {
+            result.put(IS_COOKIE_TAMPERED, "true");
+        } else if(userOtpFromDB.equals(enteredOtp)) {
+            isOtpAccurate = true;
+            result.put(IS_OTP_ACCURATE, isOtpAccurate);
+        }
+
+        return ResponseEntity.ok(result);
     }
 
-    private boolean checkIfCredentialsAreAccurate(UserDetails userDetails) {
-        String enteredUsername = userDetails.getUserName();
-        String enteredPassword = userDetails.getPassword();
+    private String getUsername(HttpServletRequest request) {
+        Cookie[] cookies = request.getCookies();
+        for(Cookie c : cookies) {
+            if(SESSIONID.equals(c.getName())) {
+                return TextSecurer.decrypt(c.getValue());
+            }
+        }
 
-        // searches for the 1 unique user
-        int searchForUser = 1;//repository.findOne(new Query(where("mUserName").is(enteredUsername)), UserDetails.class);
-        // int searchForUser = repository.find(
-        // {"mUserName": enteredUsername, "mPassword": enteredPassword}
-        //.toArray()[0].length; // may need to index into array to get proper count
+        return null;
+    }
 
-        if(searchForUser == 1)
-            return true; // there exists a unique user w/ matching credentials
-        else
-            return false; // user not found in database
+    private boolean checkIfPatientCredentialsAreAccurate(PatientDetails patientDetails) {
+        String enteredUsername = patientDetails.getUserName();
+        String enteredPassword = patientDetails.getPassword();
+
+        Optional<PatientDetails> userQueriedFromDB = patientRepository.findById(Integer.toString(enteredUsername.hashCode()));
+
+        // user not found in database
+        return userQueriedFromDB.map(details -> details.getPassword().equals(enteredPassword)).orElse(false);
+    }
+
+    private boolean checkIfDoctorCredentialsAreAccurate(DoctorDetails doctorDetails) {
+        String enteredUsername = doctorDetails.getUserName();
+        String enteredPassword = doctorDetails.getPassword();
+
+        Optional<DoctorDetails> userQueriedFromDB = doctorRepository.findById(Integer.toString(enteredUsername.hashCode()));
+
+        // user not found in database
+        return userQueriedFromDB.map(details -> details.getPassword().equals(enteredPassword)).orElse(false);
+    }
+
+    private boolean checkIfIpCredentialsAreAccurate(IPDetails ipDetails) {
+        String enteredUsername = ipDetails.getUserName();
+        String enteredPassword = ipDetails.getPassword();
+
+        Optional<IPDetails> userQueriedFromDB = ipRepository.findById(Integer.toString(enteredUsername.hashCode()));
+
+        // user not found in database
+        return userQueriedFromDB.map(details -> details.getPassword().equals(enteredPassword)).orElse(false);
     }
 
 }
+
