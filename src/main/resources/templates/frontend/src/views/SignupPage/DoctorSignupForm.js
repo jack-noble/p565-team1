@@ -78,27 +78,7 @@ export default class SignupButton extends React.Component {
     return (
       <form>
         <CardHeader color="primary">
-          <h4>Sign up with</h4>
-          <div>
-            <Button
-              justIcon
-              href="#pablo"
-              target="_blank"
-              color="transparent"
-              onClick={e => e.preventDefault()}
-            >
-              <i className={"fab fa-google"} />
-            </Button>
-              <Button
-                justIcon
-                href="#pablo"
-                target="_blank"
-                color="transparent"
-                onClick={e => e.preventDefault()}
-              >
-                <i className={"fab fa-facebook"} />
-              </Button>
-          </div>
+          <h4>Doctor sign up</h4>
         </CardHeader>
         <CardBody>
           <CustomInput

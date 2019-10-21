@@ -18,7 +18,7 @@ import CardHeader from "components/Card/CardHeader.js";
 import CardFooter from "components/Card/CardFooter.js";
 import CustomInput from "components/CustomInput/CustomInput.js";
 import TypeSelect from "views/Modals/TypeSelect.js";
-import CustomDropdown from "components/CustomDropdown/CustomDropdown.js";
+import FacebookLogin from 'react-facebook-login/dist/facebook-login-render-props'
 
 import loginStyles from "assets/jss/material-kit-react/views/loginPage.js";
 
@@ -33,6 +33,9 @@ export default function LoginPage(props) {
   }, 700);
   const loginClasses = useLoginStyles();
   const { ...rest } = props;
+  const responseFacebook = (response) => {
+  console.log(response);
+}
   return (
     <div>
       <Header
@@ -58,24 +61,23 @@ export default function LoginPage(props) {
                   <CardHeader color="primary" className={loginClasses.cardHeader}>
                     <h4>Log in with</h4>
                     <div className={loginClasses.socialLine}>
-                      <Button
-                        justIcon
-                        href="#pablo"
-                        target="_blank"
-                        color="transparent"
-                        onClick={e => e.preventDefault()}
-                      >
-                        <i className={"fab fa-google"} />
-                      </Button>
-                      <Button
-                        justIcon
-                        href="#pablo"
-                        target="_blank"
-                        color="transparent"
-                        onClick={e => e.preventDefault()}
-                      >
-                        <i className={loginClasses.socialIcons + " fab fa-facebook"} />
-                      </Button>
+                      <FacebookLogin
+                        appId="523513645103749"
+                        autoLoad
+                        fields="name,email,picture"
+                        callback={responseFacebook}
+                        render={renderProps => ( 
+                          <Button
+                            justIcon
+                            href="#pablo"
+                            target="_blank"
+                            color="transparent"
+                            onClick={renderProps.onClick}
+                          >
+                            <i className={loginClasses.socialIcons + " fab fa-facebook"} />
+                          </Button>
+                        )}
+                      />
                     </div>
                   </CardHeader>
                   <CardBody>
