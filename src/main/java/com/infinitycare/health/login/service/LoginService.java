@@ -45,7 +45,7 @@ public class LoginService extends CookieDetails {
         Map<String, Object> result = new HashMap<>();
 
         String username = request.getParameter(USERNAME);
-        String password = request.getParameter(PASSWORD);
+        String password = TextSecurer.encrypt(request.getParameter(PASSWORD));
 
         if(userType.equals(PATIENT)) {
             PatientDetails patientDetails = new PatientDetails(username, password);

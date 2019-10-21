@@ -8,9 +8,11 @@ import com.infinitycare.health.login.model.CookieDetails;
 import com.infinitycare.health.login.model.DoctorDetails;
 import com.infinitycare.health.login.model.IPDetails;
 import com.infinitycare.health.login.model.PatientDetails;
+import com.infinitycare.health.security.TextSecurer;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.w3c.dom.Text;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -44,7 +46,7 @@ public class SignUpService extends CookieDetails {
         Map<String, Object> result = new HashMap<>();
 
         String username = request.getParameter(USERNAME);
-        String password = request.getParameter(PASSWORD);
+        String password = TextSecurer.encrypt(request.getParameter(PASSWORD));
 
         if(userType.equals(PATIENT)) {
             PatientDetails patientDetails = new PatientDetails(username, password);
