@@ -8,6 +8,7 @@ import com.infinitycare.health.login.model.CookieDetails;
 import com.infinitycare.health.login.model.DoctorDetails;
 import com.infinitycare.health.login.model.IPDetails;
 import com.infinitycare.health.login.model.PatientDetails;
+import com.infinitycare.health.security.TextSecurer;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;

@@ -1,5 +1,6 @@
 package com.infinitycare.health.login.model;
 
+import com.infinitycare.health.security.TextSecurer;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 @Document(collection = "PatientDetails")
@@ -17,7 +18,7 @@ public class PatientDetails extends UserDetails {
         this.mUserName = mUserName;
         mEmail = "";
         id = Integer.toString(mUserName.hashCode());
-        this.mPassword = mPassword;
+        this.mPassword = TextSecurer.encrypt(mPassword);
         mFirstName = "";
         mLastName = "";
         mDOB = "";
