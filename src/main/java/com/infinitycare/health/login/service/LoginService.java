@@ -57,19 +57,6 @@ public class LoginService extends CookieDetails {
         String username = request.getParameter(USERNAME);
         String password = TextSecurer.encrypt(request.getParameter(PASSWORD));
 
-//        String username = "";
-//        String password = "";
-//        for(String param : request.getParameterMap().keySet()) {
-//            try {
-//                JSONObject userDetails = (JSONObject) new JSONParser().parse(param);
-//                username = userDetails.get(USERNAME).toString();
-//                password = userDetails.get(PASSWORD).toString();
-//            } catch (ParseException e) {
-//                e.printStackTrace();
-//            }
-//        }
-//          password = TextSecurer.encrypt(password);
-
         if(userType.equals(PATIENT)) {
             PatientDetails patientDetails = new PatientDetails(username, password);
             if(checkIfPatientCredentialsAreAccurate(patientDetails)){
