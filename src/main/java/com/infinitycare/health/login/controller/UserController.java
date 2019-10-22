@@ -3,6 +3,7 @@ package com.infinitycare.health.login.controller;
 import com.infinitycare.health.login.model.CookieDetails;
 import com.infinitycare.health.login.service.LoginService;
 import com.infinitycare.health.login.service.OtpService;
+import com.infinitycare.health.login.service.PasswordRecoveryService;
 import com.infinitycare.health.login.service.SignUpService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -18,12 +19,14 @@ public class UserController extends CookieDetails {
     LoginService loginService;
     SignUpService signupservice;
     OtpService otpservice;
+    PasswordRecoveryService passwordRecoveryService;
 
     @Inject
-    public UserController(LoginService loginService, SignUpService signupservice, OtpService otpservice){
+    public UserController(LoginService loginService, SignUpService signupservice, OtpService otpservice, PasswordRecoveryService passwordRecoveryService){
         this.loginService = loginService;
         this.signupservice = signupservice;
         this.otpservice = otpservice;
+        this.passwordRecoveryService = passwordRecoveryService;
     }
 
     @GetMapping(value = "/login/{userType}")
@@ -39,6 +42,11 @@ public class UserController extends CookieDetails {
     @GetMapping(value = "/otp/{userType}")
     public ResponseEntity<?> enterOtp(HttpServletRequest request, @PathVariable String userType, @RequestParam("otp") String enteredotp) {
         return this.otpservice.validateOtp(request, userType, enteredotp);
+    }
+
+    @GetMapping(value = "/recovery/{userType}")
+    public ResponseEntity<?> recoverPassword(HttpServletRequest request, @PathVariable String userType) {
+        return this.passwordRecoveryService.setPassword(request, userType);
     }
 
 }

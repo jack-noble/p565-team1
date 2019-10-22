@@ -1,3 +1,7 @@
+package com.infinitycare.health.login.service;
+
+import com.infinitycare.health.database.DoctorRepository;
+import com.infinitycare.health.database.IpRepository;
 import com.infinitycare.health.database.PatientRepository;
 import com.infinitycare.health.login.model.CookieDetails;
 import com.infinitycare.health.login.model.DoctorDetails;
@@ -36,8 +40,8 @@ public class PasswordRecoveryService extends CookieDetails {
 
         Map<String, Object> result = new HashMap<>();
 
-        // String username = getUsername(request);
-        String username = request.getParameter(USERNAME);
+        String username = getUsername(request);
+        // String username = request.getParameter(USERNAME);
         String password = TextSecurer.encrypt(request.getParameter(PASSWORD));
 
         if(null == username) {

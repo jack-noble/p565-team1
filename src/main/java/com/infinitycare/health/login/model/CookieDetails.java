@@ -18,5 +18,6 @@ public class CookieDetails {
     public static final String IS_OTP_ACCURATE = "isOtpAccurate";
     public static final String IS_COOKIE_TAMPERED = "isCookieTampered";
     public static final String IS_NEW_USER = "isNewUser";
+    public static final String IS_PASSWORD_CHANGED = "isPasswordChanged";
 
 }
