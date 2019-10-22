@@ -19,9 +19,11 @@ import org.springframework.stereotype.Service;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 public class LoginService extends CookieDetails {
@@ -47,20 +49,26 @@ public class LoginService extends CookieDetails {
 
         String otp = SendEmailSMTP.generateRandomNumber(1000, 9999);
         Map<String, Object> result = new HashMap<>();
-
-        String username = "";
-        String password = "";
-        for(String param : request.getParameterMap().keySet()) {
-            try {
-                JSONObject userDetails = (JSONObject) new JSONParser().parse(param);
-                username = userDetails.get(USERNAME).toString();
-                password = userDetails.get(PASSWORD).toString();
-            } catch (ParseException e) {
-                e.printStackTrace();
-            }
+        try {
+            System.out.println(request.getReader().lines().collect(Collectors.joining(System.lineSeparator())));
+        } catch (IOException e) {
+            e.printStackTrace();
         }
+        String username = request.getParameter(USERNAME);
+        String password = TextSecurer.encrypt(request.getParameter(PASSWORD));
 
-        password = TextSecurer.encrypt(password);
+//        String username = "";
+//        String password = "";
+//        for(String param : request.getParameterMap().keySet()) {
+//            try {
+//                JSONObject userDetails = (JSONObject) new JSONParser().parse(param);
+//                username = userDetails.get(USERNAME).toString();
+//                password = userDetails.get(PASSWORD).toString();
+//            } catch (ParseException e) {
+//                e.printStackTrace();
+//            }
+//        }
+//          password = TextSecurer.encrypt(password);
 
         if(userType.equals(PATIENT)) {
             PatientDetails patientDetails = new PatientDetails(username, password);

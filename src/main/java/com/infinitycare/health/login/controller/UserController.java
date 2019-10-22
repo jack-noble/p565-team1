@@ -13,6 +13,7 @@ import javax.inject.Inject;
 
 @RestController
 @RequestMapping(value = "/")
+@CrossOrigin(origins = "*")
 public class UserController extends CookieDetails {
 
     LoginService loginService;
