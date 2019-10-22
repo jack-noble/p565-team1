@@ -49,23 +49,29 @@ public class LoginService extends CookieDetails {
 
         if(userType.equals(PATIENT)) {
             PatientDetails patientDetails = new PatientDetails(username, password);
-            isCredentialsAccurate = checkIfPatientCredentialsAreAccurate(patientDetails);
-            patientDetails.setMFAToken(otp);
-            patientRepository.save(patientDetails);
+            if(checkIfPatientCredentialsAreAccurate(patientDetails)){
+                isCredentialsAccurate = true;
+                patientDetails.setMFAToken(otp);
+                patientRepository.save(patientDetails);
+            }
         }
 
         if(userType.equals(DOCTOR)) {
             DoctorDetails doctorDetails = new DoctorDetails(username, password);
-            isCredentialsAccurate = checkIfDoctorCredentialsAreAccurate(doctorDetails);
-            doctorDetails.setMFAToken(otp);
-            doctorRepository.save(doctorDetails);
+            if(checkIfDoctorCredentialsAreAccurate(doctorDetails)) {
+                isCredentialsAccurate = true;
+                doctorDetails.setMFAToken(otp);
+                doctorRepository.save(doctorDetails);
+            }
         }
 
         if(userType.equals(INSURANCE_PROVIDER)) {
             IPDetails ipDetails = new IPDetails(username, password);
-            isCredentialsAccurate = checkIfIpCredentialsAreAccurate(ipDetails);
-            ipDetails.setMFAToken(otp);
-            ipRepository.save(ipDetails);
+            if(checkIfIpCredentialsAreAccurate(ipDetails)) {
+                isCredentialsAccurate = true;
+                ipDetails.setMFAToken(otp);
+                ipRepository.save(ipDetails);
+            }
         }
 
         if(isCredentialsAccurate) {
