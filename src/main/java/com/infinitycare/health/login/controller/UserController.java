@@ -26,19 +26,25 @@ public class UserController extends CookieDetails {
         this.otpservice = otpservice;
     }
 
-    @GetMapping(value = "/login/{userType}")
+    @RequestMapping(value = "/login/{userType}", method = {RequestMethod.POST, RequestMethod.OPTIONS})
     public ResponseEntity<?> validateUser(HttpServletRequest request, HttpServletResponse response, @PathVariable String userType) {
         return this.loginService.validateCredentials(request, response, userType);
     }
 
-    @GetMapping(value = "/signup/{userType}")
+    @RequestMapping(value = "/signup/{userType}", method = RequestMethod.POST)
     public ResponseEntity<?> signupUser(HttpServletRequest request, HttpServletResponse response, @PathVariable String userType) {
         return this.signupservice.signup(request, response, userType);
     }
 
-    @GetMapping(value = "/otp/{userType}")
+    @RequestMapping(value = "/otp/{userType}", method = RequestMethod.POST)
     public ResponseEntity<?> enterOtp(HttpServletRequest request, @PathVariable String userType, @RequestParam("otp") String enteredotp) {
         return this.otpservice.validateOtp(request, userType, enteredotp);
+    }
+
+    @RequestMapping(value = "/", method = RequestMethod.OPTIONS)
+    public String preFlightedRequests(HttpServletResponse response) {
+        response.addHeader("Access-Control-Allow-Methods", "*");
+        return null;
     }
 
 }
