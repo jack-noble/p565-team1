@@ -1,5 +1,6 @@
 package com.infinitycare.health.login.service;
 
+import com.google.api.client.json.JsonParser;
 import com.infinitycare.health.database.DoctorRepository;
 import com.infinitycare.health.database.IpRepository;
 import com.infinitycare.health.database.PatientRepository;
@@ -9,6 +10,9 @@ import com.infinitycare.health.login.model.DoctorDetails;
 import com.infinitycare.health.login.model.IPDetails;
 import com.infinitycare.health.login.model.PatientDetails;
 import com.infinitycare.health.security.TextSecurer;
+import org.json.simple.JSONObject;
+import org.json.simple.parser.JSONParser;
+import org.json.simple.parser.ParseException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -44,8 +48,19 @@ public class LoginService extends CookieDetails {
         String otp = SendEmailSMTP.generateRandomNumber(1000, 9999);
         Map<String, Object> result = new HashMap<>();
 
-        String username = request.getParameter(USERNAME);
-        String password = TextSecurer.encrypt(request.getParameter(PASSWORD));
+        String username = "";
+        String password = "";
+        for(String param : request.getParameterMap().keySet()) {
+            try {
+                JSONObject userDetails = (JSONObject) new JSONParser().parse(param);
+                username = userDetails.get(USERNAME).toString();
+                password = userDetails.get(PASSWORD).toString();
+            } catch (ParseException e) {
+                e.printStackTrace();
+            }
+        }
+
+        password = TextSecurer.encrypt(password);
 
         if(userType.equals(PATIENT)) {
             PatientDetails patientDetails = new PatientDetails(username, password);

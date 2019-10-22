@@ -41,10 +41,10 @@ public class UserController extends CookieDetails {
         return this.otpservice.validateOtp(request, userType, enteredotp);
     }
 
-    @RequestMapping(value = "/", method = RequestMethod.OPTIONS)
-    public String preFlightedRequests(HttpServletResponse response) {
-        response.addHeader("Access-Control-Allow-Methods", "*");
-        return null;
-    }
+//    @RequestMapping(value = "/", method = RequestMethod.OPTIONS)
+//    public String preFlightedRequests(HttpServletResponse response) {
+//        response.addHeader("Access-Control-Allow-Methods", "*");
+//        return null;
+//    }
 
 }
