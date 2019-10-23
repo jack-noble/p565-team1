@@ -16,6 +16,7 @@ import org.json.simple.parser.ParseException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -49,13 +50,23 @@ public class LoginService extends CookieDetails {
 
         String otp = SendEmailSMTP.generateRandomNumber(1000, 9999);
         Map<String, Object> result = new HashMap<>();
+
+        String username = "";
+        String password = "";
         try {
-            System.out.println(request.getReader().lines().collect(Collectors.joining(System.lineSeparator())));
-        } catch (IOException e) {
+            JSONObject userDetails = (JSONObject) new JSONParser().parse(request.getReader().lines().collect(Collectors.joining(System.lineSeparator())));
+            username = userDetails.get(USERNAME).toString();
+            password = userDetails.get(PASSWORD).toString();
+        } catch (IOException | ParseException e) {
             e.printStackTrace();
         }
-        String username = request.getParameter(USERNAME);
-        String password = TextSecurer.encrypt(request.getParameter(PASSWORD));
+
+        if(StringUtils.isEmpty(username))
+            username = request.getParameter(USERNAME);
+        if(StringUtils.isEmpty(password))
+            password = request.getParameter(PASSWORD);
+
+        password = TextSecurer.encrypt(password);
 
         if(userType.equals(PATIENT)) {
             PatientDetails patientDetails = new PatientDetails(username, password);
