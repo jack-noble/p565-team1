@@ -8,16 +8,15 @@ import com.infinitycare.health.login.model.CookieDetails;
 import com.infinitycare.health.login.model.DoctorDetails;
 import com.infinitycare.health.login.model.IPDetails;
 import com.infinitycare.health.login.model.PatientDetails;
-import com.infinitycare.health.security.TextSecurer;
+import com.mongodb.BasicDBObject;
+import com.mongodb.DBObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 
 @Service
 public class SignUpService extends CookieDetails {
@@ -43,6 +42,7 @@ public class SignUpService extends CookieDetails {
         boolean isOtpSent = false;
         String otp = SendEmailSMTP.generateRandomNumber(1000, 9999);
         Map<String, Object> result = new HashMap<>();
+        List<DBObject> timeslots = new ArrayList<>();
 
         String username = request.getParameter(USERNAME);
         String password = TextSecurer.encrypt(request.getParameter(PASSWORD));
@@ -61,6 +61,11 @@ public class SignUpService extends CookieDetails {
             if(!doesDoctorAlreadyExist(doctorDetails)){
                 doctorDetails.setMFAToken(otp);
                 doctorRepository.save(doctorDetails);
+                DBObject ts = new BasicDBObject();
+                for (int i = 0; i < 13; i++) {
+                    ts.put("isAvailable", true);
+                    timeslots.add(ts);
+                }
                 isNewUser = true;
             }
         }
