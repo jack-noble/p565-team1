@@ -20,18 +20,16 @@ public class UserController extends CookieDetails {
     OtpService otpservice;
     PasswordRecoveryService passwordRecoveryService;
     AppointmentsService appointmentsService;
-    InsuranceDashboardService insuranceDashboardService;
     ProfileService profileService;
 
     @Inject
     public UserController(LoginService loginService, SignUpService signupservice, OtpService otpservice, PasswordRecoveryService passwordRecoveryService,
-                          AppointmentsService appointmentsService, InsuranceDashboardService insuranceDashboardService, ProfileService profileService){
+                          AppointmentsService appointmentsService, ProfileService profileService){
         this.loginService = loginService;
         this.signupservice = signupservice;
         this.otpservice = otpservice;
         this.passwordRecoveryService = passwordRecoveryService;
         this.appointmentsService = appointmentsService;
-        this.insuranceDashboardService = insuranceDashboardService;
         this.profileService = profileService;
     }
 
