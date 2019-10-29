@@ -2,7 +2,6 @@ package com.infinitycare.health.login.model;
 
 import com.mongodb.DBObject;
 import org.springframework.data.mongodb.core.mapping.Document;
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -38,6 +37,11 @@ public class DoctorDetails extends UserDetails {
     }
 
     public void setTimeSlots(List<DBObject> ts) { this.mTimeSlots = ts; }
-
     public List<DBObject> getTimeSlots() {return this.mTimeSlots;}
+
+    public void setmEducation(String mEducation) { this.mEducation = mEducation; }
+    public void setmExperience(String mExperience) { this.mExperience = mExperience; }
+    public void setmSpecialization(String mSpecialization) { this.mSpecialization = mSpecialization; }
+    public void setmHospital(String mHospital) { this.mHospital = mHospital; }
+    public void setmPersonalBio(String mPersonalBio) { this.mPersonalBio = mPersonalBio; }
 }

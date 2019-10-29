@@ -32,4 +32,13 @@ public class PatientDetails extends UserDetails {
         mActive = false;
         mMFAToken = "";
     }
+
+    public void setmDOB (String mDOB) { this.mDOB = mDOB; }
+    public void setmEmergencyContactName (String mEmergencyContactName) { this.mEmergencyContactName = mEmergencyContactName; }
+    public void setmEmergencyContactNumber (String mEmergencyContactNumber) { this.mEmergencyContactNumber = mEmergencyContactNumber; }
+    public void setmMedicalHistory (String mMedicalHistory) { this.mMedicalHistory = mMedicalHistory; }
+    public void setmInsurancePlan(String mInsurancePlan) { this.mInsurancePlan = mInsurancePlan; }
+    public void setmInsuranceProvider(String mInsuranceProvider) { this.mInsuranceProvider = mInsuranceProvider; }
+    public void setmInsuranceCompany(String mInsuranceCompany) { this.mInsuranceCompany = mInsuranceCompany; }
+
 }

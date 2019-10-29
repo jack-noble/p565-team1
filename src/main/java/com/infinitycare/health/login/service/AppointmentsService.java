@@ -10,6 +10,7 @@ import com.infinitycare.health.login.SendEmailSMTP;
 import com.infinitycare.health.login.model.AppointmentsDetails;
 import com.infinitycare.health.login.model.CookieDetails;
 import com.infinitycare.health.login.model.DoctorDetails;
+import com.infinitycare.health.login.model.PatientDetails;
 import com.mongodb.BasicDBObject;
 import com.mongodb.DBObject;
 import org.bson.BsonDocument;
@@ -64,13 +65,11 @@ public class AppointmentsService extends CookieDetails {
         return ResponseEntity.ok(result);
     }
 
-    // TODO Figure out the Hospital & Location in the Doctor Profile
+    // TODO Releasing Time Slots after an appointment becomes inactive
     public ResponseEntity<?> createAppointments(HttpServletRequest request) throws JsonProcessingException {
 
         String username = request.getParameter("username");
-        // String hospital = request.getParameter("hospital");
         String doctorUsername = request.getParameter("doctorUsername");
-        // String location = request.getParameter("location");
         String time = request.getParameter("time");
         int timeSlotId = Integer.parseInt(request.getParameter("timeSlotId"));
 
@@ -78,9 +77,11 @@ public class AppointmentsService extends CookieDetails {
         List<DBObject> timeSlots = null;
         Date date = null;
         boolean isAppointmentCreated = false;
+        AppointmentsDetails appointmentsDetails = null;
         DateFormat inFormat = new SimpleDateFormat( "MMM dd, yyyy");
 
         Optional<DoctorDetails> doctorQueriedFromDB = doctorRepository.findById(Integer.toString(doctorUsername.hashCode()));
+        Optional<PatientDetails> patientQueriedFromDB = patientRepository.findById(Integer.toString(username.hashCode()));
         DoctorDetails doctorDetails = new DoctorDetails(doctorUsername, "");
 
         try { date = inFormat.parse(request.getParameter("date")); }
@@ -88,24 +89,24 @@ public class AppointmentsService extends CookieDetails {
 
         date.setHours(Integer.parseInt(time.split(":")[0]));
 
-        AppointmentsDetails appointmentsDetails = new AppointmentsDetails(username, doctorUsername, date);
-        appointmentsRepository.save(appointmentsDetails);
-        isAppointmentCreated = true;
-
         if(doctorQueriedFromDB.isPresent()) {
+            appointmentsDetails = new AppointmentsDetails(username, doctorUsername, date, doctorQueriedFromDB.get().mHospital,
+                    doctorQueriedFromDB.get().mAddress, (patientQueriedFromDB.get().mFirstName + " " + patientQueriedFromDB.get().mLastName),
+                    (doctorQueriedFromDB.get().mFirstName + " " + doctorQueriedFromDB.get().mLastName));
+            appointmentsRepository.save(appointmentsDetails);
             timeSlots = doctorQueriedFromDB.get().mTimeSlots;
             BasicDBObject ts = new BasicDBObject((Document) timeSlots.get(timeSlotId));
             ts.replace("isAvailable", false);
             timeSlots.set(timeSlotId, ts);
             doctorDetails.setTimeSlots(timeSlots);
             doctorRepository.save(doctorDetails);
+            isAppointmentCreated = true;
         }
 
         ObjectWriter ow = new ObjectMapper().writer().withDefaultPrettyPrinter();
         String json = ow.writeValueAsString(appointmentsDetails);
 
-        SendEmailSMTP.sendFromGMail(new String[]{username}, "Appointment Confirmed", json);
-        SendEmailSMTP.sendFromGMail(new String[]{username}, "Appointment Confirmed", json);
+        SendEmailSMTP.sendFromGMail(new String[]{username, doctorUsername}, "Appointment Confirmed", json);
 
         result.put("isAppointmentCreated", isAppointmentCreated);
         return ResponseEntity.ok(result);
@@ -125,6 +126,7 @@ public class AppointmentsService extends CookieDetails {
                 if (now.compareTo(appointmentsDetails.getDate()) > 0) {
                     appointmentsDetails.setStatus(false);
                     appointmentsRepository.save(appointmentsDetails);
+                    appointmentsList.remove(appointmentsDetails);
                 }
             }
         }
@@ -135,6 +137,7 @@ public class AppointmentsService extends CookieDetails {
                 if (now.compareTo(appointmentsDetails.getDate()) > 0) {
                     appointmentsDetails.setStatus(false);
                     appointmentsRepository.save(appointmentsDetails);
+                    appointmentsList.remove(appointmentsDetails);
                 }
             }
         }
@@ -143,14 +146,20 @@ public class AppointmentsService extends CookieDetails {
         return ResponseEntity.ok(result);
     }
 
-    public ResponseEntity<?> cancelAppointments(HttpServletRequest request, String userType) {
+    public ResponseEntity<?> cancelAppointments(HttpServletRequest request, String userType) throws JsonProcessingException {
         String id = request.getParameter("id");
         boolean isAppointmentDeleted = false;
         Map<String, Object> result = new HashMap<>();
 
         if(userType.equals(PATIENT) || userType.equals(DOCTOR)) {
-            appointmentsRepository.deleteById(id);
-            isAppointmentDeleted = true;
+            Optional<AppointmentsDetails> appt = appointmentsRepository.findById(id);
+            if(appt.isPresent()) {
+                appointmentsRepository.deleteById(id);
+                isAppointmentDeleted = true;
+                ObjectWriter ow = new ObjectMapper().writer().withDefaultPrettyPrinter();
+                String json = ow.writeValueAsString(appt);
+                SendEmailSMTP.sendFromGMail(new String[]{appt.get().mDoctorUsername, appt.get().mPatientUsername}, "Appointment Cancelled", json);
+            }
         }
 
         result.put("isAppointmentDeleted", isAppointmentDeleted);

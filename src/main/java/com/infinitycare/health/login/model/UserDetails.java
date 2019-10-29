@@ -17,25 +17,15 @@ public class UserDetails {
     public String mAddress;
 
     public String getUserName() { return mUserName; }
-
-    public String getEmail() { return mEmail; }
-
     public String getPassword() { return mPassword; }
-
-    public void setPassword(String mPassword) { mPassword = mPassword; }
-
-    public void setUserName(String mUserName) { mUserName = mUserName; }
-
-    public String getId() { return id; }
-
-    public void setId(String id) { id = id; }
-
     public void setMFAToken(String mMFAToken) { this.mMFAToken = mMFAToken; }
-
     public String getMFAToken() { return mMFAToken; }
-
     public void setmActive(boolean mActive) { mActive = mActive; }
-
     public boolean getmActive() { return mActive; }
 
+    public void setmEmail(String mEmail) { this.mEmail = mEmail; }
+    public void setmFirstName(String mFirstName) { this.mFirstName = mFirstName; }
+    public void setmLastName(String mLastName) { this.mLastName = mLastName; }
+    public void setmPhoneNumber(String mPhoneNumber) { this.mPhoneNumber = mPhoneNumber; }
+    public void setmAddress(String mAddress) { this.mAddress = mAddress; }
 }

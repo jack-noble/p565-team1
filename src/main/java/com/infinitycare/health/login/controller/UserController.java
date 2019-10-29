@@ -69,7 +69,7 @@ public class UserController extends CookieDetails {
     }
 
     @RequestMapping(value = "/{userType}/cancelappointments")
-    public ResponseEntity<?> deleteAppointments(HttpServletRequest request, @PathVariable String userType) {
+    public ResponseEntity<?> deleteAppointments(HttpServletRequest request, @PathVariable String userType) throws JsonProcessingException {
         return this.appointmentsService.cancelAppointments(request, userType);
     }
 
@@ -94,6 +94,16 @@ public class UserController extends CookieDetails {
     @RequestMapping(value = "/patient/insurance/{ipusername}")
     public ResponseEntity<?> getInsuranceFromPatient(@PathVariable String ipusername) {
         return this.profileService.getIpFromPatient(ipusername);
+    }
+
+    @RequestMapping(value = "/insurance/iplans")
+    public ResponseEntity<?> getIplans(HttpServletRequest request) {
+        return this.profileService.getIplans(request);
+    }
+
+    @RequestMapping(value = "/{userType}/profile/edit")
+    public ResponseEntity<?> editProfile(HttpServletRequest request, @PathVariable String userType) {
+        return this.profileService.editProfile(request, userType);
     }
 
 }
