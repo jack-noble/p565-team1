@@ -20,14 +20,19 @@ public class UserController extends CookieDetails {
     OtpService otpservice;
     PasswordRecoveryService passwordRecoveryService;
     AppointmentsService appointmentsService;
+    InsuranceDashboardService insuranceDashboardService;
+    ProfileService profileService;
 
     @Inject
-    public UserController(LoginService loginService, SignUpService signupservice, OtpService otpservice, PasswordRecoveryService passwordRecoveryService, AppointmentsService appointmentsService){
+    public UserController(LoginService loginService, SignUpService signupservice, OtpService otpservice, PasswordRecoveryService passwordRecoveryService,
+                          AppointmentsService appointmentsService, InsuranceDashboardService insuranceDashboardService, ProfileService profileService){
         this.loginService = loginService;
         this.signupservice = signupservice;
         this.otpservice = otpservice;
         this.passwordRecoveryService = passwordRecoveryService;
         this.appointmentsService = appointmentsService;
+        this.insuranceDashboardService = insuranceDashboardService;
+        this.profileService = profileService;
     }
 
     @RequestMapping(value = "/login/{userType}", method = {RequestMethod.POST, RequestMethod.OPTIONS})
@@ -50,9 +55,9 @@ public class UserController extends CookieDetails {
         return this.passwordRecoveryService.setPassword(request, userType);
     }
 
-    @RequestMapping(value = "/{userType}/gettimeslots")
-    public ResponseEntity<?> getTimeSlots(HttpServletRequest request) {
-        return this.appointmentsService.getTimeSlots(request);
+    @RequestMapping(value = "/doctor/{doctorusername}")
+    public ResponseEntity<?> getTimeSlots(HttpServletRequest request, @PathVariable String doctorusername) {
+        return this.appointmentsService.getTimeSlots(request, doctorusername);
     }
 
     @RequestMapping(value = "/{userType}/createappointments")
@@ -68,6 +73,29 @@ public class UserController extends CookieDetails {
     @RequestMapping(value = "/{userType}/cancelappointments")
     public ResponseEntity<?> deleteAppointments(HttpServletRequest request, @PathVariable String userType) {
         return this.appointmentsService.cancelAppointments(request, userType);
+    }
+
+    @RequestMapping(value = "/{userType}/profile")
+    public ResponseEntity<?> getUserProfile(HttpServletRequest request, @PathVariable String userType) {
+        return this.profileService.getProfile(request, userType);
+    }
+
+    @RequestMapping(value = "/patient/doctor/{doctorusername}")
+    public ResponseEntity<?> getDoctorFromPatient(@PathVariable String doctorusername) {
+        return this.profileService.getDoctorFromPatient(doctorusername);
+    }
+
+    @RequestMapping(value = "/{userType}/patient/{patientusername}")
+    public ResponseEntity<?> getPatientFromOthers(@PathVariable String userType, @PathVariable String patientusername) {
+        if(userType.equals(DOCTOR) || userType.equals(INSURANCE_PROVIDER)) {
+            return this.profileService.getPatientFromOthers(patientusername);
+        }
+        else { return null; }
+    }
+
+    @RequestMapping(value = "/patient/insurance/{ipusername}")
+    public ResponseEntity<?> getInsuranceFromPatient(@PathVariable String ipusername) {
+        return this.profileService.getIpFromPatient(ipusername);
     }
 
 }

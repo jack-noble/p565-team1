@@ -19,6 +19,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.util.*;
 
+// TODO Change Active to True once the OTP during SingUp is authenticated
+
 @Service
 public class SignUpService extends CookieDetails {
 
@@ -65,6 +67,9 @@ public class SignUpService extends CookieDetails {
                 DBObject ts = new BasicDBObject();
                 for (int i = 0; i < 13; i++) {
                     ts.put("isAvailable", true);
+                    ts.put("_id", i);
+                    ts.put("start", Integer.toString(9 + i) + ":00");
+                    ts.put("end", Integer.toString(10 + i) + ":00");
                     timeslots.add(ts);
                 }
                 isNewUser = true;

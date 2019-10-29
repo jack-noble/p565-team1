@@ -14,18 +14,18 @@ public class AppointmentsDetails{
     public String id;
     public String mPatientUsername;
     public String mDoctorUsername;
-    public String mHospital;
-    public String mLocation;
+    // public String mHospital;
+    // public String mLocation;
     public Date mDate;
     public boolean mActive = true;
 
-    public AppointmentsDetails(String mPatientUsername, String mDoctorUsername, String mHospital, String mLocation, Date mDate) {
+    public AppointmentsDetails(String mPatientUsername, String mDoctorUsername, Date mDate) {
         DateFormat dateFormat = new SimpleDateFormat("MMM dd, yyyy hh:mm");
         this.id = Integer.toString((mPatientUsername + mDoctorUsername + dateFormat.format(mDate)).hashCode());
         this.mPatientUsername = mPatientUsername;
         this.mDoctorUsername = mDoctorUsername;
-        this.mHospital = mHospital;
-        this.mLocation = mLocation;
+        // this.mHospital = mHospital;
+        // this.mLocation = mLocation;
         this.mDate = mDate;
     }
 

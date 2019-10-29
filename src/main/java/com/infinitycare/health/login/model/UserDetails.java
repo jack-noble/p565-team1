@@ -13,6 +13,8 @@ public class UserDetails {
     public String mLastName;
     public boolean mActive;
     public String mMFAToken;
+    public String mPhoneNumber;
+    public String mAddress;
 
     public String getUserName() { return mUserName; }
 

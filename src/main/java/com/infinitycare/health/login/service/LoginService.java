@@ -1,6 +1,5 @@
 package com.infinitycare.health.login.service;
 
-import com.google.api.client.json.JsonParser;
 import com.infinitycare.health.database.DoctorRepository;
 import com.infinitycare.health.database.IpRepository;
 import com.infinitycare.health.database.PatientRepository;

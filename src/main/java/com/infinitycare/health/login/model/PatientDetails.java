@@ -6,11 +6,11 @@ import org.springframework.data.mongodb.core.mapping.Document;
 public class PatientDetails extends UserDetails {
 
     public String mDOB;
-    public String mAddress;
-    public String mPhone;
-    public String mEmergencyContact;
-    public String mInsurancePlanName;
+    public String mEmergencyContactName;
+    public String mEmergencyContactNumber;
+    public String mInsurancePlan;
     public String mInsuranceProvider;
+    public String mInsuranceCompany;
     public String mMedicalHistory;
 
     public PatientDetails(String mUserName, String mPassword) {
@@ -22,9 +22,11 @@ public class PatientDetails extends UserDetails {
         mLastName = "";
         mDOB = "";
         mAddress = "";
-        mPhone = "";
-        mEmergencyContact = "";
-        mInsurancePlanName = "";
+        mPhoneNumber = "";
+        mEmergencyContactName = "";
+        mEmergencyContactNumber = "";
+        mInsuranceCompany = "";
+        mInsurancePlan = "";
         mInsuranceProvider = "";
         mMedicalHistory = "";
         mActive = false;

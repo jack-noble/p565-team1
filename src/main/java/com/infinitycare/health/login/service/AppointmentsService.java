@@ -42,19 +42,20 @@ public class AppointmentsService extends CookieDetails {
         this.appointmentsRepository = appointmentsRepository;
     }
 
-    public ResponseEntity<?> getTimeSlots(HttpServletRequest request) {
-        String username = request.getParameter("username");
+    public ResponseEntity<?> getTimeSlots(HttpServletRequest request, String doctorusername) {
+        // String username = request.getParameter("username");
         Map<String, Object> result = new HashMap<>();
         List<DBObject> finalList = new ArrayList<>();
 
-        DoctorDetails doctorDetails = new DoctorDetails(username, "");
-        Optional<DoctorDetails> doctorQueriedFromDB = doctorRepository.findById(Integer.toString(username.hashCode()));
+        DoctorDetails doctorDetails = new DoctorDetails(doctorusername, "");
+        Optional<DoctorDetails> doctorQueriedFromDB = doctorRepository.findById(Integer.toString(doctorusername.hashCode()));
         List<DBObject> timeSlots = doctorDetails.getTimeSlots();
         if(doctorQueriedFromDB.isPresent()) { timeSlots = doctorQueriedFromDB.get().mTimeSlots; }
 
         for (int i = 0; i < timeSlots.size(); i++) {
             BasicDBObject ts = new BasicDBObject((Document) timeSlots.get(i));
             if((boolean) ts.get("isAvailable")) {
+                ts.remove("isAvailable");
                 finalList.add(ts);
             }
         }
@@ -63,12 +64,13 @@ public class AppointmentsService extends CookieDetails {
         return ResponseEntity.ok(result);
     }
 
+    // TODO Figure out the Hospital & Location in the Doctor Profile
     public ResponseEntity<?> createAppointments(HttpServletRequest request) throws JsonProcessingException {
 
         String username = request.getParameter("username");
-        String hospital = request.getParameter("hospital");
+        // String hospital = request.getParameter("hospital");
         String doctorUsername = request.getParameter("doctorUsername");
-        String location = request.getParameter("location");
+        // String location = request.getParameter("location");
         String time = request.getParameter("time");
         int timeSlotId = Integer.parseInt(request.getParameter("timeSlotId"));
 
@@ -78,17 +80,17 @@ public class AppointmentsService extends CookieDetails {
         boolean isAppointmentCreated = false;
         DateFormat inFormat = new SimpleDateFormat( "MMM dd, yyyy");
 
+        Optional<DoctorDetails> doctorQueriedFromDB = doctorRepository.findById(Integer.toString(doctorUsername.hashCode()));
+        DoctorDetails doctorDetails = new DoctorDetails(doctorUsername, "");
+
         try { date = inFormat.parse(request.getParameter("date")); }
         catch ( ParseException e ) { e.printStackTrace(); }
 
         date.setHours(Integer.parseInt(time.split(":")[0]));
 
-        AppointmentsDetails appointmentsDetails = new AppointmentsDetails(username, doctorUsername, hospital, location, date);
+        AppointmentsDetails appointmentsDetails = new AppointmentsDetails(username, doctorUsername, date);
         appointmentsRepository.save(appointmentsDetails);
         isAppointmentCreated = true;
-
-        Optional<DoctorDetails> doctorQueriedFromDB = doctorRepository.findById(Integer.toString(doctorUsername.hashCode()));
-        DoctorDetails doctorDetails = new DoctorDetails(doctorUsername, "");
 
         if(doctorQueriedFromDB.isPresent()) {
             timeSlots = doctorQueriedFromDB.get().mTimeSlots;
@@ -146,7 +148,7 @@ public class AppointmentsService extends CookieDetails {
         boolean isAppointmentDeleted = false;
         Map<String, Object> result = new HashMap<>();
 
-        if(userType.equals(PATIENT)) {
+        if(userType.equals(PATIENT) || userType.equals(DOCTOR)) {
             appointmentsRepository.deleteById(id);
             isAppointmentDeleted = true;
         }
