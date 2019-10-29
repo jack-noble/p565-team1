@@ -18,6 +18,7 @@ public class UserDetails {
 
     public String getUserName() { return mUserName; }
     public String getPassword() { return mPassword; }
+    public void setmPassword(String mPassword) { this.mPassword = mPassword; }
     public void setMFAToken(String mMFAToken) { this.mMFAToken = mMFAToken; }
     public String getMFAToken() { return mMFAToken; }
     public void setmActive(boolean mActive) { mActive = mActive; }

@@ -48,17 +48,17 @@ public class PasswordRecoveryService extends CookieDetails {
             result.put(IS_COOKIE_TAMPERED, "true");
         } else if(userType.equals(PATIENT)) {
             PatientDetails patientDetails = new PatientDetails(username, password);
-            patientDetails.setPassword(password);
+            patientDetails.setmPassword(password);
             patientRepository.save(patientDetails);
             ispasswordChanged = true;
         } else if(userType.equals(DOCTOR)) {
             DoctorDetails doctorDetails = new DoctorDetails(username, password);
-            doctorDetails.setPassword(password);
+            doctorDetails.setmPassword(password);
             doctorRepository.save(doctorDetails);
             ispasswordChanged = true;
         } else if(userType.equals(INSURANCE_PROVIDER)) {
             IPDetails ipDetails = new IPDetails(username, password);
-            ipDetails.setPassword(password);
+            ipDetails.setmPassword(password);
             ipRepository.save(ipDetails);
             ispasswordChanged = true;
         }
