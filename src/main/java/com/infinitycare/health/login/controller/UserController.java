@@ -48,6 +48,7 @@ public class UserController extends CookieDetails {
         return this.otpservice.validateOtp(request, userType, enteredotp);
     }
 
+    @RequestMapping(value = "/validateuser/{userType}")
     public ResponseEntity<?> validateUser(HttpServletRequest request, @PathVariable String userType) {
         return this.passwordRecoveryService.validateUser(request, userType);
     }
