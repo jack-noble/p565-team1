@@ -44,4 +44,5 @@ public class DoctorDetails extends UserDetails {
     public void setmSpecialization(String mSpecialization) { this.mSpecialization = mSpecialization; }
     public void setmHospital(String mHospital) { this.mHospital = mHospital; }
     public void setmPersonalBio(String mPersonalBio) { this.mPersonalBio = mPersonalBio; }
+    public void setmReviews(ArrayList mReviews) { this.mReviews = mReviews; }
 }

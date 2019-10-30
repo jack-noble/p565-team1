@@ -191,7 +191,16 @@ public class ProfileService extends CookieDetails {
                 case "insuranceplan":
                     patientDetails.setmInsurancePlan(fieldValue); break;
                 case "insuranceprovider":
-                    patientDetails.setmInsuranceProvider(fieldValue); break;
+                    patientDetails.setmInsuranceProvider(fieldValue);
+                    Optional<IPDetails> ipFromDB = ipRepository.findById(Integer.toString(fieldValue.hashCode()));
+                    IPDetails ipDetails = new IPDetails(fieldValue, "");
+                    if(ipFromDB.isPresent()) {
+                        ArrayList patients = ipFromDB.get().mPatients;
+                        patients.add(username);
+                        ipDetails.setmPatients(patients);
+                        ipRepository.save(ipDetails);
+                    }
+                    break;
                 case "insurancecompany":
                     patientDetails.setmInsuranceCompany(fieldValue); break;
             }
@@ -249,6 +258,51 @@ public class ProfileService extends CookieDetails {
 
         result.put("isFieldUpdate", isFieldUpdated);
 
+        return ResponseEntity.ok(result);
+    }
+
+    public ResponseEntity<?> getPatientsListForIp(HttpServletRequest request) {
+        String username = request.getParameter("username");
+        Map<String, Object> result = new HashMap<>();
+        ArrayList finalpatients = new ArrayList();
+
+        Optional<IPDetails> ipFromDB = ipRepository.findById(Integer.toString(username.hashCode()));
+
+        if(ipFromDB.isPresent()) {
+            ArrayList patients = ipFromDB.get().mPatients;
+
+            for (Object o : patients) {
+                Map<String, Object> patient = new HashMap<>();
+                Optional<PatientDetails> patientFromDB = patientRepository.findById(Integer.toString(o.hashCode()));
+                if(patientFromDB.isPresent()) {
+                    patient.put("username", o);
+                    patient.put("name", patientFromDB.get().mFirstName + " " + patientFromDB.get().mLastName);
+                }
+                finalpatients.add(patient);
+            }
+        }
+
+        result.put("patients", finalpatients);
+        return ResponseEntity.ok(result);
+    }
+
+    public ResponseEntity<?> addReviews(HttpServletRequest request) {
+        Map<String, Object> result = new HashMap<>();
+        String doctorusername = request.getParameter("username");
+        String review = request.getParameter("review");
+        boolean isReviewAdded = false;
+
+        Optional<DoctorDetails> doctorFromDB = doctorRepository.findById(Integer.toString(doctorusername.hashCode()));
+        DoctorDetails doctorDetails = new DoctorDetails(doctorusername, "");
+        if(doctorFromDB.isPresent()) {
+            ArrayList reviews = doctorFromDB.get().mReviews;
+            reviews.add(review);
+            doctorDetails.setmReviews(reviews);
+            doctorRepository.save(doctorDetails);
+            isReviewAdded = true;
+        }
+
+        result.put("isReviewAdded", isReviewAdded);
         return ResponseEntity.ok(result);
     }
 

@@ -16,6 +16,7 @@ import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
 
 @Service
 public class PasswordRecoveryService extends CookieDetails {
@@ -40,7 +41,6 @@ public class PasswordRecoveryService extends CookieDetails {
 
         Map<String, Object> result = new HashMap<>();
 
-        String username = getUsername(request);
         // String username = request.getParameter(USERNAME);
         String password = TextSecurer.encrypt(request.getParameter(PASSWORD));
 
@@ -77,6 +77,29 @@ public class PasswordRecoveryService extends CookieDetails {
         }
 
         return null;
+    }
+
+    public ResponseEntity<?> validateUser(HttpServletRequest request, String userType) {
+
+        Map<String, Object> result = new HashMap<>();
+        boolean isValidUser = false;
+        String username = request.getParameter("username");
+
+        if(userType.equals(PATIENT)) {
+            Optional<PatientDetails> userFromDB = patientRepository.findById(Integer.toString(username.hashCode()));
+            isValidUser = userFromDB.isPresent();
+        }
+        if(userType.equals(DOCTOR)) {
+            Optional<DoctorDetails> userFromDB = doctorRepository.findById(Integer.toString(username.hashCode()));
+            isValidUser = userFromDB.isPresent();
+        }
+        if(userType.equals(INSURANCE_PROVIDER)) {
+            Optional<IPDetails> userFromDB = ipRepository.findById(Integer.toString(username.hashCode()));
+            isValidUser = userFromDB.isPresent();
+        }
+
+        result.put("isValidUser", isValidUser);
+        return ResponseEntity.ok(result);
     }
 
 

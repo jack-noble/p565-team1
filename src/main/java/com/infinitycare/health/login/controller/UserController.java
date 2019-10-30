@@ -48,11 +48,14 @@ public class UserController extends CookieDetails {
         return this.otpservice.validateOtp(request, userType, enteredotp);
     }
 
-    @GetMapping(value = "/recovery/{userType}")
+    public ResponseEntity<?> validateUser(HttpServletRequest request, @PathVariable String userType) {
+        return this.passwordRecoveryService.validateUser(request, userType);
+    }
+
+    @RequestMapping(value = "/forgotpassword/{userType}/")
     public ResponseEntity<?> recoverPassword(HttpServletRequest request, @PathVariable String userType) {
         return this.passwordRecoveryService.setPassword(request, userType);
     }
-
     @RequestMapping(value = "/doctor/{doctorusername}")
     public ResponseEntity<?> getTimeSlots(HttpServletRequest request, @PathVariable String doctorusername) {
         return this.appointmentsService.getTimeSlots(request, doctorusername);
@@ -104,6 +107,16 @@ public class UserController extends CookieDetails {
     @RequestMapping(value = "/{userType}/profile/edit")
     public ResponseEntity<?> editProfile(HttpServletRequest request, @PathVariable String userType) {
         return this.profileService.editProfile(request, userType);
+    }
+
+    @RequestMapping(value = "/insurance/getpatients")
+    public ResponseEntity<?> getPatients(HttpServletRequest request) {
+        return this.profileService.getPatientsListForIp(request);
+    }
+
+    @RequestMapping(value = "/patient/doctor/addreviews")
+    public ResponseEntity addReviews(HttpServletRequest request) {
+        return this.profileService.addReviews(request);
     }
 
 }
