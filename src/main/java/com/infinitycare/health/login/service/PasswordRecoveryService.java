@@ -41,7 +41,8 @@ public class PasswordRecoveryService extends CookieDetails {
 
         Map<String, Object> result = new HashMap<>();
 
-        // String username = request.getParameter(USERNAME);
+        // String username = getUsername(request);
+        String username = request.getParameter(USERNAME);
         String password = TextSecurer.encrypt(request.getParameter(PASSWORD));
 
         if(null == username) {

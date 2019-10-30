@@ -43,8 +43,8 @@ public class OtpService extends CookieDetails {
         Map<String, Object> result = new HashMap<>();
         result.put(IS_OTP_ACCURATE, isOtpAccurate);
 
-        String username = getUsername(request);
-        //String username = request.getParameter("username");
+        // String username = getUsername(request);
+        String username = request.getParameter("username");
 
         if(null == username) {
             result.put(IS_COOKIE_TAMPERED, "true");
