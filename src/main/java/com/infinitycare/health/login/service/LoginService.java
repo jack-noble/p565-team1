@@ -48,7 +48,6 @@ public class LoginService extends ServiceUtility {
         String username = postBody.get(USERNAME);
         String password = TextSecurer.encrypt(postBody.get(PASSWORD));
 
-        password = TextSecurer.encrypt(password);
         String finalPassword = password;
 
         if(userType.equals(PATIENT)) {
