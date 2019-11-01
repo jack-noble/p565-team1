@@ -13,11 +13,11 @@ public class PatientDetails extends UserDetails {
     public String mInsuranceCompany;
     public String mMedicalHistory;
 
-    public PatientDetails(String mUserName, String mPassword) {
+    public PatientDetails(String mUserName) {
         this.mUserName = mUserName;
         mEmail = "";
         id = Integer.toString(mUserName.hashCode());
-        this.mPassword = mPassword;
+        mPassword = "";
         mFirstName = "";
         mLastName = "";
         mDOB = "";

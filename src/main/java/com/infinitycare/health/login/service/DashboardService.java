@@ -63,7 +63,7 @@ public class DashboardService extends ServiceUtility {
                                                         request.getParameter("price"), request.getParameter("details"));
 
         Optional<IPDetails> userQueriedFromDB = ipRepository.findById(Integer.toString(username.hashCode()));
-        IPDetails ipDetails = new IPDetails(username, "");
+        IPDetails ipDetails = new IPDetails(username);
         if(userQueriedFromDB.isPresent()) { iplans = userQueriedFromDB.get().mIplans; }
 
         if(action.equals("add")) {
@@ -116,7 +116,7 @@ public class DashboardService extends ServiceUtility {
         boolean isReviewAdded = false;
 
         Optional<DoctorDetails> doctorFromDB = doctorRepository.findById(Integer.toString(doctorusername.hashCode()));
-        DoctorDetails doctorDetails = new DoctorDetails(doctorusername, "");
+        DoctorDetails doctorDetails = new DoctorDetails(doctorusername);
         if(doctorFromDB.isPresent()) {
             ArrayList reviews = doctorFromDB.get().mReviews;
             reviews.add(review);

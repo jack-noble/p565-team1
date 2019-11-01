@@ -97,7 +97,7 @@ public class ProfileService extends ServiceUtility {
         Map<String, Object> result = new HashMap<>();
         boolean isProfileUpdated = false;
 
-        DoctorDetails doctorDetails = new DoctorDetails(username, "");
+        DoctorDetails doctorDetails = new DoctorDetails(username);
 
         if(section.equals("hospital")) {
             doctorDetails.setmHospital(request.getParameter("hospital"));
@@ -118,7 +118,7 @@ public class ProfileService extends ServiceUtility {
         Map<String, Object> result = new HashMap<>();
         boolean isProfileUpdated = false;
 
-        PatientDetails patientDetails = new PatientDetails(request.getParameter("username"), "");
+        PatientDetails patientDetails = new PatientDetails(request.getParameter("username"));
 
         if(section.equals("personal")) {
             patientDetails.setmAddress(request.getParameter("address"));
@@ -131,7 +131,7 @@ public class ProfileService extends ServiceUtility {
             patientDetails.setmInsurancePlan(request.getParameter("insuranceplan"));
             patientDetails.setmInsuranceProvider(request.getParameter("insuranceprovider"));
             Optional<IPDetails> ipFromDB = ipRepository.findById(Integer.toString(request.getParameter("insuranceprovider").hashCode()));
-            IPDetails ipDetails = new IPDetails(request.getParameter("insuranceprovider"), "");
+            IPDetails ipDetails = new IPDetails(request.getParameter("insuranceprovider"));
             if(ipFromDB.isPresent()) {
                 ArrayList patients = ipFromDB.get().mPatients;
                 patients.add(request.getParameter("username"));
@@ -161,7 +161,7 @@ public class ProfileService extends ServiceUtility {
         Map<String, Object> result = new HashMap<>();
         boolean isProfileUpdated = false;
 
-        IPDetails ipDetails = new IPDetails(request.getParameter("username"), "");
+        IPDetails ipDetails = new IPDetails(request.getParameter("username"));
 
         ipDetails.setmAddress(request.getParameter("address"));
         ipDetails.setmPhoneNumber(request.getParameter("phonenumber"));
