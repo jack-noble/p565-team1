@@ -3,10 +3,10 @@ package com.infinitycare.health.login.service;
 import com.infinitycare.health.database.DoctorRepository;
 import com.infinitycare.health.database.IpRepository;
 import com.infinitycare.health.database.PatientRepository;
-import com.infinitycare.health.login.model.CookieDetails;
 import com.infinitycare.health.login.model.DoctorDetails;
 import com.infinitycare.health.login.model.IPDetails;
 import com.infinitycare.health.login.model.PatientDetails;
+import com.infinitycare.health.login.model.ServiceUtility;
 import com.infinitycare.health.security.TextSecurer;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -20,7 +20,7 @@ import java.util.Map;
 import java.util.Optional;
 
 @Service
-public class OtpService extends CookieDetails {
+public class OtpService extends ServiceUtility {
 
     @Autowired
     public PatientRepository patientRepository;
@@ -37,14 +37,14 @@ public class OtpService extends CookieDetails {
         this.ipRepository = ipRepository;
     }
 
-    public ResponseEntity<?> validateOtp(HttpServletRequest request, String userType, String enteredOtp) {
+    public ResponseEntity<?> validateOtp(HttpServletRequest request, String userType) {
         boolean isOtpAccurate = false;
         String userOtpFromDB = "";
         Map<String, Object> result = new HashMap<>();
         result.put(IS_OTP_ACCURATE, isOtpAccurate);
 
         String username = getUsername(request);
-        //String username = request.getParameter("username");
+        String enteredOtp = getPostBodyInAMap(request).get(OTP);
 
         if(null == username) {
             result.put(IS_COOKIE_TAMPERED, "true");

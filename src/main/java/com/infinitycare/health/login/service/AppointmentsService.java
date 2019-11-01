@@ -8,11 +8,10 @@ import com.infinitycare.health.database.DoctorRepository;
 import com.infinitycare.health.database.PatientRepository;
 import com.infinitycare.health.login.SendEmailSMTP;
 import com.infinitycare.health.login.model.AppointmentsDetails;
-import com.infinitycare.health.login.model.CookieDetails;
+import com.infinitycare.health.login.model.ServiceUtility;
 import com.infinitycare.health.login.model.DoctorDetails;
 import com.mongodb.BasicDBObject;
 import com.mongodb.DBObject;
-import org.bson.BsonDocument;
 import org.bson.Document;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -25,7 +24,7 @@ import java.text.SimpleDateFormat;
 import java.util.*;
 
 @Service
-public class AppointmentsService extends CookieDetails {
+public class AppointmentsService extends ServiceUtility {
 
     @Autowired
     public PatientRepository patientRepository;

@@ -1,33 +1,26 @@
 package com.infinitycare.health.login.service;
 
-import com.google.api.client.json.JsonParser;
 import com.infinitycare.health.database.DoctorRepository;
 import com.infinitycare.health.database.IpRepository;
 import com.infinitycare.health.database.PatientRepository;
 import com.infinitycare.health.login.SendEmailSMTP;
-import com.infinitycare.health.login.model.CookieDetails;
 import com.infinitycare.health.login.model.DoctorDetails;
 import com.infinitycare.health.login.model.IPDetails;
 import com.infinitycare.health.login.model.PatientDetails;
+import com.infinitycare.health.login.model.ServiceUtility;
 import com.infinitycare.health.security.TextSecurer;
-import org.json.simple.JSONObject;
-import org.json.simple.parser.JSONParser;
-import org.json.simple.parser.ParseException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
-import org.springframework.util.StringUtils;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 @Service
-public class LoginService extends CookieDetails {
+public class LoginService extends ServiceUtility {
 
     @Autowired
     public PatientRepository patientRepository;
@@ -51,22 +44,9 @@ public class LoginService extends CookieDetails {
         String otp = SendEmailSMTP.generateRandomNumber(1000, 9999);
         Map<String, Object> result = new HashMap<>();
 
-        String username = "";
-        String password = "";
-        try {
-            JSONObject userDetails = (JSONObject) new JSONParser().parse(request.getReader().lines().collect(Collectors.joining(System.lineSeparator())));
-            username = userDetails.get(USERNAME).toString();
-            password = userDetails.get(PASSWORD).toString();
-        } catch (IOException | ParseException e) {
-            e.printStackTrace();
-        }
-
-        if(StringUtils.isEmpty(username))
-            username = request.getParameter(USERNAME);
-        if(StringUtils.isEmpty(password))
-            password = request.getParameter(PASSWORD);
-
-        password = TextSecurer.encrypt(password);
+        Map<String, String> postBody = getPostBodyInAMap(request);
+        String username = postBody.get(USERNAME);
+        String password = TextSecurer.encrypt(postBody.get(PASSWORD));
 
         if(userType.equals(PATIENT)) {
             PatientDetails patientDetails = new PatientDetails(username, password);
@@ -103,7 +83,7 @@ public class LoginService extends CookieDetails {
         result.put(IS_CREDENTIALS_ACCURATE, isCredentialsAccurate);
         result.put(IS_OTP_SENT, sentOtp);
 
-        SetEncryptedSessionId.setEncryptedSessionId(request, response, username, userType);
+        setEncryptedSessionId(request, response, username, userType);
         return ResponseEntity.ok(result);
     }
 

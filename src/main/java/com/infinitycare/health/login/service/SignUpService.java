@@ -4,10 +4,10 @@ import com.infinitycare.health.database.DoctorRepository;
 import com.infinitycare.health.database.IpRepository;
 import com.infinitycare.health.database.PatientRepository;
 import com.infinitycare.health.login.SendEmailSMTP;
-import com.infinitycare.health.login.model.CookieDetails;
 import com.infinitycare.health.login.model.DoctorDetails;
 import com.infinitycare.health.login.model.IPDetails;
 import com.infinitycare.health.login.model.PatientDetails;
+import com.infinitycare.health.login.model.ServiceUtility;
 import com.infinitycare.health.security.TextSecurer;
 import com.mongodb.BasicDBObject;
 import com.mongodb.DBObject;
@@ -20,7 +20,7 @@ import javax.servlet.http.HttpServletResponse;
 import java.util.*;
 
 @Service
-public class SignUpService extends CookieDetails {
+public class SignUpService extends ServiceUtility {
 
     @Autowired
     public PatientRepository patientRepository;
@@ -45,8 +45,9 @@ public class SignUpService extends CookieDetails {
         Map<String, Object> result = new HashMap<>();
         List<DBObject> timeslots = new ArrayList<>();
 
-        String username = request.getParameter(USERNAME);
-        String password = TextSecurer.encrypt(request.getParameter(PASSWORD));
+        Map<String, String> postBody = getPostBodyInAMap(request);
+        String username = postBody.get(USERNAME);
+        String password = TextSecurer.encrypt(postBody.get(PASSWORD));
 
         if(userType.equals(PATIENT)) {
             PatientDetails patientDetails = new PatientDetails(username, password);
@@ -84,7 +85,7 @@ public class SignUpService extends CookieDetails {
         result.put(IS_NEW_USER, isNewUser);
         result.put(IS_OTP_SENT, isOtpSent);
 
-        SetEncryptedSessionId.setEncryptedSessionId(request, response, username, userType);
+        setEncryptedSessionId(request, response, username, userType);
         return ResponseEntity.ok(result);
     }
 

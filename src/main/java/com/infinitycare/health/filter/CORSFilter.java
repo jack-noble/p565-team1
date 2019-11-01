@@ -10,11 +10,15 @@ import java.io.IOException;
 public class CORSFilter implements Filter {
 
     @Override
-    public void init(FilterConfig filterConfig) throws ServletException {}
+    public void init(FilterConfig filterConfig) {}
 
     @Override
     public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException, ServletException {
         ((HttpServletResponse)response).addHeader("Access-Control-Allow-Methods", "*");
+        ((HttpServletResponse)response).addHeader("Access-Control-Allow-Credentials", "true");
+        //((HttpServletResponse)response).addHeader("Access-Control-Expose-Headers", "");
+        ((HttpServletResponse)response).addHeader("Access-Control-Allow-Origin", "*");
+        ((HttpServletResponse)response).addHeader("Access-Control-Allow-Headers", "*");
         chain.doFilter(request, response);
     }
 
