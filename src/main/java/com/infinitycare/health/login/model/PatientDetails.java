@@ -33,7 +33,6 @@ public class PatientDetails extends UserDetails {
         mMFAToken = "";
     }
 
-    public void setmDOB (String mDOB) { this.mDOB = mDOB; }
     public void setmEmergencyContactName (String mEmergencyContactName) { this.mEmergencyContactName = mEmergencyContactName; }
     public void setmEmergencyContactNumber (String mEmergencyContactNumber) { this.mEmergencyContactNumber = mEmergencyContactNumber; }
     public void setmMedicalHistory (String mMedicalHistory) { this.mMedicalHistory = mMedicalHistory; }

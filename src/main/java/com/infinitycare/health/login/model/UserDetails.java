@@ -21,12 +21,9 @@ public class UserDetails {
     public void setmPassword(String mPassword) { this.mPassword = mPassword; }
     public void setMFAToken(String mMFAToken) { this.mMFAToken = mMFAToken; }
     public String getMFAToken() { return mMFAToken; }
-    public void setmActive(boolean mActive) { mActive = mActive; }
+    public void setmActive(boolean mActive) { this.mActive = mActive; }
     public boolean getmActive() { return mActive; }
 
-    public void setmEmail(String mEmail) { this.mEmail = mEmail; }
-    public void setmFirstName(String mFirstName) { this.mFirstName = mFirstName; }
-    public void setmLastName(String mLastName) { this.mLastName = mLastName; }
     public void setmPhoneNumber(String mPhoneNumber) { this.mPhoneNumber = mPhoneNumber; }
     public void setmAddress(String mAddress) { this.mAddress = mAddress; }
 }
