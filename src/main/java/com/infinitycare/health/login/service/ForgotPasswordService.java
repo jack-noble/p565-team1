@@ -15,6 +15,7 @@ import org.springframework.stereotype.Service;
 import javax.servlet.http.HttpServletRequest;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
 
 @Service
 public class ForgotPasswordService extends ServiceUtility {
@@ -50,17 +51,17 @@ public class ForgotPasswordService extends ServiceUtility {
             result.put(IS_COOKIE_TAMPERED, "true");
         } else if(userType.equals(PATIENT)) {
             PatientDetails patientDetails = new PatientDetails(username, password);
-            patientDetails.setPassword(password);
+            patientDetails.setmPassword(password);
             patientRepository.save(patientDetails);
             isPasswordChanged = true;
         } else if(userType.equals(DOCTOR)) {
             DoctorDetails doctorDetails = new DoctorDetails(username, password);
-            doctorDetails.setPassword(password);
+            doctorDetails.setmPassword(password);
             doctorRepository.save(doctorDetails);
             isPasswordChanged = true;
         } else if(userType.equals(INSURANCE_PROVIDER)) {
             IPDetails ipDetails = new IPDetails(username, password);
-            ipDetails.setPassword(password);
+            ipDetails.setmPassword(password);
             ipRepository.save(ipDetails);
             isPasswordChanged = true;
         }
@@ -88,6 +89,29 @@ public class ForgotPasswordService extends ServiceUtility {
 
         result.put(IS_USER_PRESENT, isUserPresent);
 
+        return ResponseEntity.ok(result);
+    }
+
+    public ResponseEntity<?> validateUser(HttpServletRequest request, String userType) {
+
+        Map<String, Object> result = new HashMap<>();
+        boolean isValidUser = false;
+        String username = request.getParameter("username");
+
+        if(userType.equals(PATIENT)) {
+            Optional<PatientDetails> userFromDB = patientRepository.findById(Integer.toString(username.hashCode()));
+            isValidUser = userFromDB.isPresent();
+        }
+        if(userType.equals(DOCTOR)) {
+            Optional<DoctorDetails> userFromDB = doctorRepository.findById(Integer.toString(username.hashCode()));
+            isValidUser = userFromDB.isPresent();
+        }
+        if(userType.equals(INSURANCE_PROVIDER)) {
+            Optional<IPDetails> userFromDB = ipRepository.findById(Integer.toString(username.hashCode()));
+            isValidUser = userFromDB.isPresent();
+        }
+
+        result.put("isValidUser", isValidUser);
         return ResponseEntity.ok(result);
     }
 

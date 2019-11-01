@@ -22,14 +22,16 @@ public class UserController extends ServiceUtility {
     ForgotPasswordService forgotPasswordService;
     AppointmentsService appointmentsService;
     Search search;
+    ProfileService profileService;
 
     @Inject
-    public UserController(LoginService loginService, SignUpService signupservice, OtpService otpservice, ForgotPasswordService forgotPasswordService, AppointmentsService appointmentsService){
+    public UserController(LoginService loginService, SignUpService signupservice, OtpService otpservice, ForgotPasswordService forgotPasswordService, AppointmentsService appointmentsService, ProfileService profileService){
         this.loginService = loginService;
         this.signupservice = signupservice;
         this.otpservice = otpservice;
         this.forgotPasswordService = forgotPasswordService;
         this.appointmentsService = appointmentsService;
+        this.profileService = profileService;
     }
 
     @RequestMapping(value = "/{userType}/login", method = {RequestMethod.POST, RequestMethod.GET})
@@ -47,6 +49,12 @@ public class UserController extends ServiceUtility {
         return this.otpservice.validateOtp(request, userType);
     }
 
+    //TODO: This is no longer required. Discuss with team and remove this tomorrow
+    @RequestMapping(value = "/validateuser/{userType}")
+    public ResponseEntity<?> validateUser(HttpServletRequest request, @PathVariable String userType) {
+        return this.forgotPasswordService.validateUser(request, userType);
+    }
+
     @RequestMapping(value = "/{userType}/forgotpassword")
     public ResponseEntity<?> recoverPassword(HttpServletRequest request, @PathVariable String userType) {
         return this.forgotPasswordService.setPassword(request, userType);
@@ -56,10 +64,9 @@ public class UserController extends ServiceUtility {
     public ResponseEntity<?> verifyEmail(HttpServletRequest request, @PathVariable String userType) {
         return this.forgotPasswordService.verifyUsername(request, userType);
     }
-
-    @RequestMapping(value = "/{userType}/gettimeslots")
-    public ResponseEntity<?> getTimeSlots(HttpServletRequest request) {
-        return this.appointmentsService.getTimeSlots(request);
+    @RequestMapping(value = "/doctor/{doctorusername}")
+    public ResponseEntity<?> getTimeSlots(HttpServletRequest request, @PathVariable String doctorusername) {
+        return this.appointmentsService.getTimeSlots(request, doctorusername);
     }
 
     @RequestMapping(value = "/{userType}/createappointments")
@@ -73,13 +80,56 @@ public class UserController extends ServiceUtility {
     }
 
     @RequestMapping(value = "/{userType}/cancelappointments")
-    public ResponseEntity<?> deleteAppointments(HttpServletRequest request, @PathVariable String userType) {
+    public ResponseEntity<?> deleteAppointments(HttpServletRequest request, @PathVariable String userType) throws JsonProcessingException {
         return this.appointmentsService.cancelAppointments(request, userType);
     }
 
     @RequestMapping(value = "/{userType}/search")
-    public ResponseEntity<?> searchForUsers(HttpServletRequest request, @PathVariable String userType, @RequestParam("otp") String userName) {
+    public ResponseEntity<?> searchForUsers(HttpServletRequest request, @PathVariable String userType, @RequestParam("username") String userName) {
         return search.searchForUsers(request, userType, userName);
+    }
+
+    @RequestMapping(value = "/{userType}/profile")
+    public ResponseEntity<?> getUserProfile(HttpServletRequest request, @PathVariable String userType) {
+        return this.profileService.getProfile(request, userType);
+    }
+
+    @RequestMapping(value = "/patient/doctor/{doctorusername}")
+    public ResponseEntity<?> getDoctorFromPatient(@PathVariable String doctorusername) {
+        return this.profileService.getDoctorFromPatient(doctorusername);
+    }
+
+    @RequestMapping(value = "/{userType}/patient/{patientusername}")
+    public ResponseEntity<?> getPatientFromOthers(@PathVariable String userType, @PathVariable String patientusername) {
+        if(userType.equals(DOCTOR) || userType.equals(INSURANCE_PROVIDER)) {
+            return this.profileService.getPatientFromOthers(patientusername);
+        }
+        else { return null; }
+    }
+
+    @RequestMapping(value = "/patient/insurance/{ipusername}")
+    public ResponseEntity<?> getInsuranceFromPatient(@PathVariable String ipusername) {
+        return this.profileService.getIpFromPatient(ipusername);
+    }
+
+    @RequestMapping(value = "/insurance/iplans")
+    public ResponseEntity<?> getIplans(HttpServletRequest request) {
+        return this.profileService.getIplans(request);
+    }
+
+    @RequestMapping(value = "/{userType}/profile/edit")
+    public ResponseEntity<?> editProfile(HttpServletRequest request, @PathVariable String userType) {
+        return this.profileService.editProfile(request, userType);
+    }
+
+    @RequestMapping(value = "/insurance/getpatients")
+    public ResponseEntity<?> getPatients(HttpServletRequest request) {
+        return this.profileService.getPatientsListForIp(request);
+    }
+
+    @RequestMapping(value = "/patient/doctor/addreviews")
+    public ResponseEntity addReviews(HttpServletRequest request) {
+        return this.profileService.addReviews(request);
     }
 
 }

@@ -48,9 +48,15 @@ public class LoginService extends ServiceUtility {
         String username = postBody.get(USERNAME);
         String password = TextSecurer.encrypt(postBody.get(PASSWORD));
 
+        password = TextSecurer.encrypt(password);
+        String finalPassword = password;
+
         if(userType.equals(PATIENT)) {
             PatientDetails patientDetails = new PatientDetails(username, password);
-            if(checkIfPatientCredentialsAreAccurate(patientDetails)){
+            Optional<PatientDetails> userQueriedFromDB = patientRepository.findById(Integer.toString(username.hashCode()));
+            boolean verifyCredentails = userQueriedFromDB.map(details -> details.getPassword().equals(finalPassword)).orElse(false);
+            if(verifyCredentails && !userQueriedFromDB.get().mActive){
+                patientDetails.setmActive(true);
                 isCredentialsAccurate = true;
                 patientDetails.setMFAToken(otp);
                 patientRepository.save(patientDetails);
@@ -59,7 +65,10 @@ public class LoginService extends ServiceUtility {
 
         if(userType.equals(DOCTOR)) {
             DoctorDetails doctorDetails = new DoctorDetails(username, password);
-            if(checkIfDoctorCredentialsAreAccurate(doctorDetails)) {
+            Optional<DoctorDetails> userQueriedFromDB = doctorRepository.findById(Integer.toString(username.hashCode()));
+            boolean verifyCredentails = userQueriedFromDB.map(details -> details.getPassword().equals(finalPassword)).orElse(false);
+            if(verifyCredentails && !userQueriedFromDB.get().mActive) {
+                doctorDetails.setmActive(true);
                 isCredentialsAccurate = true;
                 doctorDetails.setMFAToken(otp);
                 doctorRepository.save(doctorDetails);
@@ -68,7 +77,10 @@ public class LoginService extends ServiceUtility {
 
         if(userType.equals(INSURANCE_PROVIDER)) {
             IPDetails ipDetails = new IPDetails(username, password);
-            if(checkIfIpCredentialsAreAccurate(ipDetails)) {
+            Optional<IPDetails> userQueriedFromDB = ipRepository.findById(Integer.toString(username.hashCode()));
+            boolean verifyCredentails = userQueriedFromDB.map(details -> details.getPassword().equals(finalPassword)).orElse(false);
+            if(verifyCredentails && !userQueriedFromDB.get().mActive) {
+                ipDetails.setmActive(true);
                 isCredentialsAccurate = true;
                 ipDetails.setMFAToken(otp);
                 ipRepository.save(ipDetails);
@@ -85,34 +97,5 @@ public class LoginService extends ServiceUtility {
 
         setEncryptedSessionId(request, response, username, userType);
         return ResponseEntity.ok(result);
-    }
-
-    private boolean checkIfPatientCredentialsAreAccurate(PatientDetails patientDetails) {
-        String enteredUsername = patientDetails.getUserName();
-        String enteredPassword = patientDetails.getPassword();
-
-        Optional<PatientDetails> userQueriedFromDB = patientRepository.findById(Integer.toString(enteredUsername.hashCode()));
-
-        // user not found in database
-        return userQueriedFromDB.map(details -> details.getPassword().equals(enteredPassword)).orElse(false);
-    }
-
-    private boolean checkIfDoctorCredentialsAreAccurate(DoctorDetails doctorDetails) {
-        String enteredUsername = doctorDetails.getUserName();
-        String enteredPassword = doctorDetails.getPassword();
-
-        Optional<DoctorDetails> userQueriedFromDB = doctorRepository.findById(Integer.toString(enteredUsername.hashCode()));
-
-        // user not found in database
-        return userQueriedFromDB.map(details -> details.getPassword().equals(enteredPassword)).orElse(false);
-    }
-
-    private boolean checkIfIpCredentialsAreAccurate(IPDetails ipDetails) {
-        String enteredUsername = ipDetails.getUserName();
-        String enteredPassword = ipDetails.getPassword();
-
-        Optional<IPDetails> userQueriedFromDB = ipRepository.findById(Integer.toString(enteredUsername.hashCode()));
-        // user not found in database
-        return userQueriedFromDB.map(details -> details.getPassword().equals(enteredPassword)).orElse(false);
     }
 }
