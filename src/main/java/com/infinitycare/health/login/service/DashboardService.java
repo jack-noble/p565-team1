@@ -13,7 +13,7 @@ import javax.servlet.http.HttpServletRequest;
 import java.util.*;
 
 @Service
-public class DashboardService extends CookieDetails {
+public class DashboardService extends ServiceUtility {
 
     @Autowired
     public PatientRepository patientRepository;
