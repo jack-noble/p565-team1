@@ -12,7 +12,7 @@ public class DoctorDetails extends UserDetails {
     public String mExperience;
     public String mSpecialization;
     public String mPersonalBio;
-    public List<DBObject> mTimeSlots;
+    public ArrayList mTimeSlots;
     public String mHospital;
     public ArrayList mReviews;
 
@@ -36,8 +36,8 @@ public class DoctorDetails extends UserDetails {
         mReviews = new ArrayList();
     }
 
-    public void setTimeSlots(List<DBObject> ts) { this.mTimeSlots = ts; }
-    public List<DBObject> getTimeSlots() {return this.mTimeSlots;}
+    public void setTimeSlots(ArrayList ts) { this.mTimeSlots = ts; }
+    public ArrayList getTimeSlots() {return this.mTimeSlots;}
 
     public void setmSpecialization(String mSpecialization) { this.mSpecialization = mSpecialization; }
     public void setmHospital(String mHospital) { this.mHospital = mHospital; }

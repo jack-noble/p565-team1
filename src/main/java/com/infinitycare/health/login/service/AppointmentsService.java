@@ -12,8 +12,6 @@ import com.infinitycare.health.login.model.ServiceUtility;
 import com.infinitycare.health.login.model.DoctorDetails;
 import com.infinitycare.health.login.model.PatientDetails;
 import com.mongodb.BasicDBObject;
-import com.mongodb.DBObject;
-import org.bson.Document;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -43,69 +41,102 @@ public class AppointmentsService extends ServiceUtility {
     }
 
     public ResponseEntity<?> getTimeSlots(HttpServletRequest request, String doctorusername) {
-        // String username = request.getParameter("username");
+
+        // 0:9, 1:10, 2:11, 3:12, 4:1, 5:2, 6:3, 7:4.
+        List<Integer> availableTimeSlots = new ArrayList<>();
+        Collections.addAll(availableTimeSlots, 0, 1, 2, 3, 4, 5, 6, 7);
+
+        String date = request.getParameter("date"); // Date format: mm/dd/yyyy
         Map<String, Object> result = new HashMap<>();
-        List<DBObject> finalList = new ArrayList<>();
+        List<Integer> timeSlotIds = new ArrayList<>();
+        List<String> finalts = new ArrayList<>();
 
-        DoctorDetails doctorDetails = new DoctorDetails(doctorusername, "");
         Optional<DoctorDetails> doctorQueriedFromDB = doctorRepository.findById(Integer.toString(doctorusername.hashCode()));
-        List<DBObject> timeSlots = doctorDetails.getTimeSlots();
-        if(doctorQueriedFromDB.isPresent()) { timeSlots = doctorQueriedFromDB.get().mTimeSlots; }
 
-        for (int i = 0; i < timeSlots.size(); i++) {
-            BasicDBObject ts = new BasicDBObject((Document) timeSlots.get(i));
-            if((boolean) ts.get("isAvailable")) {
-                ts.remove("isAvailable");
-                finalList.add(ts);
+        if(doctorQueriedFromDB.isPresent()) {
+            ArrayList timeSlots = doctorQueriedFromDB.get().mTimeSlots;
+            for (Object timeSlot : timeSlots) {
+                BasicDBObject ts = new BasicDBObject((LinkedHashMap) timeSlot);
+                if (ts.get("date").equals(date)) {
+                    timeSlotIds = (List<Integer>) ts.get("ts");
+                }
+            }
+
+            if (timeSlotIds == null && timeSlotIds.isEmpty()) { timeSlotIds = availableTimeSlots; }
+            else {
+                for (Integer availableTimeSlot : availableTimeSlots) {
+                    if (!timeSlotIds.contains(availableTimeSlot)) { finalts.add((9 + availableTimeSlot) + ":00"); }
+                }
             }
         }
 
-        result.put("TimeSlots", finalList);
+        result.put("TimeSlots", finalts);
         return ResponseEntity.ok(result);
     }
 
-    // TODO Releasing Time Slots after an appointment becomes inactive
     public ResponseEntity<?> createAppointments(HttpServletRequest request) throws JsonProcessingException {
 
         String username = request.getParameter("username");
-        String doctorUsername = request.getParameter("doctorUsername");
+        String doctorusername = request.getParameter("doctorusername");
         String time = request.getParameter("time");
-        int timeSlotId = Integer.parseInt(request.getParameter("timeSlotId"));
+        String doctorpassword = request.getParameter("doctorpassword");
+        String datestring = request.getParameter("date");
 
-        Map<String, Object> result = new HashMap<>();
-        List<DBObject> timeSlots = null;
         Date date = null;
         boolean isAppointmentCreated = false;
         AppointmentsDetails appointmentsDetails = null;
-        DateFormat inFormat = new SimpleDateFormat( "MMM dd, yyyy");
+        Map<String, Object> result = new HashMap<>();
 
-        Optional<DoctorDetails> doctorQueriedFromDB = doctorRepository.findById(Integer.toString(doctorUsername.hashCode()));
-        Optional<PatientDetails> patientQueriedFromDB = patientRepository.findById(Integer.toString(username.hashCode()));
-        DoctorDetails doctorDetails = new DoctorDetails(doctorUsername, "");
+        DateFormat inFormat = new SimpleDateFormat( "mm/dd/yyyy");
 
-        try { date = inFormat.parse(request.getParameter("date")); }
+        try { date = inFormat.parse(datestring); }
         catch ( ParseException e ) { e.printStackTrace(); }
 
         date.setHours(Integer.parseInt(time.split(":")[0]));
 
-        if(doctorQueriedFromDB.isPresent()) {
-            appointmentsDetails = new AppointmentsDetails(username, doctorUsername, date, doctorQueriedFromDB.get().mHospital,
+        Optional<DoctorDetails> doctorQueriedFromDB = doctorRepository.findById(Integer.toString(doctorusername.hashCode()));
+        Optional<PatientDetails> patientQueriedFromDB = patientRepository.findById(Integer.toString(username.hashCode()));
+
+        if(doctorQueriedFromDB.isPresent() && patientQueriedFromDB.isPresent()) {
+            appointmentsDetails = new AppointmentsDetails(username, doctorusername, date, doctorQueriedFromDB.get().mHospital,
                     doctorQueriedFromDB.get().mAddress, (patientQueriedFromDB.get().mFirstName + " " + patientQueriedFromDB.get().mLastName),
                     (doctorQueriedFromDB.get().mFirstName + " " + doctorQueriedFromDB.get().mLastName));
             appointmentsRepository.save(appointmentsDetails);
-            timeSlots = doctorQueriedFromDB.get().mTimeSlots;
-            BasicDBObject ts = new BasicDBObject((Document) timeSlots.get(timeSlotId));
-            ts.replace("isAvailable", false);
-            timeSlots.set(timeSlotId, ts);
+            isAppointmentCreated = true;
+
+            DoctorDetails doctorDetails = new DoctorDetails(doctorusername, doctorpassword);
+            ArrayList timeSlots = doctorQueriedFromDB.get().mTimeSlots;
+            List<Integer> timeSlotIds = new ArrayList<>();
+            BasicDBObject newTimeSlot = new BasicDBObject();
+            boolean isDateFound = false;
+
+            for (Object timeSlot : timeSlots) {
+                BasicDBObject ts = new BasicDBObject((LinkedHashMap) timeSlot);
+                if (ts.get("date").equals(datestring)) {
+                    newTimeSlot = ts;
+                    timeSlotIds = (List<Integer>) ts.get("ts");
+                    timeSlotIds.add(date.getHours() - 9);
+                    ((LinkedHashMap) timeSlot).replace("ts", timeSlotIds);
+                    isDateFound = true;
+                    break;
+                }
+            }
+
+            if(!isDateFound) {
+                newTimeSlot.put("date", datestring);
+                timeSlotIds.add(date.getHours() - 9);
+                newTimeSlot.put("ts", timeSlotIds);
+                timeSlots.add(newTimeSlot);
+            }
+
             doctorDetails.setTimeSlots(timeSlots);
             doctorRepository.save(doctorDetails);
-            isAppointmentCreated = true;
         }
 
         ObjectWriter ow = new ObjectMapper().writer().withDefaultPrettyPrinter();
         String json = ow.writeValueAsString(appointmentsDetails);
 
-        SendEmailSMTP.sendFromGMail(new String[]{username, doctorUsername}, "Appointment Confirmed", json);
+        SendEmailSMTP.sendFromGMail(new String[]{username, doctorusername}, "Appointment Confirmed", json);
 
         result.put("isAppointmentCreated", isAppointmentCreated);
         return ResponseEntity.ok(result);
@@ -132,10 +163,37 @@ public class AppointmentsService extends ServiceUtility {
 
         if(userType.equals(DOCTOR)) {
             appointmentsList = appointmentsRepository.findAllDoctorAppointments(username);
+            System.out.println(appointmentsList);
             for (AppointmentsDetails appointmentsDetails : appointmentsList) {
-                if (now.compareTo(appointmentsDetails.getDate()) > 0) {
+                if (now.compareTo(appointmentsDetails.mDate) > 0) {
                     appointmentsDetails.setStatus(false);
                     appointmentsRepository.save(appointmentsDetails);
+                }
+            }
+        }
+
+        result.put("Appointments", appointmentsList);
+        return ResponseEntity.ok(result);
+    }
+
+    public ResponseEntity<?> getPastAppointments(HttpServletRequest request, String userType) {
+        String username = request.getParameter(USERNAME);
+        Map<String, Object> result = new HashMap<>();
+        List<AppointmentsDetails> appointmentsList = null;
+
+        if(userType.equals(PATIENT)) {
+            appointmentsList = appointmentsRepository.findAllPatientAppointments(username);
+            for (AppointmentsDetails appointmentsDetails : appointmentsList) {
+                if (appointmentsDetails.getStatus()) {
+                    appointmentsList.remove(appointmentsDetails);
+                }
+            }
+        }
+
+        if(userType.equals(DOCTOR)) {
+            appointmentsList = appointmentsRepository.findAllDoctorAppointments(username);
+            for (AppointmentsDetails appointmentsDetails : appointmentsList) {
+                if (appointmentsDetails.getStatus()) {
                     appointmentsList.remove(appointmentsDetails);
                 }
             }
@@ -165,5 +223,3 @@ public class AppointmentsService extends ServiceUtility {
         return ResponseEntity.ok(result);
     }
 }
-
-
