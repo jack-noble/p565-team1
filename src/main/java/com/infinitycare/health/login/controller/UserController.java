@@ -27,7 +27,7 @@ public class UserController extends ServiceUtility {
 
     @Inject
     public UserController(LoginService loginService, SignUpService signupservice, OtpService otpservice, ForgotPasswordService forgotPasswordService,
-                          AppointmentsService appointmentsService, ProfileService profileService, Search search, DashboardService dashBoardService){
+                          AppointmentsService appointmentsService, ProfileService profileService, Search search, DashboardService dashboardService){
         this.loginService = loginService;
         this.signupservice = signupservice;
         this.otpservice = otpservice;
@@ -74,7 +74,7 @@ public class UserController extends ServiceUtility {
         return this.appointmentsService.getTimeSlots(request, doctorusername);
     }
 
-    @RequestMapping(value = "/{userType}/createappointments")
+    @RequestMapping(value = "/patient/createappointments")
     public ResponseEntity<?> createAppointment(HttpServletRequest request) throws JsonProcessingException {
         return this.appointmentsService.createAppointments(request);
     }
@@ -82,6 +82,11 @@ public class UserController extends ServiceUtility {
     @RequestMapping(value = "/{userType}/getappointments")
     public ResponseEntity<?> getAppointments(HttpServletRequest request, @PathVariable String userType) {
         return this.appointmentsService.getAppointments(request, userType);
+    }
+
+    @RequestMapping(value = "/{userType}/getpastappointments")
+    public ResponseEntity<?> getPastAppointments(HttpServletRequest request, @PathVariable String userType) {
+        return this.appointmentsService.getPastAppointments(request, userType);
     }
 
     @RequestMapping(value = "/{userType}/cancelappointments")
