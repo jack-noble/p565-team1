@@ -25,13 +25,14 @@ public class UserController extends ServiceUtility {
     ProfileService profileService;
 
     @Inject
-    public UserController(LoginService loginService, SignUpService signupservice, OtpService otpservice, ForgotPasswordService forgotPasswordService, AppointmentsService appointmentsService, ProfileService profileService){
+    public UserController(LoginService loginService, SignUpService signupservice, OtpService otpservice, ForgotPasswordService forgotPasswordService, AppointmentsService appointmentsService, ProfileService profileService, Search search){
         this.loginService = loginService;
         this.signupservice = signupservice;
         this.otpservice = otpservice;
         this.forgotPasswordService = forgotPasswordService;
         this.appointmentsService = appointmentsService;
         this.profileService = profileService;
+        this.search = search;
     }
 
     @RequestMapping(value = "/{userType}/login", method = {RequestMethod.POST, RequestMethod.GET})
@@ -64,7 +65,8 @@ public class UserController extends ServiceUtility {
     public ResponseEntity<?> verifyEmail(HttpServletRequest request, @PathVariable String userType) {
         return this.forgotPasswordService.verifyUsername(request, userType);
     }
-    @RequestMapping(value = "/doctor/{doctorusername}")
+
+    @RequestMapping(value = "/doctor/time/{doctorusername}")
     public ResponseEntity<?> getTimeSlots(HttpServletRequest request, @PathVariable String doctorusername) {
         return this.appointmentsService.getTimeSlots(request, doctorusername);
     }

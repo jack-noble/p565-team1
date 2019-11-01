@@ -3,10 +3,7 @@ package com.infinitycare.health.search;
 import com.infinitycare.health.database.DoctorRepository;
 import com.infinitycare.health.database.IpRepository;
 import com.infinitycare.health.database.PatientRepository;
-import com.infinitycare.health.login.model.PatientDetails;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Example;
-import org.springframework.data.domain.ExampleMatcher;
 import org.springframework.data.mongodb.core.MongoOperations;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -36,26 +33,17 @@ public class Search {
         switch (userType) {
 
             case "patient": {
-                patientRepository.findAll(new Example<PatientDetails>() {
-                    @Override
-                    public PatientDetails getProbe() {
-                        return null;
-                    }
-
-                    @Override
-                    public ExampleMatcher getMatcher() {
-                        return null;
-                    }
-                });
+                result.put(userName, patientRepository.findByPatientsWithSimilarName(userName));
                 break;
             }
 
             case "doctor": {
+                result.put(userName, doctorRepository.findByPatientsWithSimilarName(userName));
                 break;
             }
 
             case "insurance": {
-
+                result.put(userName, ipRepository.findInsuranceProvidersWithSimilarName(userName));
                 break;
             }
 

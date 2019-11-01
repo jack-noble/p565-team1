@@ -10,6 +10,6 @@ import java.util.List;
 @Repository
 public interface PatientRepository extends MongoRepository<PatientDetails, String> {
 
-    @Query(value = "{'employees.name': ?0}", fields = "{'employees' : 0}")
+    @Query("{mUserName: { $regex: ?0 }})")
     List<PatientDetails> findByPatientsWithSimilarName(String patientName);
 }
