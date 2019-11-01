@@ -20,16 +20,18 @@ public class UserController extends CookieDetails {
     OtpService otpservice;
     PasswordRecoveryService passwordRecoveryService;
     AppointmentsService appointmentsService;
+    DashboardService dashboardService;
     ProfileService profileService;
 
     @Inject
     public UserController(LoginService loginService, SignUpService signupservice, OtpService otpservice, PasswordRecoveryService passwordRecoveryService,
-                          AppointmentsService appointmentsService, ProfileService profileService){
+                          AppointmentsService appointmentsService, DashboardService dashboardService, ProfileService profileService){
         this.loginService = loginService;
         this.signupservice = signupservice;
         this.otpservice = otpservice;
         this.passwordRecoveryService = passwordRecoveryService;
         this.appointmentsService = appointmentsService;
+        this.dashboardService = dashboardService;
         this.profileService = profileService;
     }
 
@@ -102,22 +104,37 @@ public class UserController extends CookieDetails {
 
     @RequestMapping(value = "/insurance/iplans")
     public ResponseEntity<?> getIplans(HttpServletRequest request) {
-        return this.profileService.getIplans(request);
+        return this.dashboardService.getIplans(request);
     }
 
-    @RequestMapping(value = "/{userType}/profile/edit")
-    public ResponseEntity<?> editProfile(HttpServletRequest request, @PathVariable String userType) {
-        return this.profileService.editProfile(request, userType);
+    @RequestMapping(value = "/insurance/editiplans/{action}")
+    public ResponseEntity<?> editIplans(HttpServletRequest request, @PathVariable String action) {
+        return this.dashboardService.editIplans(request, action);
+    }
+
+    @RequestMapping(value = "/patient/editprofile/{section}")
+    public ResponseEntity<?> editPatientProfile(HttpServletRequest request, @PathVariable String section) {
+        return this.profileService.editPatientProfile(request, section);
+    }
+
+    @RequestMapping(value = "/doctor/editprofile/{section}")
+    public ResponseEntity<?> editDoctorProfile(HttpServletRequest request, @PathVariable String section) {
+        return this.profileService.editDoctorProfile(request, section);
+    }
+
+    @RequestMapping(value = "/insurance/editprofile")
+    public ResponseEntity<?> editIpProfile(HttpServletRequest request) {
+        return this.profileService.editIpProfile(request);
     }
 
     @RequestMapping(value = "/insurance/getpatients")
     public ResponseEntity<?> getPatients(HttpServletRequest request) {
-        return this.profileService.getPatientsListForIp(request);
+        return this.dashboardService.getPatientsListForIp(request);
     }
 
     @RequestMapping(value = "/patient/doctor/addreviews")
     public ResponseEntity addReviews(HttpServletRequest request) {
-        return this.profileService.addReviews(request);
+        return this.dashboardService.addReviewsForDoctor(request);
     }
 
 }

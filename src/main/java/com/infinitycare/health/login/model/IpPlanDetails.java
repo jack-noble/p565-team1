@@ -11,12 +11,12 @@ public class IpPlanDetails {
     public String mPrice;
     public String mDetails;
 
-    public IpPlanDetails(String mName, String mProvider) {
+    public IpPlanDetails(String mName, String mProvider, String mPrice, String mDetails) {
         this._id = Integer.toString(mName.hashCode());
         this.mName = mName;
         this.mProvider = mProvider;
-        this.mPrice = "";
-        this.mDetails = "";
+        this.mPrice = mPrice;
+        this.mDetails = mDetails;
     }
 
 }

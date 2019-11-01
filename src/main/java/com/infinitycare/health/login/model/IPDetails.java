@@ -27,6 +27,5 @@ public class IPDetails extends UserDetails {
     }
 
     public void setmPatients (ArrayList mPatients) { this.mPatients = mPatients; }
-    public void setmCompany(String mCompany) { this.mCompany = mCompany; }
     public void setmIplans(ArrayList mIplans) { this.mIplans = mIplans; }
 }
