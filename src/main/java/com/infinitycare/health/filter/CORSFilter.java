@@ -19,6 +19,7 @@ public class CORSFilter implements Filter {
     public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException, ServletException {
         List<String> allowedDomains = new ArrayList();
         allowedDomains.add("http://localhost:3000");
+        allowedDomains.add("http://localhost:3001");
         allowedDomains.add("https://infinity-care.herokuapp.com");
 
         ((HttpServletResponse)response).addHeader("Access-Control-Allow-Methods", "*");
