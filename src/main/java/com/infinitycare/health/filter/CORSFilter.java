@@ -17,7 +17,7 @@ public class CORSFilter implements Filter {
         ((HttpServletResponse)response).addHeader("Access-Control-Allow-Methods", "*");
         ((HttpServletResponse)response).addHeader("Access-Control-Allow-Credentials", "true");
         //((HttpServletResponse)response).addHeader("Access-Control-Expose-Headers", "");
-        //((HttpServletResponse)response).addHeader("Access-Control-Allow-Origin", "http://localhost:8080");
+        //((HttpServletResponse)response).addHeader("Access-Control-Allow-Origin", "http://localhost:3000");
         ((HttpServletResponse)response).addHeader("Access-Control-Allow-Origin", "https://infinity-care.herokuapp.com");
 
         ((HttpServletResponse)response).addHeader("Access-Control-Allow-Headers", "*");

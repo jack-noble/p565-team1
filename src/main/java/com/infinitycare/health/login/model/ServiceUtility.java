@@ -8,9 +8,11 @@ import org.json.simple.parser.ParseException;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 public class ServiceUtility {
 
@@ -32,9 +34,10 @@ public class ServiceUtility {
 
     public Map<String, String> getPostBodyInAMap(HttpServletRequest request) {
         Map<String, String> postBody = new HashMap<>();
-        Iterator<String> iterator = request.getParameterMap().keySet().iterator();
-        while(iterator.hasNext()) {
-            populatePostBody(postBody, iterator.next());
+        try {
+            populatePostBody(postBody, request.getReader().lines().collect(Collectors.joining()));
+        } catch (IOException e) {
+            e.printStackTrace();
         }
 
         return postBody;

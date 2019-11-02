@@ -13,7 +13,7 @@ import javax.servlet.http.HttpServletResponse;
 
 @RestController
 @RequestMapping(value = "/")
-@CrossOrigin(origins = "*")
+//@CrossOrigin(origins = "http://localhost:3000")
 public class UserController extends ServiceUtility {
 
     LoginService loginService;
