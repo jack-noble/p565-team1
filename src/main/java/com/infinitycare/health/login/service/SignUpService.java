@@ -9,8 +9,6 @@ import com.infinitycare.health.login.model.IPDetails;
 import com.infinitycare.health.login.model.PatientDetails;
 import com.infinitycare.health.login.model.ServiceUtility;
 import com.infinitycare.health.security.TextSecurer;
-import com.mongodb.BasicDBObject;
-import com.mongodb.DBObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -78,7 +76,7 @@ public class SignUpService extends ServiceUtility {
         result.put(IS_NEW_USER, isNewUser);
         result.put(IS_OTP_SENT, isOtpSent);
 
-        setEncryptedSessionId(request, response, username, userType);
+        setSessionId(request, response, TextSecurer.encrypt(username), userType, -1);
         return ResponseEntity.ok(result);
     }
 

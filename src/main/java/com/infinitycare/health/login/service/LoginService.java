@@ -15,11 +15,9 @@ import org.springframework.stereotype.Service;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 @Service
 public class LoginService extends ServiceUtility {
@@ -105,7 +103,7 @@ public class LoginService extends ServiceUtility {
         result.put(IS_CREDENTIALS_ACCURATE, isCredentialsAccurate);
         result.put(IS_OTP_SENT, sentOtp);
 
-        setEncryptedSessionId(request, response, username, userType);
+        setSessionId(request, response, TextSecurer.encrypt(username), userType, -1);
         return ResponseEntity.ok(result);
     }
 }

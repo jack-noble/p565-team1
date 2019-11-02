@@ -69,14 +69,4 @@ public class OtpService extends ServiceUtility {
         return ResponseEntity.ok(result);
     }
 
-    private String getUsername(HttpServletRequest request) {
-        Cookie[] cookies = request.getCookies();
-        for(Cookie c : cookies) {
-            if(SESSIONID.equals(c.getName())) {
-                return TextSecurer.decrypt(c.getValue());
-            }
-        }
-
-        return null;
-    }
 }

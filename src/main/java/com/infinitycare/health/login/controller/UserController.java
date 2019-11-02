@@ -24,10 +24,12 @@ public class UserController extends ServiceUtility {
     DashboardService dashboardService;
     Search search;
     ProfileService profileService;
+    SignOutService signOutService;
 
     @Inject
     public UserController(LoginService loginService, SignUpService signupservice, OtpService otpservice, ForgotPasswordService forgotPasswordService,
-                          AppointmentsService appointmentsService, ProfileService profileService, Search search, DashboardService dashboardService){
+                          AppointmentsService appointmentsService, ProfileService profileService, Search search, DashboardService dashboardService,
+                          SignOutService signOutService){
         this.loginService = loginService;
         this.signupservice = signupservice;
         this.otpservice = otpservice;
@@ -36,6 +38,7 @@ public class UserController extends ServiceUtility {
         this.dashboardService = dashboardService;
         this.profileService = profileService;
         this.search = search;
+        this.signOutService = signOutService;
     }
 
     @RequestMapping(value = "/{userType}/login", method = {RequestMethod.POST, RequestMethod.GET})
@@ -91,6 +94,11 @@ public class UserController extends ServiceUtility {
     @RequestMapping(value = "/{userType}/search")
     public ResponseEntity<?> searchForUsers(HttpServletRequest request, @PathVariable String userType, @RequestParam("username") String userName) {
         return search.searchForUsers(request, userType, userName);
+    }
+
+    @RequestMapping(value = "/{userType}/signout")
+    public ResponseEntity<?> signOut(HttpServletRequest request, HttpServletResponse response, @PathVariable String userType) {
+        return signOutService.signOut(request, response, userType);
     }
 
     @RequestMapping(value = "/{userType}/profile")

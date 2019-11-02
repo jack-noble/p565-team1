@@ -53,14 +53,33 @@ public class ServiceUtility {
         }
     }
 
-    public void setEncryptedSessionId(HttpServletRequest request, HttpServletResponse response, String username, String userType) {
-        String encryptedSessionId = TextSecurer.encrypt(username);
+    public String getUsername(HttpServletRequest request) {
+        return getSessionIdentifier(request, true);
+    }
+
+    public String getSessionIdentifier(HttpServletRequest request) {
+        return getSessionIdentifier(request, false);
+    }
+
+    private String getSessionIdentifier(HttpServletRequest request, boolean shouldDecryptTheIdentifier) {
+        Cookie[] cookies = request.getCookies();
+        for(Cookie c : cookies) {
+            if(SESSIONID.equals(c.getName())) {
+                return shouldDecryptTheIdentifier ? TextSecurer.decrypt(c.getValue()) : c.getValue();
+            }
+        }
+
+        return null;
+    }
+
+    public void setSessionId(HttpServletRequest request, HttpServletResponse response, String username, String userType, int maxAge) {
+        String encryptedSessionId = username;
         String servletPath = request.getServletPath();
         String cookiePath = servletPath.substring(0, servletPath.indexOf(userType) + userType.length());
 
         Cookie cookie = new Cookie(SESSIONID, encryptedSessionId);
         cookie.setHttpOnly(true);
-        cookie.setMaxAge(-1);
+        cookie.setMaxAge(maxAge);
         cookie.setPath(cookiePath);
 
         //response.setHeader("Set-Cookie", SESSIONID + "=" + encryptedSessionId + "; Path=" + cookiePath + "; HttpOnly; SameSite=Lax");
