@@ -45,7 +45,6 @@ public class OtpService extends ServiceUtility {
 
         String username = getUsername(request);
         String enteredOtp = getPostBodyInAMap(request).get(OTP);
-        System.out.println(enteredOtp);
 
         if(null == username) {
             result.put(IS_COOKIE_TAMPERED, "true");
@@ -67,7 +66,6 @@ public class OtpService extends ServiceUtility {
             result.put(IS_OTP_ACCURATE, isOtpAccurate);
         }
 
-        System.out.println(result);
         return ResponseEntity.ok(result);
     }
 

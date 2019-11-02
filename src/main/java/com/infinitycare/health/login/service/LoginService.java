@@ -95,7 +95,10 @@ public class LoginService extends ServiceUtility {
         }
 
         if(isCredentialsAccurate) {
-            SendEmailSMTP.sendFromGMail(new String[]{username}, "Please enter the OTP in the login screen", otp);
+            String emailBody = "";
+            emailBody += "<h1>" + "InfinityCare" + "</h1>\n\n" + "<h2> Please enter the OTP when prompted </h2>\n"
+                        + "<h3>" + "OTP: " + otp + "</h3>\n";
+            SendEmailSMTP.sendFromGMail(new String[]{username}, "Login Authorization", emailBody);
             sentOtp = true;
         }
 

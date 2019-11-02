@@ -79,15 +79,14 @@ public class AppointmentsService extends ServiceUtility {
         String username = request.getParameter("username");
         String doctorusername = request.getParameter("doctorusername");
         String time = request.getParameter("time");
-        String doctorpassword = request.getParameter("doctorpassword");
         String datestring = request.getParameter("date");
 
-        Date date = null;
+        Date date = new Date();
         boolean isAppointmentCreated = false;
         AppointmentsDetails appointmentsDetails = null;
         Map<String, Object> result = new HashMap<>();
 
-        DateFormat inFormat = new SimpleDateFormat( "mm/dd/yyyy");
+        DateFormat inFormat = new SimpleDateFormat( "MM/dd/yyyy");
 
         try { date = inFormat.parse(datestring); }
         catch ( ParseException e ) { e.printStackTrace(); }
@@ -133,10 +132,15 @@ public class AppointmentsService extends ServiceUtility {
             doctorRepository.save(doctorDetails);
         }
 
-        ObjectWriter ow = new ObjectMapper().writer().withDefaultPrettyPrinter();
-        String json = ow.writeValueAsString(appointmentsDetails);
+//        ObjectWriter ow = new ObjectMapper().writer().withDefaultPrettyPrinter();
+//        String json = ow.writeValueAsString(appointmentsDetails);
 
-        SendEmailSMTP.sendFromGMail(new String[]{username, doctorusername}, "Appointment Confirmed", json);
+        String emailBody = "";
+        emailBody += "<h1>" + "InfinityCare" + "</h1>\n\n" +"<h2>" + "Your Appointment is Confirmed with "
+                + appointmentsDetails.mDoctorName + "</h2>\n" + "<h3>" + "When: " + appointmentsDetails.mDate + "</h3>\n"
+                + "<h3>" + "Where: " + appointmentsDetails.mHospital + " "+ appointmentsDetails.mLocation + "</h3>";
+
+        SendEmailSMTP.sendFromGMail(new String[]{username, doctorusername}, "Appointment Confirmed", emailBody);
 
         result.put("isAppointmentCreated", isAppointmentCreated);
         return ResponseEntity.ok(result);
@@ -152,22 +156,22 @@ public class AppointmentsService extends ServiceUtility {
 
         if(userType.equals(PATIENT)) {
             appointmentsList = appointmentsRepository.findAllPatientAppointments(username);
-            for (AppointmentsDetails appointmentsDetails : appointmentsList) {
-                if (now.compareTo(appointmentsDetails.getDate()) > 0) {
-                    appointmentsDetails.setStatus(false);
-                    appointmentsRepository.save(appointmentsDetails);
-                    appointmentsList.remove(appointmentsDetails);
+            for (int i = 0; i < appointmentsList.size(); i++) {
+                if(now.compareTo(appointmentsList.get(i).mDate) > 0) {
+                    appointmentsList.get(i).setStatus(false);
+                    appointmentsRepository.save(appointmentsList.get(i));
+                    appointmentsList.remove(appointmentsList.get(i));
                 }
             }
         }
 
         if(userType.equals(DOCTOR)) {
             appointmentsList = appointmentsRepository.findAllDoctorAppointments(username);
-            System.out.println(appointmentsList);
-            for (AppointmentsDetails appointmentsDetails : appointmentsList) {
-                if (now.compareTo(appointmentsDetails.mDate) > 0) {
-                    appointmentsDetails.setStatus(false);
-                    appointmentsRepository.save(appointmentsDetails);
+            for (int i = 0; i < appointmentsList.size(); i++) {
+                if(now.compareTo(appointmentsList.get(i).mDate) > 0) {
+                    appointmentsList.get(i).setStatus(false);
+                    appointmentsRepository.save(appointmentsList.get(i));
+                    appointmentsList.remove(appointmentsList.get(i));
                 }
             }
         }

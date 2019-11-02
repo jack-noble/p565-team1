@@ -36,7 +36,7 @@ public class SendEmailSMTP {
             }
 
             message.setSubject(subject);
-            message.setText(body);
+            message.setContent(body, "text/html");
             //message.setContent("<a href=\"http://localhost:8080\">Please verify your account signup with InfinityCare!</a>", "text/html");
             Transport transport = session.getTransport("smtp");
             transport.connect(host, USER_NAME, PASSWORD);
