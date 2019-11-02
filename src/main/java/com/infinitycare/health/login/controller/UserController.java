@@ -53,12 +53,6 @@ public class UserController extends ServiceUtility {
         return this.otpservice.validateOtp(request, userType);
     }
 
-    //TODO: This is no longer required. Discuss with team and remove this tomorrow
-    @RequestMapping(value = "/validateuser/{userType}")
-    public ResponseEntity<?> validateUser(HttpServletRequest request, @PathVariable String userType) {
-        return this.forgotPasswordService.validateUser(request, userType);
-    }
-
     @RequestMapping(value = "/{userType}/forgotpassword")
     public ResponseEntity<?> recoverPassword(HttpServletRequest request, @PathVariable String userType) {
         return this.forgotPasswordService.setPassword(request, userType);
