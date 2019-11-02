@@ -10,11 +10,11 @@ public class IPDetails extends UserDetails {
     public ArrayList mIplans;
     public ArrayList mPatients;
 
-    public IPDetails(String mUserName, String mPassword) {
+    public IPDetails(String mUserName) {
         this.mUserName = mUserName;
         mEmail = "";
         id = Integer.toString(mUserName.hashCode());
-        this.mPassword = mPassword;
+        mPassword = "";
         mFirstName = "";
         mLastName = "";
         mCompany = "";

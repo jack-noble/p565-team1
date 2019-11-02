@@ -104,7 +104,7 @@ public class AppointmentsService extends ServiceUtility {
             appointmentsRepository.save(appointmentsDetails);
             isAppointmentCreated = true;
 
-            DoctorDetails doctorDetails = new DoctorDetails(doctorusername, doctorpassword);
+            DoctorDetails doctorDetails = new DoctorDetails(doctorusername);
             ArrayList timeSlots = doctorQueriedFromDB.get().mTimeSlots;
             List<Integer> timeSlotIds = new ArrayList<>();
             BasicDBObject newTimeSlot = new BasicDBObject();

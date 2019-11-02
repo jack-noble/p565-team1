@@ -50,17 +50,17 @@ public class ForgotPasswordService extends ServiceUtility {
         if(null == username) {
             result.put(IS_COOKIE_TAMPERED, "true");
         } else if(userType.equals(PATIENT)) {
-            PatientDetails patientDetails = new PatientDetails(username, password);
+            PatientDetails patientDetails = new PatientDetails(username);
             patientDetails.setmPassword(password);
             patientRepository.save(patientDetails);
             isPasswordChanged = true;
         } else if(userType.equals(DOCTOR)) {
-            DoctorDetails doctorDetails = new DoctorDetails(username, password);
+            DoctorDetails doctorDetails = new DoctorDetails(username);
             doctorDetails.setmPassword(password);
             doctorRepository.save(doctorDetails);
             isPasswordChanged = true;
         } else if(userType.equals(INSURANCE_PROVIDER)) {
-            IPDetails ipDetails = new IPDetails(username, password);
+            IPDetails ipDetails = new IPDetails(username);
             ipDetails.setmPassword(password);
             ipRepository.save(ipDetails);
             isPasswordChanged = true;

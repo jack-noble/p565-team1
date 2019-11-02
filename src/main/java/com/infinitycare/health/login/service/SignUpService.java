@@ -19,8 +19,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.util.*;
 
-// TODO Change Active to True once the OTP during SingUp is authenticated
-
 @Service
 public class SignUpService extends ServiceUtility {
 
@@ -39,20 +37,18 @@ public class SignUpService extends ServiceUtility {
         this.ipRepository = ipRepository;
     }
 
-    public ResponseEntity<?> signup(HttpServletRequest request, HttpServletResponse response, String userType) {
+    public ResponseEntity<?> signUp(HttpServletRequest request, HttpServletResponse response, String userType) {
 
         boolean isNewUser = false;
         boolean isOtpSent = false;
         String otp = SendEmailSMTP.generateRandomNumber(1000, 9999);
         Map<String, Object> result = new HashMap<>();
-        List<DBObject> timeslots = new ArrayList<>();
 
         Map<String, String> postBody = getPostBodyInAMap(request);
         String username = postBody.get(USERNAME);
-        String password = TextSecurer.encrypt(postBody.get(PASSWORD));
 
         if(userType.equals(PATIENT)) {
-            PatientDetails patientDetails = new PatientDetails(username, password);
+            PatientDetails patientDetails = new PatientDetails(username);
             if(!doesPatientAlreadyExist(patientDetails)){
                 patientDetails.setMFAToken(otp);
                 patientRepository.save(patientDetails);
@@ -61,24 +57,16 @@ public class SignUpService extends ServiceUtility {
         }
 
         if (userType.equals(DOCTOR)) {
-            DoctorDetails doctorDetails = new DoctorDetails(username, password);
+            DoctorDetails doctorDetails = new DoctorDetails(username);
             if(!doesDoctorAlreadyExist(doctorDetails)){
                 doctorDetails.setMFAToken(otp);
                 doctorRepository.save(doctorDetails);
-                DBObject ts = new BasicDBObject();
-                for (int i = 0; i < 13; i++) {
-                    ts.put("isAvailable", true);
-                    ts.put("_id", i);
-                    ts.put("start", Integer.toString(9 + i) + ":00");
-                    ts.put("end", Integer.toString(10 + i) + ":00");
-                    timeslots.add(ts);
-                }
                 isNewUser = true;
             }
         }
 
         if(userType.equals(INSURANCE_PROVIDER)) {
-            IPDetails ipDetails = new IPDetails(username, password);
+            IPDetails ipDetails = new IPDetails(username);
             if(!doesIpAlreadyExist(ipDetails)){
                 ipDetails.setMFAToken(otp);
                 ipRepository.save(ipDetails);

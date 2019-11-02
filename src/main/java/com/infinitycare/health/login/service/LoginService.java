@@ -45,19 +45,21 @@ public class LoginService extends ServiceUtility {
 
         String otp = SendEmailSMTP.generateRandomNumber(1000, 9999);
         Map<String, Object> result = new HashMap<>();
+        boolean verifyCredentails = false;
 
         Map<String, String> postBody = getPostBodyInAMap(request);
+
         String username = postBody.get(USERNAME);
         String password = TextSecurer.encrypt(postBody.get(PASSWORD));
 
-        String finalPassword = password;
-
         if(userType.equals(PATIENT)) {
-            PatientDetails patientDetails = new PatientDetails(username, password);
+            PatientDetails patientDetails = new PatientDetails(username);
             Optional<PatientDetails> userQueriedFromDB = patientRepository.findById(Integer.toString(username.hashCode()));
-            boolean verifyCredentails = userQueriedFromDB.map(details -> details.getPassword().equals(finalPassword)).orElse(false);
-            if(verifyCredentails && !userQueriedFromDB.get().mActive){
-                patientDetails.setmActive(true);
+            if(userQueriedFromDB.isPresent()) {
+                verifyCredentails = userQueriedFromDB.get().mPassword.equals(password);
+            }
+            if(verifyCredentails){
+                if(!userQueriedFromDB.get().mActive) { patientDetails.setmActive(true); }
                 isCredentialsAccurate = true;
                 patientDetails.setMFAToken(otp);
                 patientRepository.save(patientDetails);
@@ -65,11 +67,13 @@ public class LoginService extends ServiceUtility {
         }
 
         if(userType.equals(DOCTOR)) {
-            DoctorDetails doctorDetails = new DoctorDetails(username, password);
+            DoctorDetails doctorDetails = new DoctorDetails(username);
             Optional<DoctorDetails> userQueriedFromDB = doctorRepository.findById(Integer.toString(username.hashCode()));
-            boolean verifyCredentails = userQueriedFromDB.map(details -> details.getPassword().equals(finalPassword)).orElse(false);
-            if(verifyCredentails && !userQueriedFromDB.get().mActive) {
-                doctorDetails.setmActive(true);
+            if(userQueriedFromDB.isPresent()) {
+                verifyCredentails = userQueriedFromDB.get().mPassword.equals(password);
+            }
+            if(verifyCredentails) {
+                if(!userQueriedFromDB.get().mActive) { doctorDetails.setmActive(true); }
                 isCredentialsAccurate = true;
                 doctorDetails.setMFAToken(otp);
                 doctorRepository.save(doctorDetails);
@@ -77,11 +81,13 @@ public class LoginService extends ServiceUtility {
         }
 
         if(userType.equals(INSURANCE_PROVIDER)) {
-            IPDetails ipDetails = new IPDetails(username, password);
+            IPDetails ipDetails = new IPDetails(username);
             Optional<IPDetails> userQueriedFromDB = ipRepository.findById(Integer.toString(username.hashCode()));
-            boolean verifyCredentails = userQueriedFromDB.map(details -> details.getPassword().equals(finalPassword)).orElse(false);
-            if(verifyCredentails && !userQueriedFromDB.get().mActive) {
-                ipDetails.setmActive(true);
+            if(userQueriedFromDB.isPresent()) {
+                verifyCredentails = userQueriedFromDB.get().mPassword.equals(password);
+            }
+            if(verifyCredentails) {
+                if(!userQueriedFromDB.get().mActive) { ipDetails.setmActive(true); }
                 isCredentialsAccurate = true;
                 ipDetails.setMFAToken(otp);
                 ipRepository.save(ipDetails);

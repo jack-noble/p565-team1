@@ -16,11 +16,11 @@ public class DoctorDetails extends UserDetails {
     public String mHospital;
     public ArrayList mReviews;
 
-    public DoctorDetails(String mUserName, String mPassword) {
+    public DoctorDetails(String mUserName) {
         this.mUserName = mUserName;
         mEmail = "";
         id = Integer.toString(mUserName.hashCode());
-        this.mPassword = mPassword;
+        mPassword = "";
         mFirstName = "";
         mLastName = "";
         mEducation = "";

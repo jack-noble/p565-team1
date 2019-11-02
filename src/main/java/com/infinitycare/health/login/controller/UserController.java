@@ -45,7 +45,7 @@ public class UserController extends ServiceUtility {
 
     @RequestMapping(value = "/{userType}/signup", method = {RequestMethod.POST, RequestMethod.GET})
     public ResponseEntity<?> signupUser(HttpServletRequest request, HttpServletResponse response, @PathVariable String userType) {
-        return this.signupservice.signup(request, response, userType);
+        return this.signupservice.signUp(request, response, userType);
     }
 
     @RequestMapping(value = "/{userType}/mfa", method = {RequestMethod.POST, RequestMethod.GET})
