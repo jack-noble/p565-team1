@@ -3,7 +3,7 @@ package com.infinitycare.health.login.controller;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.infinitycare.health.login.model.ServiceUtility;
 import com.infinitycare.health.login.service.*;
-import com.infinitycare.health.search.Search;
+import com.infinitycare.health.search.SearchService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -22,13 +22,13 @@ public class UserController extends ServiceUtility {
     ForgotPasswordService forgotPasswordService;
     AppointmentsService appointmentsService;
     DashboardService dashboardService;
-    Search search;
+    SearchService searchService;
     ProfileService profileService;
     SignOutService signOutService;
 
     @Inject
     public UserController(LoginService loginService, SignUpService signupservice, OtpService otpservice, ForgotPasswordService forgotPasswordService,
-                          AppointmentsService appointmentsService, ProfileService profileService, Search search, DashboardService dashboardService,
+                          AppointmentsService appointmentsService, ProfileService profileService, SearchService searchService, DashboardService dashboardService,
                           SignOutService signOutService){
         this.loginService = loginService;
         this.signupservice = signupservice;
@@ -37,7 +37,7 @@ public class UserController extends ServiceUtility {
         this.appointmentsService = appointmentsService;
         this.dashboardService = dashboardService;
         this.profileService = profileService;
-        this.search = search;
+        this.searchService = searchService;
         this.signOutService = signOutService;
     }
 
@@ -92,8 +92,8 @@ public class UserController extends ServiceUtility {
     }
 
     @RequestMapping(value = "/{userType}/search")
-    public ResponseEntity<?> searchForUsers(HttpServletRequest request, @PathVariable String userType, @RequestParam("username") String userName) {
-        return search.searchForUsers(request, userType, userName);
+    public ResponseEntity<?> searchForUsers(HttpServletRequest request, @PathVariable String userType, @RequestParam("query") String userName) {
+        return searchService.searchForUsers(request, userType, userName);
     }
 
     @RequestMapping(value = "/{userType}/signout")

@@ -12,5 +12,8 @@ import java.util.List;
 public interface DoctorRepository extends MongoRepository<DoctorDetails, String> {
 
     @Query("{mUserName: { $regex: ?0 }})")
-    List<DoctorDetails> findByPatientsWithSimilarName(String doctorName);
+    List<DoctorDetails> findDoctorsWithSimilarName(String doctorName);
+
+    @Query("{mSpecialization: { $regex: ?0 }})")
+    List<DoctorDetails> findDoctorsWithSimilarSpecializations(String specialization);
 }
