@@ -5,6 +5,7 @@ import com.infinitycare.health.database.IpPlanRepository;
 import com.infinitycare.health.database.IpRepository;
 import com.infinitycare.health.database.PatientRepository;
 import com.infinitycare.health.login.model.*;
+import com.mongodb.BasicDBObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -112,6 +113,7 @@ public class DashboardService extends ServiceUtility {
     public ResponseEntity<?> addReviewsForDoctor(HttpServletRequest request) {
         Map<String, Object> result = new HashMap<>();
         String doctorusername = request.getParameter("username");
+        int rating = Integer.parseInt(request.getParameter("rating"));
         String review = request.getParameter("review");
         boolean isReviewAdded = false;
 
@@ -119,8 +121,16 @@ public class DashboardService extends ServiceUtility {
         DoctorDetails doctorDetails = new DoctorDetails(doctorusername);
         if(doctorFromDB.isPresent()) {
             ArrayList reviews = doctorFromDB.get().mReviews;
-            reviews.add(review);
+            BasicDBObject newReview = new BasicDBObject();
+            newReview.put("rating", rating);
+            newReview.put("review", review);
+            reviews.add(newReview);
             doctorDetails.setmReviews(reviews);
+
+            // updating the cumulative rating
+            if(doctorFromDB.get().mTotalRating == 0) { doctorDetails.setmTotalRating(rating); }
+            else { doctorDetails.setmTotalRating((doctorFromDB.get().mTotalRating * (reviews.size() - 1) + rating)/reviews.size()); }
+
             doctorRepository.save(doctorDetails);
             isReviewAdded = true;
         }
