@@ -63,4 +63,5 @@ public class SearchService extends ServiceUtility {
 
         return ResponseEntity.ok(result);
     }
+
 }
