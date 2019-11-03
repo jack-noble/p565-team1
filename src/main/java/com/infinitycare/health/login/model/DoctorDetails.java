@@ -15,6 +15,7 @@ public class DoctorDetails extends UserDetails {
     public ArrayList mTimeSlots;
     public String mHospital;
     public ArrayList mReviews;
+    public float mTotalRating;
 
     public DoctorDetails(String mUserName) {
         this.mUserName = mUserName;
@@ -34,6 +35,7 @@ public class DoctorDetails extends UserDetails {
         mHospital = "";
         mTimeSlots = new ArrayList<>();
         mReviews = new ArrayList();
+        mTotalRating = 0;
     }
 
     public void setTimeSlots(ArrayList ts) { this.mTimeSlots = ts; }
@@ -43,4 +45,5 @@ public class DoctorDetails extends UserDetails {
     public void setmHospital(String mHospital) { this.mHospital = mHospital; }
     public void setmPersonalBio(String mPersonalBio) { this.mPersonalBio = mPersonalBio; }
     public void setmReviews(ArrayList mReviews) { this.mReviews = mReviews; }
+    public void setmTotalRating(float mTotalRating) { this.mTotalRating = mTotalRating; }
 }
