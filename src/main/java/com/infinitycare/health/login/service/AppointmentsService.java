@@ -38,8 +38,7 @@ public class AppointmentsService extends ServiceUtility {
     }
 
     public ResponseEntity<?> getTimeSlots(HttpServletRequest request, String doctorusername) {
-        Map<String, String> postBody = getPostBodyInAMap(request);
-        String date = postBody.get("date"); // Date format: mm/dd/yyyy
+        String date = getPostBodyInAMap(request).get("date"); // Date format: mm/dd/yyyy
 
         // 0:9, 1:10, 2:11, 3:12, 4:1, 5:2, 6:3, 7:4.
         List<Integer> availableTimeSlots = new ArrayList<>();
@@ -73,11 +72,10 @@ public class AppointmentsService extends ServiceUtility {
     }
 
     public ResponseEntity<?> createAppointments(HttpServletRequest request) {
-        Map<String, String> postBody = getPostBodyInAMap(request);
-        String username = postBody.get(USERNAME);
-        String doctorusername = postBody.get("doctorusername");
-        String time = postBody.get("time");
-        String datestring = postBody.get("date");
+        String username = getUsername(request);
+        String doctorusername = getPostBodyInAMap(request).get("doctorusername");
+        String time = getPostBodyInAMap(request).get("time");
+        String datestring = getPostBodyInAMap(request).get("date");
 
         Date date = new Date();
         boolean isAppointmentCreated = false;
@@ -142,8 +140,7 @@ public class AppointmentsService extends ServiceUtility {
 
     public ResponseEntity<?> getAppointments(HttpServletRequest request, String userType) {
         // doing a sanity check when sending appointments to the user.
-        Map<String, String> postBody = getPostBodyInAMap(request);
-        String username = postBody.get(USERNAME);
+        String username = getUsername(request);
 
         Map<String, Object> result = new HashMap<>();
         List<AppointmentsDetails> appointmentsList = null;
@@ -176,8 +173,7 @@ public class AppointmentsService extends ServiceUtility {
     }
 
     public ResponseEntity<?> getPastAppointments(HttpServletRequest request, String userType) {
-        Map<String, String> postBody = getPostBodyInAMap(request);
-        String username = postBody.get(USERNAME);
+        String username = getUsername(request);
 
         Map<String, Object> result = new HashMap<>();
         List<AppointmentsDetails> appointmentsList = null;
@@ -205,8 +201,7 @@ public class AppointmentsService extends ServiceUtility {
     }
 
     public ResponseEntity<?> cancelAppointments(HttpServletRequest request, String userType) {
-        Map<String, String> postBody = getPostBodyInAMap(request);
-        String id = postBody.get("id");
+        String id = getPostBodyInAMap(request).get("id");
 
         boolean isAppointmentDeleted = false;
         Map<String, Object> result = new HashMap<>();

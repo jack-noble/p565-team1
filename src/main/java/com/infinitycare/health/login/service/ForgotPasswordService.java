@@ -96,8 +96,7 @@ public class ForgotPasswordService extends ServiceUtility {
     }
 
     public ResponseEntity<?> validateUser(HttpServletRequest request, String userType) {
-        Map<String, String> postBody = getPostBodyInAMap(request);
-        String username = postBody.get(USERNAME);
+        String username = getUsername(request);
 
         Map<String, Object> result = new HashMap<>();
         boolean isValidUser = false;

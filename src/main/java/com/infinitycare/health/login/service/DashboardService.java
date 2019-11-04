@@ -36,8 +36,7 @@ public class DashboardService extends ServiceUtility {
     }
 
     public ResponseEntity<?> getIplans(HttpServletRequest request) {
-        Map<String, String> postBody = getPostBodyInAMap(request);
-        String username = postBody.get(USERNAME);
+        String username = getUsername(request);
 
         ArrayList iplans = new ArrayList();
         List<Optional<IpPlanDetails>> iPlans = new ArrayList<>();
@@ -56,15 +55,15 @@ public class DashboardService extends ServiceUtility {
     }
 
     public ResponseEntity<?> editIplans(HttpServletRequest request, String action) {
-        Map<String, String> postBody = getPostBodyInAMap(request);
-        String username = postBody.get(USERNAME);
+        String username = getUsername(request);
 
         Map<String, Object> result = new HashMap<>();
         ArrayList iplans = new ArrayList();
 
         boolean isIplansUpdated = false;
 
-        IpPlanDetails ipPlanDetails = new IpPlanDetails(postBody.get("name"), postBody.get("provider"), postBody.get("price"), postBody.get("details"));
+        IpPlanDetails ipPlanDetails = new IpPlanDetails(getPostBodyInAMap(request).get("name"), getPostBodyInAMap(request).get("provider"),
+                                                        getPostBodyInAMap(request).get("price"), getPostBodyInAMap(request).get("details"));
 
         Optional<IPDetails> userQueriedFromDB = ipRepository.findById(Integer.toString(username.hashCode()));
         if(userQueriedFromDB.isPresent()) {
@@ -88,8 +87,7 @@ public class DashboardService extends ServiceUtility {
     }
 
     public ResponseEntity<?> getPatientsListForIp(HttpServletRequest request) {
-        Map<String, String> postBody = getPostBodyInAMap(request);
-        String username = postBody.get(USERNAME);
+        String username = getUsername(request);
 
         Map<String, Object> result = new HashMap<>();
         ArrayList finalpatients = new ArrayList();
@@ -115,10 +113,9 @@ public class DashboardService extends ServiceUtility {
     }
 
     public ResponseEntity<?> addReviewsForDoctor(HttpServletRequest request) {
-        Map<String, String> postBody = getPostBodyInAMap(request);
-        String doctorusername = postBody.get(USERNAME);
-        String review = postBody.get("review");
-        int rating = Integer.parseInt(postBody.get("rating"));
+        String doctorusername = getUsername(request);
+        String review = getPostBodyInAMap(request).get("review");
+        int rating = Integer.parseInt(getPostBodyInAMap(request).get("rating"));
 
         Map<String, Object> result = new HashMap<>();
         boolean isReviewAdded = false;
