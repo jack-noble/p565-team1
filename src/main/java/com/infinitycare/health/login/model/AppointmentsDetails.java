@@ -3,7 +3,9 @@ package com.infinitycare.health.login.model;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 import java.text.DateFormat;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.Base64;
 import java.util.Date;
 
 @Document(collection = "AppointmentsDetails")
@@ -16,6 +18,10 @@ public class AppointmentsDetails{
     public String mHospital;
     public String mLocation;
     public Date mDate;
+    public String mDisplayDate;
+    public String mDisplayTime;
+    public String mEncodedDoctorUserName;
+    public String mEncodedPatientName;
     public boolean mActive = true;
     public String mPatientName;
     public String mDoctorName;
@@ -26,9 +32,13 @@ public class AppointmentsDetails{
         this.id = Integer.toString((mPatientUsername + mDoctorUsername + dateFormat.format(mDate)).hashCode());
         this.mPatientUsername = mPatientUsername;
         this.mDoctorUsername = mDoctorUsername;
+        this.mEncodedDoctorUserName = Base64.getEncoder().encodeToString(mDoctorUsername.getBytes());
+        this.mEncodedPatientName = Base64.getEncoder().encodeToString(mPatientUsername.getBytes());
         this.mHospital = mHospital;
         this.mLocation = mLocation;
         this.mDate = mDate;
+        this.mDisplayDate = new SimpleDateFormat("dd/MM/yyyy").format(mDate);
+        this.mDisplayTime = String.valueOf(mDate.getHours());
         this.mPatientName = mPatientName;
         this.mDoctorName = mDoctorName;
     }

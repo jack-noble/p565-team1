@@ -14,6 +14,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -140,7 +141,9 @@ public class AppointmentsService extends ServiceUtility {
 
     public ResponseEntity<?> getAppointments(HttpServletRequest request, String userType) {
         // doing a sanity check when sending appointments to the user.
+        Map<String, Object> results = new HashMap();
         String username = getUsername(request);
+        //String username = request.getParameter(USERNAME);
 
         List<AppointmentsDetails> appointmentsList = null;
         Date now = new Date();
@@ -167,35 +170,49 @@ public class AppointmentsService extends ServiceUtility {
             }
         }
 
-        return ResponseEntity.ok(appointmentsList);
+        results.put("CurrentAppointments", appointmentsList);
+        List<AppointmentsDetails> appointmentsDetails = getPastAppointmentsAsList(request, userType);
+        if (appointmentsDetails == null || appointmentsDetails.isEmpty()) {
+            results.put("PastAppointments", new ArrayList<AppointmentsDetails>());
+        } else {
+            results.put("PastAppointments", appointmentsDetails);
+        }
+
+        return ResponseEntity.ok(results);
     }
 
     public ResponseEntity<?> getPastAppointments(HttpServletRequest request, String userType) {
-        String username = getUsername(request);
+        Map<String, Object> result = new HashMap();
 
-        Map<String, Object> result = new HashMap<>();
-        List<AppointmentsDetails> appointmentsList = null;
+        result.put("Appointments", getPastAppointmentsAsList(request, userType));
+        return ResponseEntity.ok(result);
+    }
+
+    private List<AppointmentsDetails> getPastAppointmentsAsList(HttpServletRequest request, String userType) {
+        String username = getUsername(request);
+        //String username = request.getParameter(USERNAME);
+
+        List<AppointmentsDetails> result = new ArrayList();
 
         if(userType.equals(PATIENT)) {
-            appointmentsList = appointmentsRepository.findAllPatientAppointments(username);
+            List<AppointmentsDetails> appointmentsList = appointmentsRepository.findAllPatientAppointments(username);
             for (AppointmentsDetails appointmentsDetails : appointmentsList) {
-                if (appointmentsDetails.getStatus()) {
-                    appointmentsList.remove(appointmentsDetails);
+                if (!appointmentsDetails.getStatus()) {
+                    result.add(appointmentsDetails);
                 }
             }
         }
 
         if(userType.equals(DOCTOR)) {
-            appointmentsList = appointmentsRepository.findAllDoctorAppointments(username);
+            List<AppointmentsDetails> appointmentsList = appointmentsRepository.findAllDoctorAppointments(username);
             for (AppointmentsDetails appointmentsDetails : appointmentsList) {
-                if (appointmentsDetails.getStatus()) {
-                    appointmentsList.remove(appointmentsDetails);
+                if (!appointmentsDetails.getStatus()) {
+                    result.add(appointmentsDetails);
                 }
             }
         }
 
-        result.put("Appointments", appointmentsList);
-        return ResponseEntity.ok(result);
+        return result;
     }
 
     public ResponseEntity<?> cancelAppointments(HttpServletRequest request, String userType) {

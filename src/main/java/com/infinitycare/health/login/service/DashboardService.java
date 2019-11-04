@@ -50,7 +50,8 @@ public class DashboardService extends ServiceUtility {
             if (planFromDB.isPresent()) { iPlans.add(planFromDB); }
         }
 
-        result.put("Iplans", iPlans);
+        result.put("IPlans", iPlans);
+        result.put("Patients", getPatientsList(request));
         return ResponseEntity.ok(result);
     }
 
@@ -87,6 +88,13 @@ public class DashboardService extends ServiceUtility {
     }
 
     public ResponseEntity<?> getPatientsListForIp(HttpServletRequest request) {
+        Map<String, Object> result = new HashMap();
+
+        result.put("patients", getPatientsList(request));
+        return ResponseEntity.ok(result);
+    }
+
+    private List<IPDetails> getPatientsList(HttpServletRequest request) {
         String username = getUsername(request);
 
         Map<String, Object> result = new HashMap<>();
@@ -107,9 +115,7 @@ public class DashboardService extends ServiceUtility {
                 finalpatients.add(patient);
             }
         }
-
-        result.put("patients", finalpatients);
-        return ResponseEntity.ok(result);
+        return finalpatients;
     }
 
     public ResponseEntity<?> addReviewsForDoctor(HttpServletRequest request) {
