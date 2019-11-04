@@ -103,7 +103,7 @@ public class AppointmentsService extends ServiceUtility {
             appointmentsRepository.save(appointmentsDetails);
             isAppointmentCreated = true;
 
-            DoctorDetails doctorDetails = new DoctorDetails(doctorusername);
+            DoctorDetails doctorDetails = doctorQueriedFromDB.get();
             ArrayList timeSlots = doctorQueriedFromDB.get().mTimeSlots;
             List<Integer> timeSlotIds = new ArrayList<>();
             BasicDBObject newTimeSlot = new BasicDBObject();
@@ -132,11 +132,7 @@ public class AppointmentsService extends ServiceUtility {
             doctorRepository.save(doctorDetails);
         }
 
-//        ObjectWriter ow = new ObjectMapper().writer().withDefaultPrettyPrinter();
-//        String json = ow.writeValueAsString(appointmentsDetails);
-
-        String emailBody = "";
-        emailBody += "<h1>" + "InfinityCare" + "</h1>\n\n" +"<h2>" + "Your Appointment is Confirmed with "
+        String emailBody = "<h1>" + "InfinityCare" + "</h1>\n\n" +"<h2>" + "Your Appointment is Confirmed with "
                 + appointmentsDetails.mDoctorName + "</h2>\n" + "<h3>" + "When: " + appointmentsDetails.mDate + "</h3>\n"
                 + "<h3>" + "Where: " + appointmentsDetails.mHospital + " "+ appointmentsDetails.mLocation + "</h3>";
 
@@ -217,9 +213,12 @@ public class AppointmentsService extends ServiceUtility {
             if(appt.isPresent()) {
                 appointmentsRepository.deleteById(id);
                 isAppointmentDeleted = true;
-                ObjectWriter ow = new ObjectMapper().writer().withDefaultPrettyPrinter();
-                String json = ow.writeValueAsString(appt);
-                SendEmailSMTP.sendFromGMail(new String[]{appt.get().mDoctorUsername, appt.get().mPatientUsername}, "Appointment Cancelled", json);
+
+                String emailBody = "<h1>" + "InfinityCare" + "</h1>\n\n" +"<h2>" + "Your Appointment with "
+                        + appt.get().mDoctorName + "has been cancelled." + "</h2>\n" + "<h3>" + "When: " + appt.get().mDate + "</h3>\n"
+                        + "<h3>" + "Where: " + appt.get().mHospital + " "+ appt.get().mLocation + "</h3>";
+
+                SendEmailSMTP.sendFromGMail(new String[]{appt.get().mDoctorUsername, appt.get().mPatientUsername}, "Appointment Cancelled", emailBody);
             }
         }
 

@@ -43,7 +43,6 @@ public class LoginService extends ServiceUtility {
 
         String otp = SendEmailSMTP.generateRandomNumber(1000, 9999);
         Map<String, Object> result = new HashMap<>();
-        boolean verifyCredentails = false;
 
         Map<String, String> postBody = getPostBodyInAMap(request);
 
@@ -51,44 +50,42 @@ public class LoginService extends ServiceUtility {
         String password = TextSecurer.encrypt(postBody.get(PASSWORD));
 
         if(userType.equals(PATIENT)) {
-            PatientDetails patientDetails = new PatientDetails(username);
             Optional<PatientDetails> userQueriedFromDB = patientRepository.findById(Integer.toString(username.hashCode()));
             if(userQueriedFromDB.isPresent()) {
-                verifyCredentails = userQueriedFromDB.get().mPassword.equals(password);
+                PatientDetails patientDetails = userQueriedFromDB.get();
+                if(userQueriedFromDB.get().mPassword.equals(password)){
+                    if(!userQueriedFromDB.get().mActive) { patientDetails.setActive(true); }
+                    isCredentialsAccurate = true;
+                    patientDetails.setMFAToken(otp);
+                    patientRepository.save(patientDetails);
+                }
             }
-            if(verifyCredentails){
-                if(!userQueriedFromDB.get().mActive) { patientDetails.setActive(true); }
-                isCredentialsAccurate = true;
-                patientDetails.setMFAToken(otp);
-                patientRepository.save(patientDetails);
-            }
+
         }
 
         if(userType.equals(DOCTOR)) {
-            DoctorDetails doctorDetails = new DoctorDetails(username);
             Optional<DoctorDetails> userQueriedFromDB = doctorRepository.findById(Integer.toString(username.hashCode()));
             if(userQueriedFromDB.isPresent()) {
-                verifyCredentails = userQueriedFromDB.get().mPassword.equals(password);
-            }
-            if(verifyCredentails) {
-                if(!userQueriedFromDB.get().mActive) { doctorDetails.setActive(true); }
-                isCredentialsAccurate = true;
-                doctorDetails.setMFAToken(otp);
-                doctorRepository.save(doctorDetails);
+                DoctorDetails doctorDetails = userQueriedFromDB.get();
+                if(userQueriedFromDB.get().mPassword.equals(password)) {
+                    if(!userQueriedFromDB.get().mActive) { doctorDetails.setActive(true); }
+                    isCredentialsAccurate = true;
+                    doctorDetails.setMFAToken(otp);
+                    doctorRepository.save(doctorDetails);
+                }
             }
         }
 
         if(userType.equals(INSURANCE_PROVIDER)) {
-            IPDetails ipDetails = new IPDetails(username);
             Optional<IPDetails> userQueriedFromDB = ipRepository.findById(Integer.toString(username.hashCode()));
             if(userQueriedFromDB.isPresent()) {
-                verifyCredentails = userQueriedFromDB.get().mPassword.equals(password);
-            }
-            if(verifyCredentails) {
-                if(!userQueriedFromDB.get().mActive) { ipDetails.setActive(true); }
-                isCredentialsAccurate = true;
-                ipDetails.setMFAToken(otp);
-                ipRepository.save(ipDetails);
+                IPDetails ipDetails = userQueriedFromDB.get();
+                if(userQueriedFromDB.get().mPassword.equals(password)) {
+                    if(!userQueriedFromDB.get().mActive) { ipDetails.setActive(true); }
+                    isCredentialsAccurate = true;
+                    ipDetails.setMFAToken(otp);
+                    ipRepository.save(ipDetails);
+                }
             }
         }
 
