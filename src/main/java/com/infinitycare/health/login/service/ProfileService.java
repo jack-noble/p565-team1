@@ -194,6 +194,7 @@ public class ProfileService extends ServiceUtility {
             result.put("address", doctorQueriedFromDB.get().mAddress);
             result.put("specialization", doctorQueriedFromDB.get().mSpecialization);
             result.put("education", doctorQueriedFromDB.get().mEducation);
+            result.put("totalrating", doctorQueriedFromDB.get().mTotalRating);
             result.put("biosummary", doctorQueriedFromDB.get().mPersonalBio);
             result.put("reviews", doctorQueriedFromDB.get().mReviews);
         }
