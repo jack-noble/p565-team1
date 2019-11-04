@@ -64,22 +64,21 @@ public class DashboardService extends ServiceUtility {
                                                         request.getParameter("price"), request.getParameter("details"));
 
         Optional<IPDetails> userQueriedFromDB = ipRepository.findById(Integer.toString(username.hashCode()));
-        IPDetails ipDetails = new IPDetails(username);
-        if(userQueriedFromDB.isPresent()) { iplans = userQueriedFromDB.get().mIplans; }
-
-        if(action.equals("add")) {
-            ipPlanRepository.save(ipPlanDetails);
-            iplans.add(ipPlanDetails.mName);
-            isIplansUpdated = true;
+        if(userQueriedFromDB.isPresent()) {
+            IPDetails ipDetails = userQueriedFromDB.get();
+            iplans = userQueriedFromDB.get().mIplans;
+            if(action.equals("add")) {
+                ipPlanRepository.save(ipPlanDetails);
+                iplans.add(ipPlanDetails.mName);
+                isIplansUpdated = true;
+            }
+            if(action.equals("delete")) {
+                iplans.remove(ipPlanDetails.mName);
+                isIplansUpdated = true;
+            }
+            ipDetails.setmIplans(iplans);
+            ipRepository.save(ipDetails);
         }
-
-        if(action.equals("delete")) {
-            iplans.remove(ipPlanDetails.mName);
-            isIplansUpdated = true;
-        }
-
-        ipDetails.setmIplans(iplans);
-        ipRepository.save(ipDetails);
 
         result.put("isIplansUpdated", isIplansUpdated);
         return ResponseEntity.ok(result);
@@ -118,8 +117,8 @@ public class DashboardService extends ServiceUtility {
         boolean isReviewAdded = false;
 
         Optional<DoctorDetails> doctorFromDB = doctorRepository.findById(Integer.toString(doctorusername.hashCode()));
-        DoctorDetails doctorDetails = new DoctorDetails(doctorusername);
         if(doctorFromDB.isPresent()) {
+            DoctorDetails doctorDetails = doctorFromDB.get();
             ArrayList reviews = doctorFromDB.get().mReviews;
             BasicDBObject newReview = new BasicDBObject();
             newReview.put("rating", rating);

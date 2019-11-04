@@ -94,16 +94,19 @@ public class ProfileService extends ServiceUtility {
         Map<String, Object> result = new HashMap<>();
         boolean isProfileUpdated = false;
 
-        DoctorDetails doctorDetails = new DoctorDetails(username);
+        Optional<DoctorDetails> userQueriedFromDB = doctorRepository.findById(Integer.toString(username.hashCode()));
+        DoctorDetails doctorDetails = userQueriedFromDB.get();
 
         if(section.equals("hospital")) {
             doctorDetails.setmHospital(request.getParameter("hospital"));
             doctorDetails.setmSpecialization(request.getParameter("specialization"));
             doctorDetails.setmAddress(request.getParameter("address"));
+            isProfileUpdated = true;
         }
 
         if(section.equals("aboutme")) {
             doctorDetails.setmPersonalBio(request.getParameter("aboutme"));
+            isProfileUpdated = true;
         }
 
         doctorRepository.save(doctorDetails);
@@ -114,8 +117,10 @@ public class ProfileService extends ServiceUtility {
     public ResponseEntity<?> editPatientProfile(HttpServletRequest request, String section) {
         Map<String, Object> result = new HashMap<>();
         boolean isProfileUpdated = false;
+        String username = request.getParameter("username");
 
-        PatientDetails patientDetails = new PatientDetails(request.getParameter("username"));
+        Optional<PatientDetails> userQueriedFromDB = patientRepository.findById(Integer.toString(username.hashCode()));
+        PatientDetails patientDetails = userQueriedFromDB.get();
 
         if(section.equals("personal")) {
             patientDetails.setmAddress(request.getParameter("address"));
@@ -128,8 +133,8 @@ public class ProfileService extends ServiceUtility {
             patientDetails.setmInsurancePlan(request.getParameter("insuranceplan"));
             patientDetails.setmInsuranceProvider(request.getParameter("insuranceprovider"));
             Optional<IPDetails> ipFromDB = ipRepository.findById(Integer.toString(request.getParameter("insuranceprovider").hashCode()));
-            IPDetails ipDetails = new IPDetails(request.getParameter("insuranceprovider"));
             if(ipFromDB.isPresent()) {
+                IPDetails ipDetails = ipFromDB.get();
                 ArrayList patients = ipFromDB.get().mPatients;
                 patients.add(request.getParameter("username"));
                 ipDetails.setmPatients(patients);
@@ -157,13 +162,17 @@ public class ProfileService extends ServiceUtility {
     public ResponseEntity<?> editIpProfile(HttpServletRequest request) {
         Map<String, Object> result = new HashMap<>();
         boolean isProfileUpdated = false;
+        String username = request.getParameter("username");
 
-        IPDetails ipDetails = new IPDetails(request.getParameter("username"));
+        Optional<IPDetails> userQueriedFromDB = ipRepository.findById(Integer.toString(username.hashCode()));
 
-        ipDetails.setmAddress(request.getParameter("address"));
-        ipDetails.setmPhoneNumber(request.getParameter("phonenumber"));
-        isProfileUpdated = true;
-        ipRepository.save(ipDetails);
+        if(userQueriedFromDB.isPresent()) {
+            IPDetails ipDetails = userQueriedFromDB.get();
+            ipDetails.setmAddress(request.getParameter("address"));
+            ipDetails.setmPhoneNumber(request.getParameter("phonenumber"));
+            ipRepository.save(ipDetails);
+            isProfileUpdated = true;
+        }
 
         result.put("isProfileUpdated", isProfileUpdated);
         return ResponseEntity.ok(result);
