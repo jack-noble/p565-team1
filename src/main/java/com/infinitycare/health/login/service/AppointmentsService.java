@@ -142,7 +142,6 @@ public class AppointmentsService extends ServiceUtility {
         // doing a sanity check when sending appointments to the user.
         String username = getUsername(request);
 
-        Map<String, Object> result = new HashMap<>();
         List<AppointmentsDetails> appointmentsList = null;
         Date now = new Date();
 
@@ -168,8 +167,7 @@ public class AppointmentsService extends ServiceUtility {
             }
         }
 
-        result.put("Appointments", appointmentsList);
-        return ResponseEntity.ok(result);
+        return ResponseEntity.ok(appointmentsList);
     }
 
     public ResponseEntity<?> getPastAppointments(HttpServletRequest request, String userType) {
