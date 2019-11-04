@@ -1,6 +1,5 @@
 package com.infinitycare.health.login.controller;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.infinitycare.health.login.model.ServiceUtility;
 import com.infinitycare.health.login.service.*;
 import com.infinitycare.health.search.SearchService;
@@ -74,7 +73,7 @@ public class UserController extends ServiceUtility {
     }
 
     @RequestMapping(value = "/patient/createappointments")
-    public ResponseEntity<?> createAppointment(HttpServletRequest request) throws JsonProcessingException {
+    public ResponseEntity<?> createAppointment(HttpServletRequest request) {
         return this.appointmentsService.createAppointments(request);
     }
 
@@ -89,7 +88,7 @@ public class UserController extends ServiceUtility {
     }
 
     @RequestMapping(value = "/{userType}/cancelappointments")
-    public ResponseEntity<?> deleteAppointments(HttpServletRequest request, @PathVariable String userType) throws JsonProcessingException {
+    public ResponseEntity<?> deleteAppointments(HttpServletRequest request, @PathVariable String userType) {
         return this.appointmentsService.cancelAppointments(request, userType);
     }
 

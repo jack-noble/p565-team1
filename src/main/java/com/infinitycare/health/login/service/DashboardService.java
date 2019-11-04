@@ -36,7 +36,9 @@ public class DashboardService extends ServiceUtility {
     }
 
     public ResponseEntity<?> getIplans(HttpServletRequest request) {
-        String username = request.getParameter("username");
+        Map<String, String> postBody = getPostBodyInAMap(request);
+        String username = postBody.get(USERNAME);
+
         ArrayList iplans = new ArrayList();
         List<Optional<IpPlanDetails>> iPlans = new ArrayList<>();
         Map<String, Object> result = new HashMap<>();
@@ -54,14 +56,15 @@ public class DashboardService extends ServiceUtility {
     }
 
     public ResponseEntity<?> editIplans(HttpServletRequest request, String action) {
-        String username = request.getParameter("username");
+        Map<String, String> postBody = getPostBodyInAMap(request);
+        String username = postBody.get(USERNAME);
+
         Map<String, Object> result = new HashMap<>();
         ArrayList iplans = new ArrayList();
 
         boolean isIplansUpdated = false;
 
-        IpPlanDetails ipPlanDetails = new IpPlanDetails(request.getParameter("name"), request.getParameter("provider"),
-                                                        request.getParameter("price"), request.getParameter("details"));
+        IpPlanDetails ipPlanDetails = new IpPlanDetails(postBody.get("name"), postBody.get("provider"), postBody.get("price"), postBody.get("details"));
 
         Optional<IPDetails> userQueriedFromDB = ipRepository.findById(Integer.toString(username.hashCode()));
         if(userQueriedFromDB.isPresent()) {
@@ -85,7 +88,9 @@ public class DashboardService extends ServiceUtility {
     }
 
     public ResponseEntity<?> getPatientsListForIp(HttpServletRequest request) {
-        String username = request.getParameter("username");
+        Map<String, String> postBody = getPostBodyInAMap(request);
+        String username = postBody.get(USERNAME);
+
         Map<String, Object> result = new HashMap<>();
         ArrayList finalpatients = new ArrayList();
 
@@ -110,10 +115,12 @@ public class DashboardService extends ServiceUtility {
     }
 
     public ResponseEntity<?> addReviewsForDoctor(HttpServletRequest request) {
+        Map<String, String> postBody = getPostBodyInAMap(request);
+        String doctorusername = postBody.get(USERNAME);
+        String review = postBody.get("review");
+        int rating = Integer.parseInt(postBody.get("rating"));
+
         Map<String, Object> result = new HashMap<>();
-        String doctorusername = request.getParameter("username");
-        int rating = Integer.parseInt(request.getParameter("rating"));
-        String review = request.getParameter("review");
         boolean isReviewAdded = false;
 
         Optional<DoctorDetails> doctorFromDB = doctorRepository.findById(Integer.toString(doctorusername.hashCode()));

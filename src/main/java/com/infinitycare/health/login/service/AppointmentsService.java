@@ -1,8 +1,5 @@
 package com.infinitycare.health.login.service;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.ObjectWriter;
 import com.infinitycare.health.database.AppointmentsRepository;
 import com.infinitycare.health.database.DoctorRepository;
 import com.infinitycare.health.database.PatientRepository;
@@ -41,12 +38,13 @@ public class AppointmentsService extends ServiceUtility {
     }
 
     public ResponseEntity<?> getTimeSlots(HttpServletRequest request, String doctorusername) {
+        Map<String, String> postBody = getPostBodyInAMap(request);
+        String date = postBody.get("date"); // Date format: mm/dd/yyyy
 
         // 0:9, 1:10, 2:11, 3:12, 4:1, 5:2, 6:3, 7:4.
         List<Integer> availableTimeSlots = new ArrayList<>();
         Collections.addAll(availableTimeSlots, 0, 1, 2, 3, 4, 5, 6, 7);
 
-        String date = request.getParameter("date"); // Date format: mm/dd/yyyy
         Map<String, Object> result = new HashMap<>();
         List<Integer> timeSlotIds = new ArrayList<>();
         List<String> finalts = new ArrayList<>();
@@ -74,12 +72,12 @@ public class AppointmentsService extends ServiceUtility {
         return ResponseEntity.ok(result);
     }
 
-    public ResponseEntity<?> createAppointments(HttpServletRequest request) throws JsonProcessingException {
-
-        String username = request.getParameter("username");
-        String doctorusername = request.getParameter("doctorusername");
-        String time = request.getParameter("time");
-        String datestring = request.getParameter("date");
+    public ResponseEntity<?> createAppointments(HttpServletRequest request) {
+        Map<String, String> postBody = getPostBodyInAMap(request);
+        String username = postBody.get(USERNAME);
+        String doctorusername = postBody.get("doctorusername");
+        String time = postBody.get("time");
+        String datestring = postBody.get("date");
 
         Date date = new Date();
         boolean isAppointmentCreated = false;
@@ -144,8 +142,9 @@ public class AppointmentsService extends ServiceUtility {
 
     public ResponseEntity<?> getAppointments(HttpServletRequest request, String userType) {
         // doing a sanity check when sending appointments to the user.
+        Map<String, String> postBody = getPostBodyInAMap(request);
+        String username = postBody.get(USERNAME);
 
-        String username = request.getParameter(USERNAME);
         Map<String, Object> result = new HashMap<>();
         List<AppointmentsDetails> appointmentsList = null;
         Date now = new Date();
@@ -177,7 +176,9 @@ public class AppointmentsService extends ServiceUtility {
     }
 
     public ResponseEntity<?> getPastAppointments(HttpServletRequest request, String userType) {
-        String username = request.getParameter(USERNAME);
+        Map<String, String> postBody = getPostBodyInAMap(request);
+        String username = postBody.get(USERNAME);
+
         Map<String, Object> result = new HashMap<>();
         List<AppointmentsDetails> appointmentsList = null;
 
@@ -203,8 +204,10 @@ public class AppointmentsService extends ServiceUtility {
         return ResponseEntity.ok(result);
     }
 
-    public ResponseEntity<?> cancelAppointments(HttpServletRequest request, String userType) throws JsonProcessingException {
-        String id = request.getParameter("id");
+    public ResponseEntity<?> cancelAppointments(HttpServletRequest request, String userType) {
+        Map<String, String> postBody = getPostBodyInAMap(request);
+        String id = postBody.get("id");
+
         boolean isAppointmentDeleted = false;
         Map<String, Object> result = new HashMap<>();
 
