@@ -97,13 +97,13 @@ public class ProfileService extends ServiceUtility {
         DoctorDetails doctorDetails = new DoctorDetails(username);
 
         if(section.equals("hospital")) {
-            doctorDetails.setmHospital(request.getParameter("hospital"));
-            doctorDetails.setmSpecialization(request.getParameter("specialization"));
-            doctorDetails.setmAddress(request.getParameter("address"));
+            doctorDetails.setHospital(request.getParameter("hospital"));
+            doctorDetails.setSpecialization(request.getParameter("specialization"));
+            doctorDetails.setAddress(request.getParameter("address"));
         }
 
         if(section.equals("aboutme")) {
-            doctorDetails.setmPersonalBio(request.getParameter("aboutme"));
+            doctorDetails.setPersonalBio(request.getParameter("aboutme"));
         }
 
         doctorRepository.save(doctorDetails);
@@ -118,8 +118,8 @@ public class ProfileService extends ServiceUtility {
         PatientDetails patientDetails = new PatientDetails(request.getParameter("username"));
 
         if(section.equals("personal")) {
-            patientDetails.setmAddress(request.getParameter("address"));
-            patientDetails.setmPhoneNumber(request.getParameter("phonenumber"));
+            patientDetails.setAddress(request.getParameter("address"));
+            patientDetails.setPhoneNumber(request.getParameter("phonenumber"));
             isProfileUpdated = true;
         }
 
@@ -160,8 +160,8 @@ public class ProfileService extends ServiceUtility {
 
         IPDetails ipDetails = new IPDetails(request.getParameter("username"));
 
-        ipDetails.setmAddress(request.getParameter("address"));
-        ipDetails.setmPhoneNumber(request.getParameter("phonenumber"));
+        ipDetails.setAddress(request.getParameter("address"));
+        ipDetails.setPhoneNumber(request.getParameter("phonenumber"));
         isProfileUpdated = true;
         ipRepository.save(ipDetails);
 

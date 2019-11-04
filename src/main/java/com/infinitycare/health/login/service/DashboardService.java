@@ -125,11 +125,11 @@ public class DashboardService extends ServiceUtility {
             newReview.put("rating", rating);
             newReview.put("review", review);
             reviews.add(newReview);
-            doctorDetails.setmReviews(reviews);
+            doctorDetails.setReviews(reviews);
 
             // updating the cumulative rating
-            if(doctorFromDB.get().mTotalRating == 0) { doctorDetails.setmTotalRating(rating); }
-            else { doctorDetails.setmTotalRating((doctorFromDB.get().mTotalRating * (reviews.size() - 1) + rating)/reviews.size()); }
+            if(doctorFromDB.get().mTotalRating == 0) { doctorDetails.setTotalRating(rating); }
+            else { doctorDetails.setTotalRating((doctorFromDB.get().mTotalRating * (reviews.size() - 1) + rating)/reviews.size()); }
 
             doctorRepository.save(doctorDetails);
             isReviewAdded = true;

@@ -57,7 +57,7 @@ public class LoginService extends ServiceUtility {
                 verifyCredentails = userQueriedFromDB.get().mPassword.equals(password);
             }
             if(verifyCredentails){
-                if(!userQueriedFromDB.get().mActive) { patientDetails.setmActive(true); }
+                if(!userQueriedFromDB.get().mActive) { patientDetails.setActive(true); }
                 isCredentialsAccurate = true;
                 patientDetails.setMFAToken(otp);
                 patientRepository.save(patientDetails);
@@ -71,7 +71,7 @@ public class LoginService extends ServiceUtility {
                 verifyCredentails = userQueriedFromDB.get().mPassword.equals(password);
             }
             if(verifyCredentails) {
-                if(!userQueriedFromDB.get().mActive) { doctorDetails.setmActive(true); }
+                if(!userQueriedFromDB.get().mActive) { doctorDetails.setActive(true); }
                 isCredentialsAccurate = true;
                 doctorDetails.setMFAToken(otp);
                 doctorRepository.save(doctorDetails);
@@ -85,7 +85,7 @@ public class LoginService extends ServiceUtility {
                 verifyCredentails = userQueriedFromDB.get().mPassword.equals(password);
             }
             if(verifyCredentails) {
-                if(!userQueriedFromDB.get().mActive) { ipDetails.setmActive(true); }
+                if(!userQueriedFromDB.get().mActive) { ipDetails.setActive(true); }
                 isCredentialsAccurate = true;
                 ipDetails.setMFAToken(otp);
                 ipRepository.save(ipDetails);

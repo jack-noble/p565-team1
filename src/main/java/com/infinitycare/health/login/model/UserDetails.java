@@ -18,12 +18,19 @@ public class UserDetails {
 
     public String getUserName() { return mUserName; }
     public String getPassword() { return mPassword; }
-    public void setmPassword(String mPassword) { this.mPassword = mPassword; }
-    public void setMFAToken(String mMFAToken) { this.mMFAToken = mMFAToken; }
+
     public String getMFAToken() { return mMFAToken; }
-    public void setmActive(boolean mActive) { this.mActive = mActive; }
     public boolean getmActive() { return mActive; }
 
-    public void setmPhoneNumber(String mPhoneNumber) { this.mPhoneNumber = mPhoneNumber; }
-    public void setmAddress(String mAddress) { this.mAddress = mAddress; }
+    public void setId(String id) { this.id = id; }
+    public void setUserName(String mUserName) { this.mUserName = mUserName; }
+    public void setPassword(String mPassword) { this.mPassword = mPassword; }
+    public void setEmail(String mEmail) { this.mEmail = mEmail; }
+    public void setFirstName(String mFirstName) { this.mFirstName = mFirstName; }
+    public void setLastName(String mLastName) { this.mLastName = mLastName; }
+    public void setActive(boolean mActive) { this.mActive = mActive; }
+
+    public void setMFAToken(String mMFAToken) { this.mMFAToken = mMFAToken; }
+    public void setPhoneNumber(String mPhoneNumber) { this.mPhoneNumber = mPhoneNumber; }
+    public void setAddress(String mAddress) { this.mAddress = mAddress; }
 }

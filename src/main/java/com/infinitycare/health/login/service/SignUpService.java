@@ -43,12 +43,21 @@ public class SignUpService extends ServiceUtility {
         Map<String, Object> result = new HashMap<>();
 
         Map<String, String> postBody = getPostBodyInAMap(request);
-        String username = postBody.get(USERNAME);
+        String username = postBody.get(EMAIL);
 
         if(userType.equals(PATIENT)) {
             PatientDetails patientDetails = new PatientDetails(username);
             if(!doesPatientAlreadyExist(patientDetails)){
+                patientDetails.setPassword(postBody.get(PASSWORD));
+                patientDetails.setEmail(postBody.get(EMAIL));
+                patientDetails.setFirstName(postBody.get(FIRSTNAME));
+                patientDetails.setLastName(postBody.get(LASTNAME));
+                patientDetails.setAddress(postBody.get(ADDRESS));
+                patientDetails.setDOB(postBody.get(DOB));
+                patientDetails.setPhoneNumber(postBody.get(PHONENUMBER));
+
                 patientDetails.setMFAToken(otp);
+
                 patientRepository.save(patientDetails);
                 isNewUser = true;
             }
@@ -57,7 +66,16 @@ public class SignUpService extends ServiceUtility {
         if (userType.equals(DOCTOR)) {
             DoctorDetails doctorDetails = new DoctorDetails(username);
             if(!doesDoctorAlreadyExist(doctorDetails)){
+                doctorDetails.setPassword(postBody.get(PASSWORD));
+                doctorDetails.setEmail(postBody.get(EMAIL));
+                doctorDetails.setFirstName(postBody.get(FIRSTNAME));
+                doctorDetails.setLastName(postBody.get(LASTNAME));
+                doctorDetails.setAddress(postBody.get(ADDRESS));
+                doctorDetails.setHospital(postBody.get(HOSPITAL));
+                doctorDetails.setSpecialization(SPECIALIZATION);
+
                 doctorDetails.setMFAToken(otp);
+
                 doctorRepository.save(doctorDetails);
                 isNewUser = true;
             }
@@ -66,7 +84,16 @@ public class SignUpService extends ServiceUtility {
         if(userType.equals(INSURANCE_PROVIDER)) {
             IPDetails ipDetails = new IPDetails(username);
             if(!doesIpAlreadyExist(ipDetails)){
+                ipDetails.setPassword(postBody.get(PASSWORD));
+                ipDetails.setEmail(postBody.get(EMAIL));
+                ipDetails.setFirstName(postBody.get(FIRSTNAME));
+                ipDetails.setLastName(postBody.get(LASTNAME));
+                ipDetails.setAddress(postBody.get(ADDRESS));
+                ipDetails.setCompany(postBody.get(COMPANY));
+                ipDetails.setPhoneNumber(postBody.get(PHONENUMBER));
+
                 ipDetails.setMFAToken(otp);
+
                 ipRepository.save(ipDetails);
                 isNewUser = true;
             }

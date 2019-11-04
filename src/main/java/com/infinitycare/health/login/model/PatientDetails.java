@@ -39,5 +39,6 @@ public class PatientDetails extends UserDetails {
     public void setmInsurancePlan(String mInsurancePlan) { this.mInsurancePlan = mInsurancePlan; }
     public void setmInsuranceProvider(String mInsuranceProvider) { this.mInsuranceProvider = mInsuranceProvider; }
     public void setmInsuranceCompany(String mInsuranceCompany) { this.mInsuranceCompany = mInsuranceCompany; }
+    public void setDOB(String dob) { this.mDOB = dob; }
 
 }

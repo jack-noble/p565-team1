@@ -16,7 +16,7 @@ public class DoctorDetails extends UserDetails {
     public String mHospital;
     public ArrayList mReviews;
     public String mDoctorURLInSearch;
-    
+
     public float mTotalRating;
 
     public DoctorDetails(String mUserName) {
@@ -44,9 +44,9 @@ public class DoctorDetails extends UserDetails {
     public void setTimeSlots(ArrayList ts) { this.mTimeSlots = ts; }
     public ArrayList getTimeSlots() {return this.mTimeSlots;}
 
-    public void setmSpecialization(String mSpecialization) { this.mSpecialization = mSpecialization; }
-    public void setmHospital(String mHospital) { this.mHospital = mHospital; }
-    public void setmPersonalBio(String mPersonalBio) { this.mPersonalBio = mPersonalBio; }
-    public void setmReviews(ArrayList mReviews) { this.mReviews = mReviews; }
-    public void setmTotalRating(float mTotalRating) { this.mTotalRating = mTotalRating; }
+    public void setSpecialization(String mSpecialization) { this.mSpecialization = mSpecialization; }
+    public void setHospital(String mHospital) { this.mHospital = mHospital; }
+    public void setPersonalBio(String mPersonalBio) { this.mPersonalBio = mPersonalBio; }
+    public void setReviews(ArrayList mReviews) { this.mReviews = mReviews; }
+    public void setTotalRating(float mTotalRating) { this.mTotalRating = mTotalRating; }
 }

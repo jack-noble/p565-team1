@@ -16,10 +16,30 @@ import java.util.stream.Collectors;
 public class ServiceUtility {
 
     public static final String EMAIL_ID = "emailID";
-    public static final String OTP = "otp";
-    public static final String SESSIONID = "sessionid";
+
+    //Common for all users
     public static final String USERNAME = "username";
     public static final String PASSWORD = "password";
+    public static final String EMAIL = "email";
+    public static final String FIRSTNAME = "firstName";
+    public static final String LASTNAME = "lastName";
+    public static final String ADDRESS = "address";
+
+    //Patient Details
+    public static final String DOB = "dob";
+
+    //Doctor details
+    public static final String HOSPITAL = "hospital";
+    public static final String SPECIALIZATION = "specialization";
+
+    //Insurance Provider details
+    public static final String PHONENUMBER = "phoneNumber";
+    public static final String COMPANY = "company";
+
+
+    public static final String OTP = "otp";
+    public static final String SESSIONID = "sessionid";
+
     public static final String PATIENT = "patient";
     public static final String DOCTOR = "doctor";
     public static final String INSURANCE_PROVIDER = "insurance";
