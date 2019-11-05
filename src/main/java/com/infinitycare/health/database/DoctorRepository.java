@@ -1,7 +1,6 @@
 package com.infinitycare.health.database;
 
 import com.infinitycare.health.login.model.DoctorDetails;
-import com.infinitycare.health.login.model.PatientDetails;
 import org.springframework.data.mongodb.repository.MongoRepository;
 import org.springframework.data.mongodb.repository.Query;
 import org.springframework.stereotype.Repository;
@@ -15,10 +14,10 @@ public interface DoctorRepository extends MongoRepository<DoctorDetails, String>
     List<DoctorDetails> findDoctorsWithSimilarUserName(String doctorName);
 
     @Query("{mFirstName: { $regex: ?0 }})")
-    List<PatientDetails> findDoctorsWithSimilarFirstName(String patientName);
+    List<DoctorDetails> findDoctorsWithSimilarFirstName(String patientName);
 
     @Query("{mLastName: { $regex: ?0 }})")
-    List<PatientDetails> findDoctorsWithSimilarLastName(String patientName);
+    List<DoctorDetails> findDoctorsWithSimilarLastName(String patientName);
 
     @Query("{mSpecialization: { $regex: ?0 }})")
     List<DoctorDetails> findDoctorsWithSimilarSpecializations(String specialization);

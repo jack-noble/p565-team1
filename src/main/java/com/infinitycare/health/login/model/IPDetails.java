@@ -1,6 +1,7 @@
 package com.infinitycare.health.login.model;
 
 import org.springframework.data.mongodb.core.mapping.Document;
+
 import java.util.ArrayList;
 
 @Document(collection = "IPDetails")
@@ -24,6 +25,16 @@ public class IPDetails extends UserDetails {
         mMFAToken = "";
         mIplans = new ArrayList();
         mPatients = new ArrayList();
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        return this.mUserName.equals(((IPDetails)o).getUserName());
+    }
+
+    @Override
+    public int hashCode() {
+        return this.mUserName.hashCode();
     }
 
     public void setmPatients (ArrayList mPatients) { this.mPatients = mPatients; }

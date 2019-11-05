@@ -33,6 +33,16 @@ public class PatientDetails extends UserDetails {
         mMFAToken = "";
     }
 
+    @Override
+    public boolean equals(Object o) {
+        return this.mUserName.equals(((PatientDetails)o).getUserName());
+    }
+
+    @Override
+    public int hashCode() {
+        return this.mUserName.hashCode();
+    }
+
     public void setmEmergencyContactName (String mEmergencyContactName) { this.mEmergencyContactName = mEmergencyContactName; }
     public void setmEmergencyContactNumber (String mEmergencyContactNumber) { this.mEmergencyContactNumber = mEmergencyContactNumber; }
     public void setmMedicalHistory (String mMedicalHistory) { this.mMedicalHistory = mMedicalHistory; }

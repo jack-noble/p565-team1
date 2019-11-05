@@ -3,6 +3,9 @@ package com.infinitycare.health.search;
 import com.infinitycare.health.database.DoctorRepository;
 import com.infinitycare.health.database.IpRepository;
 import com.infinitycare.health.database.PatientRepository;
+import com.infinitycare.health.login.model.DoctorDetails;
+import com.infinitycare.health.login.model.IPDetails;
+import com.infinitycare.health.login.model.PatientDetails;
 import com.infinitycare.health.login.model.ServiceUtility;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.MongoOperations;
@@ -32,43 +35,42 @@ public class SearchService extends ServiceUtility {
     public IpRepository ipRepository;
 
     public ResponseEntity<?> searchForUsers(HttpServletRequest request, String userType, String query) {
-        Set<Object> result = new HashSet<>();
-
         Map<String, String> postBody = getPostBodyInAMap(request);
         boolean isLocationSearchEnabled = Boolean.getBoolean(postBody.get(IS_LOCATION_ENABLED));
         boolean isSpecializationSearchEnabled = Boolean.getBoolean(postBody.get(IS_SPECIALIZATION_ENABLED));
 
         switch (userType) {
             case "patient": {
-                result.add(patientRepository.findByPatientsWithSimilarUserName(query));
-                result.add(patientRepository.findByPatientsWithSimilarFirstName(query));
-                result.add(patientRepository.findByPatientsWithSimilarLastName(query));
-                break;
+                Set<PatientDetails> details = new HashSet();
+                details.addAll(patientRepository.findByPatientsWithSimilarUserName(query));
+                details.addAll(patientRepository.findByPatientsWithSimilarFirstName(query));
+                details.addAll(patientRepository.findByPatientsWithSimilarLastName(query));
+                return ResponseEntity.ok(details);
             }
 
             case "doctor": {
+                Set<DoctorDetails> details = new HashSet();
                 if(isSpecializationSearchEnabled)
-                    result.add(doctorRepository.findDoctorsWithSimilarSpecializations(query));
+                    details.addAll(doctorRepository.findDoctorsWithSimilarSpecializations(query));
                 else {
-                    result.add(doctorRepository.findDoctorsWithSimilarUserName(query));
-                    result.add(doctorRepository.findDoctorsWithSimilarFirstName(query));
-                    result.add(doctorRepository.findDoctorsWithSimilarLastName(query));
+                    details.addAll(doctorRepository.findDoctorsWithSimilarUserName(query));
+                    details.addAll(doctorRepository.findDoctorsWithSimilarFirstName(query));
+                    details.addAll(doctorRepository.findDoctorsWithSimilarLastName(query));
                 }
-                break;
+                return ResponseEntity.ok(details);
             }
 
             case "insurance": {
-                result.add(ipRepository.findInsuranceProvidersWithSimilarUserName(query));
-                result.add(ipRepository.findInsuranceProvidersWithSimilarFirstName(query));
-                result.add(ipRepository.findInsuranceProvidersWithSimilarLastName(query));
-                break;
+                Set<IPDetails> details = new HashSet();
+                details.addAll(ipRepository.findInsuranceProvidersWithSimilarUserName(query));
+                details.addAll(ipRepository.findInsuranceProvidersWithSimilarFirstName(query));
+                details.addAll(ipRepository.findInsuranceProvidersWithSimilarLastName(query));
+                return ResponseEntity.ok(details);
             }
 
             default :
                 throw new RuntimeException("Wrong user type");
         }
-
-        return ResponseEntity.ok(result);
     }
 
 }

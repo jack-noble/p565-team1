@@ -21,7 +21,7 @@ public class DoctorDetails extends UserDetails {
 
     public DoctorDetails(String mUserName) {
         this.mUserName = mUserName;
-        this.mDoctorURLInSearch = ServiceUtility.FRONTEND_BASE_URL + "/patient/doctor/" + Base64.getEncoder().encodeToString(mUserName.getBytes());
+        this.mDoctorURLInSearch = "/patient/doctor/" + Base64.getEncoder().encodeToString(mUserName.getBytes());
         mEmail = "";
         id = Integer.toString(mUserName.hashCode());
         mPassword = "";
@@ -39,6 +39,16 @@ public class DoctorDetails extends UserDetails {
         mTimeSlots = new ArrayList<>();
         mReviews = new ArrayList();
         mTotalRating = 0;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        return this.mUserName.equals(((DoctorDetails)o).getUserName());
+    }
+
+    @Override
+    public int hashCode() {
+        return this.mUserName.hashCode();
     }
 
     public void setTimeSlots(ArrayList ts) { this.mTimeSlots = ts; }
