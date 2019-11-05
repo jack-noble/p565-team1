@@ -36,8 +36,8 @@ public class SearchService extends ServiceUtility {
 
     public ResponseEntity<?> searchForUsers(HttpServletRequest request, String userType, String query) {
         Map<String, String> postBody = getPostBodyInAMap(request);
-        boolean isLocationSearchEnabled = Boolean.getBoolean(postBody.get(IS_LOCATION_ENABLED));
-        boolean isSpecializationSearchEnabled = Boolean.getBoolean(postBody.get(IS_SPECIALIZATION_ENABLED));
+        //boolean isLocationSearchEnabled = Boolean.getBoolean(postBody.get(IS_LOCATION_ENABLED));
+        //boolean isSpecializationSearchEnabled = Boolean.getBoolean(postBody.get(IS_SPECIALIZATION_ENABLED));
 
         switch (userType) {
             case "patient": {
@@ -50,13 +50,18 @@ public class SearchService extends ServiceUtility {
 
             case "doctor": {
                 Set<DoctorDetails> details = new HashSet();
-                if(isSpecializationSearchEnabled)
-                    details.addAll(doctorRepository.findDoctorsWithSimilarSpecializations(query));
-                else {
-                    details.addAll(doctorRepository.findDoctorsWithSimilarUserName(query));
-                    details.addAll(doctorRepository.findDoctorsWithSimilarFirstName(query));
-                    details.addAll(doctorRepository.findDoctorsWithSimilarLastName(query));
+                String[] arr = query.split(" ");
+                for(String word : arr) {
+                    if(word.equals("in") || word.equals(("specialized")) || word.equals(("speciality"))) {
+                        details.addAll(doctorRepository.findDoctorsWithSimilarSpecializations(arr[arr.length - 1]));
+                        details.addAll(doctorRepository.findDoctorsWithSimilarLocations(arr[arr.length - 1]));
+                        return ResponseEntity.ok(details);
+                    }
                 }
+
+                details.addAll(doctorRepository.findDoctorsWithSimilarUserName(query));
+                details.addAll(doctorRepository.findDoctorsWithSimilarFirstName(query));
+                details.addAll(doctorRepository.findDoctorsWithSimilarLastName(query));
                 return ResponseEntity.ok(details);
             }
 

@@ -21,4 +21,7 @@ public interface DoctorRepository extends MongoRepository<DoctorDetails, String>
 
     @Query("{mSpecialization: { $regex: ?0 }})")
     List<DoctorDetails> findDoctorsWithSimilarSpecializations(String specialization);
+
+    @Query("{mAddress: { $regex: ?0 }})")
+    List<DoctorDetails> findDoctorsWithSimilarLocations(String specialization);
 }
