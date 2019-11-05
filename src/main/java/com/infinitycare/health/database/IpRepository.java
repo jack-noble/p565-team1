@@ -13,5 +13,12 @@ import java.util.List;
 public interface IpRepository extends MongoRepository<IPDetails, String> {
 
     @Query("{mUserName: { $regex: ?0 }})")
-    List<IpPlanDetails> findInsuranceProvidersWithSimilarName(String insuranceProvider);
+    List<IpPlanDetails> findInsuranceProvidersWithSimilarUserName(String insuranceProvider);
+
+    @Query("{mFirstName: { $regex: ?0 }})")
+    List<PatientDetails> findInsuranceProvidersWithSimilarFirstName(String patientName);
+
+    @Query("{mLastName: { $regex: ?0 }})")
+    List<PatientDetails> findInsuranceProvidersWithSimilarLastName(String patientName);
+
 }

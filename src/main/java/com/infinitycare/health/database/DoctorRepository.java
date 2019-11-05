@@ -12,7 +12,13 @@ import java.util.List;
 public interface DoctorRepository extends MongoRepository<DoctorDetails, String> {
 
     @Query("{mUserName: { $regex: ?0 }})")
-    List<DoctorDetails> findDoctorsWithSimilarName(String doctorName);
+    List<DoctorDetails> findDoctorsWithSimilarUserName(String doctorName);
+
+    @Query("{mFirstName: { $regex: ?0 }})")
+    List<PatientDetails> findDoctorsWithSimilarFirstName(String patientName);
+
+    @Query("{mLastName: { $regex: ?0 }})")
+    List<PatientDetails> findDoctorsWithSimilarLastName(String patientName);
 
     @Query("{mSpecialization: { $regex: ?0 }})")
     List<DoctorDetails> findDoctorsWithSimilarSpecializations(String specialization);

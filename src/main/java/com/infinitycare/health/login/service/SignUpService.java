@@ -48,7 +48,7 @@ public class SignUpService extends ServiceUtility {
         if(userType.equals(PATIENT)) {
             PatientDetails patientDetails = new PatientDetails(username);
             if(!doesPatientAlreadyExist(patientDetails)){
-                patientDetails.setPassword(postBody.get(PASSWORD));
+                patientDetails.setPassword(TextSecurer.encrypt(postBody.get(PASSWORD)));
                 patientDetails.setEmail(postBody.get(EMAIL));
                 patientDetails.setFirstName(postBody.get(FIRSTNAME));
                 patientDetails.setLastName(postBody.get(LASTNAME));
@@ -61,12 +61,10 @@ public class SignUpService extends ServiceUtility {
                 patientRepository.save(patientDetails);
                 isNewUser = true;
             }
-        }
-
-        if (userType.equals(DOCTOR)) {
+        } else if (userType.equals(DOCTOR)) {
             DoctorDetails doctorDetails = new DoctorDetails(username);
             if(!doesDoctorAlreadyExist(doctorDetails)){
-                doctorDetails.setPassword(postBody.get(PASSWORD));
+                doctorDetails.setPassword(TextSecurer.encrypt(postBody.get(PASSWORD)));
                 doctorDetails.setEmail(postBody.get(EMAIL));
                 doctorDetails.setFirstName(postBody.get(FIRSTNAME));
                 doctorDetails.setLastName(postBody.get(LASTNAME));
@@ -79,12 +77,10 @@ public class SignUpService extends ServiceUtility {
                 doctorRepository.save(doctorDetails);
                 isNewUser = true;
             }
-        }
-
-        if(userType.equals(INSURANCE_PROVIDER)) {
+        } else if(userType.equals(INSURANCE_PROVIDER)) {
             IPDetails ipDetails = new IPDetails(username);
             if(!doesIpAlreadyExist(ipDetails)){
-                ipDetails.setPassword(postBody.get(PASSWORD));
+                ipDetails.setPassword(TextSecurer.encrypt(postBody.get(PASSWORD)));
                 ipDetails.setEmail(postBody.get(EMAIL));
                 ipDetails.setFirstName(postBody.get(FIRSTNAME));
                 ipDetails.setLastName(postBody.get(LASTNAME));

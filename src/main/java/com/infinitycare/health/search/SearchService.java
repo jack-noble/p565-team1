@@ -40,20 +40,27 @@ public class SearchService extends ServiceUtility {
 
         switch (userType) {
             case "patient": {
-                result.add(patientRepository.findByPatientsWithSimilarName(query));
+                result.add(patientRepository.findByPatientsWithSimilarUserName(query));
+                result.add(patientRepository.findByPatientsWithSimilarFirstName(query));
+                result.add(patientRepository.findByPatientsWithSimilarLastName(query));
                 break;
             }
 
             case "doctor": {
                 if(isSpecializationSearchEnabled)
                     result.add(doctorRepository.findDoctorsWithSimilarSpecializations(query));
-                else
-                    result.add(doctorRepository.findDoctorsWithSimilarName(query));
+                else {
+                    result.add(doctorRepository.findDoctorsWithSimilarUserName(query));
+                    result.add(doctorRepository.findDoctorsWithSimilarFirstName(query));
+                    result.add(doctorRepository.findDoctorsWithSimilarLastName(query));
+                }
                 break;
             }
 
             case "insurance": {
-                result.add(ipRepository.findInsuranceProvidersWithSimilarName(query));
+                result.add(ipRepository.findInsuranceProvidersWithSimilarUserName(query));
+                result.add(ipRepository.findInsuranceProvidersWithSimilarFirstName(query));
+                result.add(ipRepository.findInsuranceProvidersWithSimilarLastName(query));
                 break;
             }
 
