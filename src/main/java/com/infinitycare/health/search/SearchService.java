@@ -52,7 +52,7 @@ public class SearchService extends ServiceUtility {
                 Set<DoctorDetails> details = new HashSet();
                 String[] arr = query.split(" ");
                 for(String word : arr) {
-                    if(word.equals("in") || word.equals(("specialized")) || word.equals(("speciality"))) {
+                    if(word.equalsIgnoreCase("in") || word.equalsIgnoreCase(("specialized")) || word.equalsIgnoreCase(("speciality"))) {
                         details.addAll(doctorRepository.findDoctorsWithSimilarSpecializations(arr[arr.length - 1]));
                         details.addAll(doctorRepository.findDoctorsWithSimilarLocations(arr[arr.length - 1]));
                         return ResponseEntity.ok(details);
