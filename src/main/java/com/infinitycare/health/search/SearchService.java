@@ -36,6 +36,7 @@ public class SearchService extends ServiceUtility {
 
     public ResponseEntity<?> searchForUsers(HttpServletRequest request, String userType, String query) {
         Map<String, String> postBody = getPostBodyInAMap(request);
+        query = query.trim();
         //boolean isLocationSearchEnabled = Boolean.getBoolean(postBody.get(IS_LOCATION_ENABLED));
         //boolean isSpecializationSearchEnabled = Boolean.getBoolean(postBody.get(IS_SPECIALIZATION_ENABLED));
 
