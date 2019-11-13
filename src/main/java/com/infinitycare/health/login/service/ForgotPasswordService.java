@@ -3,6 +3,7 @@ package com.infinitycare.health.login.service;
 import com.infinitycare.health.database.DoctorRepository;
 import com.infinitycare.health.database.IpRepository;
 import com.infinitycare.health.database.PatientRepository;
+import com.infinitycare.health.login.SendEmailSMTP;
 import com.infinitycare.health.login.model.DoctorDetails;
 import com.infinitycare.health.login.model.IPDetails;
 import com.infinitycare.health.login.model.PatientDetails;
@@ -39,6 +40,7 @@ public class ForgotPasswordService extends ServiceUtility {
 
     public ResponseEntity<?> setPassword(HttpServletRequest request, String userType) {
         boolean isPasswordChanged = false;
+
 
         Map<String, Object> result = new HashMap<>();
 
@@ -77,20 +79,42 @@ public class ForgotPasswordService extends ServiceUtility {
     public ResponseEntity<?> verifyUsername(HttpServletRequest request, String userType) {
         boolean isUserPresent = false;
         Map<String, Object> result = new HashMap<>();
+        String otp = SendEmailSMTP.generateRandomNumber(1000, 9999);
 
         String username = getPostBodyInAMap(request).get(EMAIL_ID);
 
         if(null == username) {
             result.put(IS_COOKIE_TAMPERED, "true");
         } else if(userType.equals(PATIENT)) {
-            isUserPresent = patientRepository.existsById(String.valueOf(username.hashCode()));
+            Optional<PatientDetails> patientDetails = patientRepository.findById(String.valueOf(username.hashCode()));
+            if(patientDetails.isPresent()) {
+                isUserPresent = true;
+                patientDetails.get().setMFAToken(otp);
+            }
+            patientRepository.save(patientDetails.get());
+
         } else if(userType.equals(DOCTOR)) {
-            isUserPresent = doctorRepository.existsById(String.valueOf(username.hashCode()));
+            Optional<DoctorDetails> doctorDetails = doctorRepository.findById(String.valueOf(username.hashCode()));
+            if(doctorDetails.isPresent()) {
+                isUserPresent = true;
+                doctorDetails.get().setMFAToken(otp);
+            }
+            doctorRepository.save(doctorDetails.get());
         } else if(userType.equals(INSURANCE_PROVIDER)) {
-            isUserPresent = ipRepository.existsById(String.valueOf(username.hashCode()));
+            Optional<IPDetails> ipDetails = ipRepository.findById(String.valueOf(username.hashCode()));
+            if(ipDetails.isPresent()) {
+                isUserPresent = true;
+                ipDetails.get().setMFAToken(otp);
+            }
+            ipRepository.save(ipDetails.get());
         }
 
         result.put(IS_USER_PRESENT, isUserPresent);
+
+        String emailBody = "";
+        emailBody += "<h1>" + "InfinityCare" + "</h1>\n\n" + "<h2> Please enter the OTP when prompted </h2>\n"
+                + "<h3>" + "OTP: " + otp + "</h3>\n";
+        SendEmailSMTP.sendFromGMail(new String[]{username}, "Login Authorization", emailBody);
 
         return ResponseEntity.ok(result);
     }
