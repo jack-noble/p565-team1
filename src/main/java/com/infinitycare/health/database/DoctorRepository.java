@@ -13,15 +13,15 @@ public interface DoctorRepository extends MongoRepository<DoctorDetails, String>
     @Query("{mUserName: { $regex: ?0 }})")
     List<DoctorDetails> findDoctorsWithSimilarUserName(String doctorName);
 
-    @Query("{mFirstName: { $regex: ?0 }})")
-    List<DoctorDetails> findDoctorsWithSimilarFirstName(String patientName);
+    @Query("{'mFirstName': {$regex : ?0, $options: 'i'}}")
+    List<DoctorDetails> findDoctorsWithSimilarFirstName(String firstName);
 
-    @Query("{mLastName: { $regex: ?0 }})")
-    List<DoctorDetails> findDoctorsWithSimilarLastName(String patientName);
+    @Query("{mLastName: { $regex: ?0, $options: 'i'}})")
+    List<DoctorDetails> findDoctorsWithSimilarLastName(String lastName);
 
-    @Query("{mSpecialization: { $regex: ?0 }})")
+    @Query("{mSpecialization: { $regex: ?0, $options: 'i'}})")
     List<DoctorDetails> findDoctorsWithSimilarSpecializations(String specialization);
 
-    @Query("{mAddress: { $regex: ?0 }})")
+    @Query("{mAddress: { $regex: ?0, $options: 'i'}})")
     List<DoctorDetails> findDoctorsWithSimilarLocations(String specialization);
 }
