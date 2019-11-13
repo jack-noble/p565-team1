@@ -10,7 +10,7 @@ import java.util.List;
 @Repository
 public interface DoctorRepository extends MongoRepository<DoctorDetails, String> {
 
-    @Query("{mUserName: { $regex: ?0 }})")
+    @Query("{mUserName: { $regex: ?0, $options: 'i' }})")
     List<DoctorDetails> findDoctorsWithSimilarUserName(String doctorName);
 
     @Query("{'mFirstName': {$regex : ?0, $options: 'i'}}")
