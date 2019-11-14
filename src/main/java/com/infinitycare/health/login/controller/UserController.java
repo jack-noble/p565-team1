@@ -62,8 +62,8 @@ public class UserController extends ServiceUtility {
     }
 
     @RequestMapping(value = "/{userType}/forgotpassword/email")
-    public ResponseEntity<?> verifyEmail(HttpServletRequest request, @PathVariable String userType) {
-        return this.forgotPasswordService.verifyUsername(request, userType);
+    public ResponseEntity<?> verifyEmail(HttpServletRequest request, HttpServletResponse response, @PathVariable String userType) {
+        return this.forgotPasswordService.verifyUsername(request, response, userType);
     }
 
     @RequestMapping(value = "/doctor/time/{doctorusername}")

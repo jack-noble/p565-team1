@@ -1,5 +1,6 @@
 package com.infinitycare.health.login.model;
 
+import com.infinitycare.health.login.SendEmailSMTP;
 import com.infinitycare.health.security.TextSecurer;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
@@ -108,6 +109,13 @@ public class ServiceUtility {
         //response.setHeader("Set-Cookie", SESSIONID + "=" + encryptedSessionId + "; Path=" + cookiePath + "; HttpOnly; SameSite=Lax");
 
         response.addCookie(cookie);
+    }
+
+    public void sendLoginOTP(String username, String otp) {
+        String emailBody = "";
+        emailBody += "<h1>" + "InfinityCare" + "</h1>\n\n" + "<h2> Please enter the OTP when prompted </h2>\n"
+                + "<h3>" + "OTP: " + otp + "</h3>\n";
+        SendEmailSMTP.sendFromGMail(new String[]{username}, "Login Authorization", emailBody);
     }
 
 }

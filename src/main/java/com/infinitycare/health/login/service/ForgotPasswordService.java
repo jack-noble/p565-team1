@@ -14,6 +14,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
@@ -41,12 +42,11 @@ public class ForgotPasswordService extends ServiceUtility {
     public ResponseEntity<?> setPassword(HttpServletRequest request, String userType) {
         boolean isPasswordChanged = false;
 
-
         Map<String, Object> result = new HashMap<>();
 
         Map<String, String> postBody = getPostBodyInAMap(request);
 
-        String username = postBody.get(USERNAME);
+        String username = getUsername(request);
         String password = TextSecurer.encrypt(postBody.get(PASSWORD));
 
         if(null == username) {
@@ -76,7 +76,7 @@ public class ForgotPasswordService extends ServiceUtility {
         return ResponseEntity.ok(result);
     }
 
-    public ResponseEntity<?> verifyUsername(HttpServletRequest request, String userType) {
+    public ResponseEntity<?> verifyUsername(HttpServletRequest request, HttpServletResponse response, String userType) {
         boolean isUserPresent = false;
         Map<String, Object> result = new HashMap<>();
         String otp = SendEmailSMTP.generateRandomNumber(1000, 9999);
@@ -90,55 +90,31 @@ public class ForgotPasswordService extends ServiceUtility {
             if(patientDetails.isPresent()) {
                 isUserPresent = true;
                 patientDetails.get().setMFAToken(otp);
+                patientRepository.save(patientDetails.get());
             }
-            patientRepository.save(patientDetails.get());
-
         } else if(userType.equals(DOCTOR)) {
             Optional<DoctorDetails> doctorDetails = doctorRepository.findById(String.valueOf(username.hashCode()));
             if(doctorDetails.isPresent()) {
                 isUserPresent = true;
                 doctorDetails.get().setMFAToken(otp);
+                doctorRepository.save(doctorDetails.get());
             }
-            doctorRepository.save(doctorDetails.get());
         } else if(userType.equals(INSURANCE_PROVIDER)) {
             Optional<IPDetails> ipDetails = ipRepository.findById(String.valueOf(username.hashCode()));
             if(ipDetails.isPresent()) {
                 isUserPresent = true;
                 ipDetails.get().setMFAToken(otp);
+                ipRepository.save(ipDetails.get());
             }
-            ipRepository.save(ipDetails.get());
         }
 
         result.put(IS_USER_PRESENT, isUserPresent);
 
-        String emailBody = "";
-        emailBody += "<h1>" + "InfinityCare" + "</h1>\n\n" + "<h2> Please enter the OTP when prompted </h2>\n"
-                + "<h3>" + "OTP: " + otp + "</h3>\n";
-        SendEmailSMTP.sendFromGMail(new String[]{username}, "Login Authorization", emailBody);
-
-        return ResponseEntity.ok(result);
-    }
-
-    public ResponseEntity<?> validateUser(HttpServletRequest request, String userType) {
-        String username = getUsername(request);
-
-        Map<String, Object> result = new HashMap<>();
-        boolean isValidUser = false;
-
-        if(userType.equals(PATIENT)) {
-            Optional<PatientDetails> userFromDB = patientRepository.findById(Integer.toString(username.hashCode()));
-            isValidUser = userFromDB.isPresent();
-        }
-        if(userType.equals(DOCTOR)) {
-            Optional<DoctorDetails> userFromDB = doctorRepository.findById(Integer.toString(username.hashCode()));
-            isValidUser = userFromDB.isPresent();
-        }
-        if(userType.equals(INSURANCE_PROVIDER)) {
-            Optional<IPDetails> userFromDB = ipRepository.findById(Integer.toString(username.hashCode()));
-            isValidUser = userFromDB.isPresent();
+        if(isUserPresent) {
+            setSessionId(request, response, TextSecurer.encrypt(username), userType, -1);
+            sendLoginOTP(username, otp);
         }
 
-        result.put("isValidUser", isValidUser);
         return ResponseEntity.ok(result);
     }
 
