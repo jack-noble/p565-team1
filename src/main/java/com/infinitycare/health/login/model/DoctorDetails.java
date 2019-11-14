@@ -59,4 +59,5 @@ public class DoctorDetails extends UserDetails {
     public void setPersonalBio(String mPersonalBio) { this.mPersonalBio = mPersonalBio; }
     public void setReviews(ArrayList mReviews) { this.mReviews = mReviews; }
     public void setTotalRating(float mTotalRating) { this.mTotalRating = mTotalRating; }
+    public void setEducation(String education) { this.mEducation = education; }
 }

@@ -7,6 +7,7 @@ import com.infinitycare.health.login.model.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
@@ -90,95 +91,111 @@ public class ProfileService extends ServiceUtility {
         return ResponseEntity.ok(result);
     }
 
-    public ResponseEntity<?> editDoctorProfile(HttpServletRequest request, String section) {
+    public ResponseEntity<?> updateDoctorProfile(HttpServletRequest request) {
         String username = getUsername(request);
 
         Map<String, Object> result = new HashMap<>();
-        boolean isProfileUpdated = false;
+        boolean isProfileUpdated = true;
 
+        Map<String, String> postBody = getPostBodyInAMap(request);
         Optional<DoctorDetails> userQueriedFromDB = doctorRepository.findById(Integer.toString(username.hashCode()));
+
+        if(!userQueriedFromDB.isPresent()){
+            result.put("userExists", false);
+            return ResponseEntity.ok(result);
+        }
+
         DoctorDetails doctorDetails = userQueriedFromDB.get();
 
-        if(section.equals("hospital")) {
-
-            doctorDetails.setHospital(getPostBodyInAMap(request).get("hospital"));
-            doctorDetails.setSpecialization(getPostBodyInAMap(request).get("specialization"));
-            doctorDetails.setAddress(getPostBodyInAMap(request).get("address"));
-            isProfileUpdated = true;
-        }
-
-        if(section.equals("aboutme")) {
-            doctorDetails.setPersonalBio(getPostBodyInAMap(request).get("aboutme"));
-            isProfileUpdated = true;
-        }
+        if(!StringUtils.isEmpty(postBody.get("address")))
+            doctorDetails.setAddress(postBody.get("address"));
+        if(!StringUtils.isEmpty(postBody.get("hospital")))
+            doctorDetails.setHospital(postBody.get("hospital"));
+        if(!StringUtils.isEmpty(postBody.get("specialization")))
+            doctorDetails.setSpecialization(postBody.get("specialization"));
+        if(!StringUtils.isEmpty(postBody.get("biosummary")))
+            doctorDetails.setPersonalBio(postBody.get("biosummary"));
+        if(!StringUtils.isEmpty(postBody.get("emailaddress")))
+            doctorDetails.setEmail(postBody.get("emailaddress"));
+        if(!StringUtils.isEmpty(postBody.get("education")))
+            doctorDetails.setEducation(postBody.get("education"));
 
         doctorRepository.save(doctorDetails);
         result.put("isProfileUpdated", isProfileUpdated);
         return ResponseEntity.ok(result);
     }
 
-    public ResponseEntity<?> editPatientProfile(HttpServletRequest request, String section) {
+    public ResponseEntity<?> updatePatientProfile(HttpServletRequest request) {
         String username = getUsername(request);
 
         Map<String, Object> result = new HashMap<>();
         boolean isProfileUpdated = false;
 
+        Map<String, String> postBody = getPostBodyInAMap(request);
+
         Optional<PatientDetails> userQueriedFromDB = patientRepository.findById(Integer.toString(username.hashCode()));
+
+        if(!userQueriedFromDB.isPresent()) {
+            result.put("userExists", false);
+            return ResponseEntity.ok(result);
+        }
         PatientDetails patientDetails = userQueriedFromDB.get();
 
-        if(section.equals("personal")) {
-            patientDetails.setAddress(getPostBodyInAMap(request).get("address"));
-            patientDetails.setPhoneNumber(getPostBodyInAMap(request).get("phonenumber"));
-            isProfileUpdated = true;
-        }
+        if(!StringUtils.isEmpty(postBody.get("emailaddress")))
+            patientDetails.setEmail(postBody.get("emailaddress"));
+        if(!StringUtils.isEmpty(postBody.get("address")))
+            patientDetails.setAddress(postBody.get("address"));
+        if(!StringUtils.isEmpty(postBody.get("phonenumber")))
+            patientDetails.setPhoneNumber(postBody.get("phonenumber"));
 
-        if(section.equals("insurance")) {
-            patientDetails.setmInsuranceCompany(getPostBodyInAMap(request).get("insurancecompany"));
-            patientDetails.setmInsurancePlan(getPostBodyInAMap(request).get("insuranceplan"));
-            patientDetails.setmInsuranceProvider(getPostBodyInAMap(request).get("insuranceprovider"));
-            Optional<IPDetails> ipFromDB = ipRepository.findById(Integer.toString(getPostBodyInAMap(request).get("insuranceprovider").hashCode()));
-            if(ipFromDB.isPresent()) {
-                IPDetails ipDetails = ipFromDB.get();
-                ArrayList patients = ipFromDB.get().mPatients;
-                patients.add(getPostBodyInAMap(request).get("username"));
-                ipDetails.setmPatients(patients);
-                ipRepository.save(ipDetails);
-            }
-            isProfileUpdated = true;
-        }
+//        patientDetails.setmInsuranceCompany(postBody.get("insurancecompany"));
+//        patientDetails.setmInsurancePlan(postBody.get("insuranceplan"));
+//        patientDetails.setmInsuranceProvider(postBody.get("insuranceprovider"));
+//        Optional<IPDetails> ipFromDB = ipRepository.findById(Integer.toString(postBody.get("insuranceprovider").hashCode()));
+//        if(ipFromDB.isPresent()) {
+//            IPDetails ipDetails = ipFromDB.get();
+//            ArrayList patients = ipFromDB.get().mPatients;
+//            patients.add(postBody.get("username"));
+//            ipDetails.setmPatients(patients);
+//            ipRepository.save(ipDetails);
+//        }
 
-        if(section.equals("emergencycontact")) {
-            patientDetails.setmEmergencyContactName(getPostBodyInAMap(request).get("emergencycontactname"));
-            patientDetails.setmEmergencyContactNumber(getPostBodyInAMap(request).get("emergencycontactnumber"));
-            isProfileUpdated = true;
-        }
-
-        if(section.equals("medicalhistory")) {
-            patientDetails.setmMedicalHistory(getPostBodyInAMap(request).get("medicalhistory"));
-            isProfileUpdated = true;
-        }
+        if(!StringUtils.isEmpty(postBody.get("emergencycontactname")))
+            patientDetails.setmEmergencyContactName(postBody.get("emergencycontactname"));
+        if(!StringUtils.isEmpty(postBody.get("emergencycontactnumber")))
+            patientDetails.setmEmergencyContactNumber(postBody.get("emergencycontactnumber"));
+        if(!StringUtils.isEmpty(postBody.get("medicalhistory")))
+            patientDetails.setmMedicalHistory(postBody.get("medicalhistory"));
 
         patientRepository.save(patientDetails);
         result.put("isProfileUpdated", isProfileUpdated);
         return ResponseEntity.ok(result);
     }
 
-    public ResponseEntity<?> editIpProfile(HttpServletRequest request) {
+    public ResponseEntity<?> updateIpProfile(HttpServletRequest request) {
         String username = getUsername(request);
 
         Map<String, Object> result = new HashMap<>();
         boolean isProfileUpdated = false;
 
+        Map<String, String> postBody = getPostBodyInAMap(request);
+
         Optional<IPDetails> userQueriedFromDB = ipRepository.findById(Integer.toString(username.hashCode()));
 
-        if(userQueriedFromDB.isPresent()) {
-            IPDetails ipDetails = userQueriedFromDB.get();
-            ipDetails.setAddress(getPostBodyInAMap(request).get("address"));
-            ipDetails.setPhoneNumber(getPostBodyInAMap(request).get("phonenumber"));
-            ipRepository.save(ipDetails);
-            isProfileUpdated = true;
+        if(!userQueriedFromDB.isPresent()) {
+            result.put("userExists", false);
+            return ResponseEntity.ok(result);
         }
 
+        IPDetails ipDetails = userQueriedFromDB.get();
+        if(!StringUtils.isEmpty(postBody.get("emailaddress")))
+            ipDetails.setEmail(postBody.get("emailaddress"));
+        if(!StringUtils.isEmpty(postBody.get("address")))
+            ipDetails.setAddress(postBody.get("address"));
+        if(!StringUtils.isEmpty(postBody.get("phonenumber")))
+            ipDetails.setPhoneNumber(postBody.get("phonenumber"));
+
+        ipRepository.save(ipDetails);
         result.put("isProfileUpdated", isProfileUpdated);
         return ResponseEntity.ok(result);
     }

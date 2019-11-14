@@ -138,19 +138,19 @@ public class UserController extends ServiceUtility {
         return this.dashboardService.editIplans(request, action);
     }
 
-    @RequestMapping(value = "/patient/editprofile/{section}")
-    public ResponseEntity<?> editPatientProfile(HttpServletRequest request, @PathVariable String section) {
-        return this.profileService.editPatientProfile(request, section);
+    @RequestMapping(value = "/patient/profile/update")
+    public ResponseEntity<?> updatePatientProfile(HttpServletRequest request) {
+        return this.profileService.updatePatientProfile(request);
     }
 
-    @RequestMapping(value = "/doctor/editprofile/{section}")
-    public ResponseEntity<?> editDoctorProfile(HttpServletRequest request, @PathVariable String section) {
-        return this.profileService.editDoctorProfile(request, section);
+    @RequestMapping(value = "/doctor/profile/update")
+    public ResponseEntity<?> updateDoctorProfile(HttpServletRequest request) {
+        return this.profileService.updateDoctorProfile(request);
     }
 
-    @RequestMapping(value = "/insurance/editprofile")
-    public ResponseEntity<?> editIpProfile(HttpServletRequest request) {
-        return this.profileService.editIpProfile(request);
+    @RequestMapping(value = "/insurance/profile/update")
+    public ResponseEntity<?> updateIpProfile(HttpServletRequest request) {
+        return this.profileService.updateIpProfile(request);
     }
 
     @RequestMapping(value = "/insurance/getpatients")
