@@ -97,7 +97,6 @@ public class DashboardService extends ServiceUtility {
     private List<IPDetails> getPatientsList(HttpServletRequest request) {
         String username = getUsername(request);
 
-        Map<String, Object> result = new HashMap<>();
         ArrayList finalpatients = new ArrayList();
 
         Optional<IPDetails> ipFromDB = ipRepository.findById(Integer.toString(username.hashCode()));
@@ -111,6 +110,7 @@ public class DashboardService extends ServiceUtility {
                 if(patientFromDB.isPresent()) {
                     patient.put("username", o);
                     patient.put("name", patientFromDB.get().mFirstName + " " + patientFromDB.get().mLastName);
+                    patient.put("currentplan", patientFromDB.get().mInsurancePlan);
                 }
                 finalpatients.add(patient);
             }
