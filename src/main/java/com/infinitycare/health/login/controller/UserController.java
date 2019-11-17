@@ -93,8 +93,13 @@ public class UserController extends ServiceUtility {
     }
 
     @RequestMapping(value = "/{userType}/search")
-    public ResponseEntity<?> searchForUsers(HttpServletRequest request, @PathVariable String userType, @RequestParam("query") String userName) {
-        return searchService.searchForUsers(request, userType, userName);
+    public ResponseEntity<?> searchForUsers(@PathVariable String userType, @RequestParam("query") String userName) {
+        return searchService.searchForUsers(userType, userName);
+    }
+
+    @RequestMapping(value = "/{userType}/search/locations")
+    public ResponseEntity<?> getLocationsOfQueriesUsers(@PathVariable String userType, @RequestParam("query") String userName) {
+        return searchService.getLocations(userType, userName);
     }
 
     @RequestMapping(value = "/{userType}/signout")

@@ -14,6 +14,7 @@ public class UserDetails {
     public boolean mActive;
     public String mMFAToken;
     public String mPhoneNumber;
+
     public String mAddress;
 
     public String getUserName() { return mUserName; }
@@ -33,4 +34,5 @@ public class UserDetails {
     public void setMFAToken(String mMFAToken) { this.mMFAToken = mMFAToken; }
     public void setPhoneNumber(String mPhoneNumber) { this.mPhoneNumber = mPhoneNumber; }
     public void setAddress(String mAddress) { this.mAddress = mAddress; }
+    public String getAddress() { return mAddress; }
 }

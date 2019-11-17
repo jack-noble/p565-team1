@@ -12,15 +12,13 @@ import org.springframework.data.mongodb.core.MongoOperations;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
-import javax.servlet.http.HttpServletRequest;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 @Service
 public class SearchService extends ServiceUtility {
 
-    public static final String IS_LOCATION_ENABLED = "isLocationEnabled";
-    public static final String IS_SPECIALIZATION_ENABLED = "isSpecializationEnabled";
     @Autowired
     MongoOperations mongoOperations;
 
@@ -33,21 +31,21 @@ public class SearchService extends ServiceUtility {
     @Autowired
     public IpRepository ipRepository;
 
-    public ResponseEntity<?> searchForUsers(HttpServletRequest request, String userType, String query) {
+    public ResponseEntity<?> searchForUsers(String userType, String query) {
         query = query.trim();
         //boolean isLocationSearchEnabled = Boolean.getBoolean(postBody.get(IS_LOCATION_ENABLED));
         //boolean isSpecializationSearchEnabled = Boolean.getBoolean(postBody.get(IS_SPECIALIZATION_ENABLED));
 
         switch (userType) {
             case "patient": {
-                Set<PatientDetails> details = new HashSet();
+                Set<PatientDetails> details = new HashSet<>();
                 details.addAll(patientRepository.findByPatientsWithSimilarFirstName(query));
                 details.addAll(patientRepository.findByPatientsWithSimilarLastName(query));
                 return ResponseEntity.ok(details);
             }
 
             case "doctor": {
-                Set<DoctorDetails> details = new HashSet();
+                Set<DoctorDetails> details = new HashSet<>();
                 String[] arr = query.split(" ");
                 for(String word : arr) {
                     if(word.equalsIgnoreCase("in") || word.equalsIgnoreCase(("specialized")) || word.equalsIgnoreCase(("speciality"))) {
@@ -63,10 +61,50 @@ public class SearchService extends ServiceUtility {
             }
 
             case "insurance": {
-                Set<IPDetails> details = new HashSet();
+                Set<IPDetails> details = new HashSet<>();
                 details.addAll(ipRepository.findInsuranceProvidersWithSimilarFirstName(query));
                 details.addAll(ipRepository.findInsuranceProvidersWithSimilarLastName(query));
                 return ResponseEntity.ok(details);
+            }
+
+            default :
+                throw new RuntimeException("Wrong user type");
+        }
+    }
+
+    public ResponseEntity<?> getLocations(String userType, String query) {
+        query = query.trim();
+
+        switch (userType) {
+            case "patient": {
+                Set<String> details = new HashSet<>();
+                patientRepository.findByPatientsWithSimilarFirstName(query).forEach(patient -> details.add(patient.getAddress()));
+                patientRepository.findByPatientsWithSimilarLastName(query).forEach(patient -> details.add(patient.getAddress()));
+                return ResponseEntity.ok(details.stream().filter(address -> !address.equals("")).collect(Collectors.toSet()));
+            }
+
+            case "doctor": {
+                Set<String> details = new HashSet<>();
+                details.add("Indianapolis");
+                String[] arr = query.split(" ");
+                for(String word : arr) {
+                    if(word.equalsIgnoreCase("in") || word.equalsIgnoreCase(("specialized")) || word.equalsIgnoreCase(("speciality"))) {
+                        doctorRepository.findDoctorsWithSimilarSpecializations(arr[arr.length - 1]).forEach(doctor -> details.add(doctor.getAddress()));
+                        doctorRepository.findDoctorsWithSimilarLocations(arr[arr.length - 1]).forEach(doctor -> details.add(doctor.getAddress()));
+                        return ResponseEntity.ok(details);
+                    }
+                }
+
+                doctorRepository.findDoctorsWithSimilarFirstName(query).forEach(doctor -> details.add(doctor.getAddress()));
+                doctorRepository.findDoctorsWithSimilarLastName(query).forEach(doctor -> details.add(doctor.getAddress()));
+                return ResponseEntity.ok(details.stream().filter(address -> !address.equals("")).collect(Collectors.toSet()));
+            }
+
+            case "insurance": {
+                Set<String> details = new HashSet<>();
+                ipRepository.findInsuranceProvidersWithSimilarFirstName(query).forEach(doctor -> details.add(doctor.getAddress()));
+                ipRepository.findInsuranceProvidersWithSimilarLastName(query).forEach(doctor -> details.add(doctor.getAddress()));
+                return ResponseEntity.ok(details.stream().filter(address -> !address.equals("")).collect(Collectors.toSet()));
             }
 
             default :
