@@ -85,7 +85,6 @@ public class SearchService extends ServiceUtility {
 
             case "doctor": {
                 Set<String> details = new HashSet<>();
-                details.add("Indianapolis");
                 String[] arr = query.split(" ");
                 for(String word : arr) {
                     if(word.equalsIgnoreCase("in") || word.equalsIgnoreCase(("specialized")) || word.equalsIgnoreCase(("speciality"))) {
