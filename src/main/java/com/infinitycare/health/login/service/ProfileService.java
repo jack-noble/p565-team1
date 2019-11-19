@@ -54,6 +54,10 @@ public class ProfileService extends ServiceUtility {
                 result.put("emergencycontactname", userQueriedFromDB.get().mEmergencyContactName);
                 result.put("emergencycontactnumber", userQueriedFromDB.get().mEmergencyContactNumber);
                 result.put("medicalhistory", userQueriedFromDB.get().mMedicalHistory);
+                result.put("bloodType", userQueriedFromDB.get().getBloodType());
+                result.put("allergies", userQueriedFromDB.get().getAllergies());
+                result.put("currentMedications", userQueriedFromDB.get().getCurrentMedications());
+                result.put("vaccinations", userQueriedFromDB.get().getVaccinations());
 
                 Optional<IPDetails> ipFromDB = ipRepository.findById(Integer.toString(userQueriedFromDB.get().mInsuranceProvider.hashCode()));
                 ipFromDB.ifPresent(ipDetails -> result.put("insuranceprovidername", (ipDetails.mFirstName + " " + ipDetails.mLastName)));
@@ -166,6 +170,15 @@ public class ProfileService extends ServiceUtility {
             patientDetails.setmEmergencyContactNumber(postBody.get("emergencycontactnumber"));
         if(!StringUtils.isEmpty(postBody.get("medicalhistory")))
             patientDetails.setmMedicalHistory(postBody.get("medicalhistory"));
+
+        if(!StringUtils.isEmpty(postBody.get("bloodType")))
+            patientDetails.setBloodType(postBody.get("bloodType"));
+        if(!StringUtils.isEmpty(postBody.get("allergies")))
+            patientDetails.setAllergies(postBody.get("allergies"));
+        if(!StringUtils.isEmpty(postBody.get("currentMedications")))
+            patientDetails.setCurrentMedications(postBody.get("currentMedications"));
+        if(!StringUtils.isEmpty(postBody.get("vaccinations")))
+            patientDetails.setVaccinations(postBody.get("vaccinations"));
 
         patientRepository.save(patientDetails);
         result.put("isProfileUpdated", isProfileUpdated);

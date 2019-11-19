@@ -6,12 +6,20 @@ import org.springframework.data.mongodb.core.mapping.Document;
 public class PatientDetails extends UserDetails {
 
     public String mDOB;
-    public String mEmergencyContactName;
-    public String mEmergencyContactNumber;
     public String mInsurancePlan;
     public String mInsuranceProvider;
     public String mInsuranceCompany;
+
+    private String mBloodType;
+    private String mAllergies;
+    private String mCurrentMedications;
+    private String mVaccinations;
+
     public String mMedicalHistory;
+
+    public String mEmergencyContactName;
+    public String mEmergencyContactNumber;
+
 
     public PatientDetails(String mUserName) {
         this.mUserName = mUserName;
@@ -31,6 +39,11 @@ public class PatientDetails extends UserDetails {
         mMedicalHistory = "";
         mActive = false;
         mMFAToken = "";
+        mBloodType = "";
+        mAllergies = "";
+        mCurrentMedications = "";
+        mVaccinations = "";
+
     }
 
     @Override
@@ -51,4 +64,35 @@ public class PatientDetails extends UserDetails {
     public void setmInsuranceCompany(String mInsuranceCompany) { this.mInsuranceCompany = mInsuranceCompany; }
     public void setDOB(String dob) { this.mDOB = dob; }
 
+    public String getBloodType() {
+        return mBloodType;
+    }
+
+    public void setBloodType(String mBloodType) {
+        this.mBloodType = mBloodType;
+    }
+
+    public String getAllergies() {
+        return mAllergies;
+    }
+
+    public void setAllergies(String mAllergies) {
+        this.mAllergies = mAllergies;
+    }
+
+    public String getCurrentMedications() {
+        return mCurrentMedications;
+    }
+
+    public void setCurrentMedications(String mCurrentMedications) {
+        this.mCurrentMedications = mCurrentMedications;
+    }
+
+    public String getVaccinations() {
+        return mVaccinations;
+    }
+
+    public void setVaccinations(String mVaccinations) {
+        this.mVaccinations = mVaccinations;
+    }
 }
