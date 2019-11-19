@@ -12,6 +12,7 @@ import com.infinitycare.health.security.TextSecurer;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -44,6 +45,9 @@ public class SignUpService extends ServiceUtility {
 
         Map<String, String> postBody = getPostBodyInAMap(request);
         String username = postBody.get(EMAIL);
+        if(StringUtils.isEmpty(username)) {
+            username = postBody.get(USERNAME);
+        }
 
         if(userType.equals(PATIENT)) {
             PatientDetails patientDetails = new PatientDetails(username);
@@ -95,7 +99,10 @@ public class SignUpService extends ServiceUtility {
             }
         }
 
-        if(isNewUser) { SendEmailSMTP.sendFromGMail(new String[]{username}, "Please enter the OTP in the signup screen", otp); isOtpSent = true;}
+        if(isNewUser) {
+            sendLoginOTP(username, otp);
+            isOtpSent = true;
+        }
         result.put(IS_NEW_USER, isNewUser);
         result.put(IS_OTP_SENT, isOtpSent);
 
