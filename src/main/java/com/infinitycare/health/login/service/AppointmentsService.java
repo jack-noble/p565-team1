@@ -205,12 +205,14 @@ public class AppointmentsService extends ServiceUtility {
         results.put("CurrentAppointments", appointmentsList);
         List<AppointmentsDetails> appointmentsDetails = getPastAppointmentsAsList(request, userType);
 
-        for(AppointmentsDetails appointment: appointmentsList) {
-            appointment.setDisplayTime(get12HrTime(Integer.valueOf(appointment.getDisplayTime())));
-        }
-        for(AppointmentsDetails appointment: appointmentsDetails) {
-            appointment.setDisplayTime(get12HrTime(Integer.valueOf(appointment.getDisplayTime())));
-        }
+//        for(AppointmentsDetails appointment: appointmentsList) {
+//            System.out.println(appointment.mDisplayTime);
+//            appointment.setDisplayTime(get12HrTime(Integer.valueOf(appointment.getDisplayTime())));
+//        }
+//        for(AppointmentsDetails appointment: appointmentsDetails) {
+//            System.out.println(appointment.mDisplayTime);
+//            appointment.setDisplayTime(get12HrTime(Integer.valueOf(appointment.getDisplayTime())));
+//        }
         if (appointmentsDetails == null || appointmentsDetails.isEmpty()) {
             results.put("PastAppointments", new ArrayList<AppointmentsDetails>());
         } else {
