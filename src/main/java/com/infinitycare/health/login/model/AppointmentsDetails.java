@@ -58,4 +58,12 @@ public class AppointmentsDetails{
     public Date getDate() {
         return this.mDate;
     }
+
+    public void setDisplayTime(String mDisplayTime) {
+        this.mDisplayTime = mDisplayTime;
+    }
+
+    public String getDisplayTime() {
+        return this.mDisplayTime;
+    }
 }

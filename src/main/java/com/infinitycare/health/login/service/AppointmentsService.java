@@ -8,6 +8,7 @@ import com.infinitycare.health.login.model.AppointmentsDetails;
 import com.infinitycare.health.login.model.ServiceUtility;
 import com.infinitycare.health.login.model.DoctorDetails;
 import com.infinitycare.health.login.model.PatientDetails;
+import com.infinitycare.health.security.TextSecurer;
 import com.mongodb.BasicDBObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -40,7 +41,7 @@ public class AppointmentsService extends ServiceUtility {
 
     public ResponseEntity<?> getTimeSlots(HttpServletRequest request, String doctorusername) {
         Map<String, String> postBody = getPostBodyInAMap(request);
-        String date = postBody.get("date"); // Date format: mm/dd/yyyy
+        String date = getProperParsedDate(postBody.get("date")); // Date format: mm/dd/yyyy
 
         // 0:9, 1:10, 2:11, 3:12, 4:1, 5:2, 6:3, 7:4.
         List<Integer> availableTimeSlots = new ArrayList<>();
@@ -58,13 +59,14 @@ public class AppointmentsService extends ServiceUtility {
                 BasicDBObject ts = new BasicDBObject((LinkedHashMap) timeSlot);
                 if (ts.get("date").equals(date)) {
                     timeSlotIds = (List<Integer>) ts.get("ts");
+                    break;
                 }
             }
 
             if (timeSlotIds == null && timeSlotIds.isEmpty()) { timeSlotIds = availableTimeSlots; }
             else {
                 for (Integer availableTimeSlot : availableTimeSlots) {
-                    if (!timeSlotIds.contains(availableTimeSlot)) { finalts.add((9 + availableTimeSlot) + ":00"); }
+                    if (!timeSlotIds.contains(availableTimeSlot)) { finalts.add(get12HrTime(availableTimeSlot)); }
                 }
             }
         }
@@ -73,12 +75,31 @@ public class AppointmentsService extends ServiceUtility {
         return ResponseEntity.ok(result);
     }
 
+    private String get12HrTime(Integer availableTimeSlot) {
+        if(availableTimeSlot > 3) {
+            return (availableTimeSlot - 3) + ":00 PM";
+        } else if(availableTimeSlot == 3) {
+            return "12:00 PM";
+        }
+        return (9 + availableTimeSlot) + ":00 AM";
+    }
+
+    private String getProperParsedDate(String date) {
+        String[] arr = date.split("/");
+        StringBuilder newDate = new StringBuilder();
+        for(int i = 0; i < arr.length; i++) {
+            newDate.append(arr[i].length() == 1 ? "0" + arr[i] : arr[i]).append("/");
+        }
+
+        return newDate.substring(0, newDate.length() - 1);
+    }
+
     public ResponseEntity<?> createAppointments(HttpServletRequest request) {
         String username = getUsername(request);
         Map<String, String> postBody = getPostBodyInAMap(request);
-        String doctorusername = postBody.get("doctorusername");
+        String doctorusername = new String(Base64.getDecoder().decode(postBody.get("doctorusername")));
         String time = postBody.get("time");
-        String datestring = postBody.get("date");
+        String datestring = getProperParsedDate(postBody.get("date"));
 
         Date date = new Date();
         boolean isAppointmentCreated = false;
@@ -90,7 +111,7 @@ public class AppointmentsService extends ServiceUtility {
         try { date = inFormat.parse(datestring); }
         catch ( ParseException e ) { e.printStackTrace(); }
 
-        date.setHours(Integer.parseInt(time.split(":")[0]));
+        date.setHours(getTimeSlotToStoreInDB(time));
 
         Optional<DoctorDetails> doctorQueriedFromDB = doctorRepository.findById(Integer.toString(doctorusername.hashCode()));
         Optional<PatientDetails> patientQueriedFromDB = patientRepository.findById(Integer.toString(username.hashCode()));
@@ -141,6 +162,15 @@ public class AppointmentsService extends ServiceUtility {
         return ResponseEntity.ok(result);
     }
 
+    private Integer getTimeSlotToStoreInDB(String aTime) {
+        boolean isAM = aTime.substring(aTime.length() - 3).equalsIgnoreCase("AM");
+        int time = Integer.valueOf(aTime.split(":")[0]);
+        if(isAM) {
+            return time - 9;
+        }
+        return time + 3;
+    }
+
     public ResponseEntity<?> getAppointments(HttpServletRequest request, String userType) {
         // doing a sanity check when sending appointments to the user.
         Map<String, Object> results = new HashMap();
@@ -174,6 +204,13 @@ public class AppointmentsService extends ServiceUtility {
 
         results.put("CurrentAppointments", appointmentsList);
         List<AppointmentsDetails> appointmentsDetails = getPastAppointmentsAsList(request, userType);
+
+        for(AppointmentsDetails appointment: appointmentsList) {
+            appointment.setDisplayTime(get12HrTime(Integer.valueOf(appointment.getDisplayTime())));
+        }
+        for(AppointmentsDetails appointment: appointmentsDetails) {
+            appointment.setDisplayTime(get12HrTime(Integer.valueOf(appointment.getDisplayTime())));
+        }
         if (appointmentsDetails == null || appointmentsDetails.isEmpty()) {
             results.put("PastAppointments", new ArrayList<AppointmentsDetails>());
         } else {
