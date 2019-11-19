@@ -111,7 +111,7 @@ public class AppointmentsService extends ServiceUtility {
         try { date = inFormat.parse(datestring); }
         catch ( ParseException e ) { e.printStackTrace(); }
 
-        date.setHours(getTimeSlotToStoreInDB(time));
+        date.setHours(getTimeSlotToStoreInDB(time) + 9);
 
         Optional<DoctorDetails> doctorQueriedFromDB = doctorRepository.findById(Integer.toString(doctorusername.hashCode()));
         Optional<PatientDetails> patientQueriedFromDB = patientRepository.findById(Integer.toString(username.hashCode()));
@@ -163,11 +163,16 @@ public class AppointmentsService extends ServiceUtility {
     }
 
     private Integer getTimeSlotToStoreInDB(String aTime) {
-        boolean isAM = aTime.substring(aTime.length() - 3).equalsIgnoreCase("AM");
+        boolean isAM = aTime.substring(aTime.length() - 2).equalsIgnoreCase("AM");
         int time = Integer.valueOf(aTime.split(":")[0]);
         if(isAM) {
             return time - 9;
         }
+
+        if(time == 12) {
+            return 3;
+        }
+
         return time + 3;
     }
 
@@ -203,18 +208,18 @@ public class AppointmentsService extends ServiceUtility {
         }
 
         results.put("CurrentAppointments", appointmentsList);
-        List<AppointmentsDetails> appointmentsDetails = getPastAppointmentsAsList(request, userType);
+        List<AppointmentsDetails> pastAppointments = getPastAppointmentsAsList(request, userType);
 
         for(AppointmentsDetails appointment: appointmentsList) {
             appointment.setDisplayTime(get12HrTime(Integer.valueOf(appointment.getDisplayTime())));
         }
-        for(AppointmentsDetails appointment: appointmentsDetails) {
+        for(AppointmentsDetails appointment: pastAppointments) {
             appointment.setDisplayTime(get12HrTime(Integer.valueOf(appointment.getDisplayTime())));
         }
-        if (appointmentsDetails == null || appointmentsDetails.isEmpty()) {
+        if (pastAppointments.isEmpty()) {
             results.put("PastAppointments", new ArrayList<AppointmentsDetails>());
         } else {
-            results.put("PastAppointments", appointmentsDetails);
+            results.put("PastAppointments", pastAppointments);
         }
 
         return ResponseEntity.ok(results);
