@@ -37,7 +37,7 @@ public class AppointmentsDetails{
         this.mHospital = mHospital;
         this.mLocation = mLocation;
         this.mDate = mDate;
-        this.mDisplayDate = new SimpleDateFormat("dd/MM/yyyy").format(mDate);
+        this.mDisplayDate = new SimpleDateFormat("EEE, d MMM yyyy").format(mDate);
         this.mDisplayTime = String.valueOf(mDate.getHours() - 9);
         this.mPatientName = mPatientName;
         this.mDoctorName = mDoctorName;
