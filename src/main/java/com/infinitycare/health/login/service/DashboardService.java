@@ -63,8 +63,9 @@ public class DashboardService extends ServiceUtility {
 
         boolean isIplansUpdated = false;
 
-        IpPlanDetails ipPlanDetails = new IpPlanDetails(getPostBodyInAMap(request).get("name"), getPostBodyInAMap(request).get("provider"),
-                                                        getPostBodyInAMap(request).get("price"), getPostBodyInAMap(request).get("details"));
+        Map<String, String> postBody = getPostBodyInAMap(request);
+        IpPlanDetails ipPlanDetails = new IpPlanDetails(postBody.get("name"), postBody.get("provider"),
+                                                        postBody.get("price"), postBody.get("details"));
 
         Optional<IPDetails> userQueriedFromDB = ipRepository.findById(Integer.toString(username.hashCode()));
         if(userQueriedFromDB.isPresent()) {
