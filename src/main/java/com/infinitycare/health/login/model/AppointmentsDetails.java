@@ -66,4 +66,12 @@ public class AppointmentsDetails{
     public String getDisplayTime() {
         return this.mDisplayTime;
     }
+
+    public void formatDisplayDate(Date date) {
+        mDisplayDate = new SimpleDateFormat("EEE, d MMM yyyy").format(date);
+    }
+
+    public String getDisplayDate() {
+        return mDisplayDate;
+    }
 }
