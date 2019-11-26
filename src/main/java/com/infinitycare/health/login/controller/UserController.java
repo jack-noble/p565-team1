@@ -163,9 +163,10 @@ public class UserController extends ServiceUtility {
         return this.dashboardService.getPatientsListForIp(request);
     }
 
-    @RequestMapping(value = "/patient/doctor/addreviews")
-    public ResponseEntity addReviews(HttpServletRequest request) {
-        return this.dashboardService.addReviewsForDoctor(request);
+    @RequestMapping(value = "/patient/doctor/{doctorId}/addreviews")
+    public ResponseEntity addReviews(HttpServletRequest request, @PathVariable String doctorId) {
+        doctorId = new String(Base64.getDecoder().decode(doctorId));
+        return this.dashboardService.addReviewsForDoctor(request, doctorId);
     }
 
 }

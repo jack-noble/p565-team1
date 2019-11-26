@@ -119,10 +119,10 @@ public class DashboardService extends ServiceUtility {
         return finalpatients;
     }
 
-    public ResponseEntity<?> addReviewsForDoctor(HttpServletRequest request) {
-        String doctorusername = getUsername(request);
-        String review = getPostBodyInAMap(request).get("review");
-        int rating = Integer.parseInt(getPostBodyInAMap(request).get("rating"));
+    public ResponseEntity<?> addReviewsForDoctor(HttpServletRequest request, String doctorusername) {
+        Map<String, String> postBody = getPostBodyInAMap(request);
+        String review = postBody.get("review");
+        int rating = Integer.parseInt(postBody.get("rating"));
 
         Map<String, Object> result = new HashMap<>();
         boolean isReviewAdded = false;
