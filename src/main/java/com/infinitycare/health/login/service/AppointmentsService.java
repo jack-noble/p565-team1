@@ -300,6 +300,11 @@ public class AppointmentsService extends ServiceUtility {
         if(userType.equals(PATIENT) || userType.equals(DOCTOR)) {
             Optional<AppointmentsDetails> appt = appointmentsRepository.findById(id);
             if(appt.isPresent()) {
+                DateFormat dateFormatter = new SimpleDateFormat( "MM/dd/yyyy");
+                String datestring = dateFormatter.format(appt.get().getDate());
+                Integer timeSlot = Integer.parseInt(appt.get().getDisplayTime());
+
+                updateDeletedTimeSlotForDoctor(appt.get().getDoctorUsername(), datestring, timeSlot);
                 appointmentsRepository.deleteById(id);
                 isAppointmentDeleted = true;
 
@@ -313,5 +318,21 @@ public class AppointmentsService extends ServiceUtility {
 
         result.put("isAppointmentDeleted", isAppointmentDeleted);
         return ResponseEntity.ok(result);
+    }
+
+    private void updateDeletedTimeSlotForDoctor(String doctorUserName, String datestring, Integer timeSlot) {
+        Optional<DoctorDetails> doctorQueriedFromDB = doctorRepository.findById(Integer.toString(doctorUserName.hashCode()));
+        ArrayList timeSlots = doctorQueriedFromDB.get().getTimeSlots();
+
+        for(Object slot : timeSlots) {
+            BasicDBObject ts = new BasicDBObject((LinkedHashMap) slot);
+            if (ts.get("date").equals(datestring)) {
+                List<Integer> timeSlotIds = (List<Integer>) ts.get("ts");
+                timeSlotIds.removeIf(e -> e.equals(timeSlot));
+                ((LinkedHashMap) slot).replace("ts", timeSlotIds);
+                doctorRepository.save(doctorQueriedFromDB.get());
+                break;
+            }
+        }
     }
 }

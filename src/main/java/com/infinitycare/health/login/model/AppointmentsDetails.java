@@ -74,4 +74,8 @@ public class AppointmentsDetails{
     public String getDisplayDate() {
         return mDisplayDate;
     }
+
+    public String getDoctorUsername() {
+        return mDoctorUsername;
+    }
 }

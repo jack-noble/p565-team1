@@ -38,9 +38,9 @@ public class ProfileService extends ServiceUtility {
 
         Map<String, Object> result = new HashMap<>();
 
-        if(userType.equals(PATIENT)) {
+        if (userType.equals(PATIENT)) {
             Optional<PatientDetails> userQueriedFromDB = patientRepository.findById(Integer.toString(username.hashCode()));
-            if(userQueriedFromDB.isPresent()) {
+            if (userQueriedFromDB.isPresent()) {
                 result.put("username", username);
                 result.put("email", userQueriedFromDB.get().mEmail);
                 result.put("firstname", userQueriedFromDB.get().mFirstName);
@@ -64,9 +64,9 @@ public class ProfileService extends ServiceUtility {
             }
         }
 
-        if(userType.equals(DOCTOR)) {
+        if (userType.equals(DOCTOR)) {
             Optional<DoctorDetails> userQueriedFromDB = doctorRepository.findById(Integer.toString(username.hashCode()));
-            if(userQueriedFromDB.isPresent()) {
+            if (userQueriedFromDB.isPresent()) {
                 result.put("username", username);
                 result.put("email", userQueriedFromDB.get().mEmail);
                 result.put("firstname", userQueriedFromDB.get().mFirstName);
@@ -79,9 +79,9 @@ public class ProfileService extends ServiceUtility {
             }
         }
 
-        if(userType.equals(INSURANCE_PROVIDER)) {
+        if (userType.equals(INSURANCE_PROVIDER)) {
             Optional<IPDetails> userQueriedFromDB = ipRepository.findById(Integer.toString(username.hashCode()));
-            if(userQueriedFromDB.isPresent()) {
+            if (userQueriedFromDB.isPresent()) {
                 result.put("username", username);
                 result.put("email", userQueriedFromDB.get().mEmail);
                 result.put("firstname", userQueriedFromDB.get().mFirstName);
@@ -104,24 +104,24 @@ public class ProfileService extends ServiceUtility {
         Map<String, String> postBody = getPostBodyInAMap(request);
         Optional<DoctorDetails> userQueriedFromDB = doctorRepository.findById(Integer.toString(username.hashCode()));
 
-        if(!userQueriedFromDB.isPresent()){
+        if (!userQueriedFromDB.isPresent()) {
             result.put("userExists", false);
             return ResponseEntity.ok(result);
         }
 
         DoctorDetails doctorDetails = userQueriedFromDB.get();
 
-        if(!StringUtils.isEmpty(postBody.get("address")))
+        if (!StringUtils.isEmpty(postBody.get("address")))
             doctorDetails.setAddress(postBody.get("address"));
-        if(!StringUtils.isEmpty(postBody.get("hospital")))
+        if (!StringUtils.isEmpty(postBody.get("hospital")))
             doctorDetails.setHospital(postBody.get("hospital"));
-        if(!StringUtils.isEmpty(postBody.get("specialization")))
+        if (!StringUtils.isEmpty(postBody.get("specialization")))
             doctorDetails.setSpecialization(postBody.get("specialization"));
-        if(!StringUtils.isEmpty(postBody.get("biosummary")))
+        if (!StringUtils.isEmpty(postBody.get("biosummary")))
             doctorDetails.setPersonalBio(postBody.get("biosummary"));
-        if(!StringUtils.isEmpty(postBody.get("emailaddress")))
+        if (!StringUtils.isEmpty(postBody.get("emailaddress")))
             doctorDetails.setEmail(postBody.get("emailaddress"));
-        if(!StringUtils.isEmpty(postBody.get("education")))
+        if (!StringUtils.isEmpty(postBody.get("education")))
             doctorDetails.setEducation(postBody.get("education"));
 
         doctorRepository.save(doctorDetails);
@@ -139,45 +139,33 @@ public class ProfileService extends ServiceUtility {
 
         Optional<PatientDetails> userQueriedFromDB = patientRepository.findById(Integer.toString(username.hashCode()));
 
-        if(!userQueriedFromDB.isPresent()) {
+        if (!userQueriedFromDB.isPresent()) {
             result.put("userExists", false);
             return ResponseEntity.ok(result);
         }
         PatientDetails patientDetails = userQueriedFromDB.get();
 
-        if(!StringUtils.isEmpty(postBody.get("emailaddress")))
+        if (!StringUtils.isEmpty(postBody.get("emailaddress")))
             patientDetails.setEmail(postBody.get("emailaddress"));
-        if(!StringUtils.isEmpty(postBody.get("address")))
+        if (!StringUtils.isEmpty(postBody.get("address")))
             patientDetails.setAddress(postBody.get("address"));
-        if(!StringUtils.isEmpty(postBody.get("phonenumber")))
+        if (!StringUtils.isEmpty(postBody.get("phonenumber")))
             patientDetails.setPhoneNumber(postBody.get("phonenumber"));
 
-//        patientDetails.setmInsuranceCompany(postBody.get("insurancecompany"));
-//        patientDetails.setmInsurancePlan(postBody.get("insuranceplan"));
-//        patientDetails.setmInsuranceProvider(postBody.get("insuranceprovider"));
-//        Optional<IPDetails> ipFromDB = ipRepository.findById(Integer.toString(postBody.get("insuranceprovider").hashCode()));
-//        if(ipFromDB.isPresent()) {
-//            IPDetails ipDetails = ipFromDB.get();
-//            ArrayList patients = ipFromDB.get().mPatients;
-//            patients.add(postBody.get("username"));
-//            ipDetails.setmPatients(patients);
-//            ipRepository.save(ipDetails);
-//        }
-
-        if(!StringUtils.isEmpty(postBody.get("emergencycontactname")))
+        if (!StringUtils.isEmpty(postBody.get("emergencycontactname")))
             patientDetails.setmEmergencyContactName(postBody.get("emergencycontactname"));
-        if(!StringUtils.isEmpty(postBody.get("emergencycontactnumber")))
+        if (!StringUtils.isEmpty(postBody.get("emergencycontactnumber")))
             patientDetails.setmEmergencyContactNumber(postBody.get("emergencycontactnumber"));
-        if(!StringUtils.isEmpty(postBody.get("medicalhistory")))
+        if (!StringUtils.isEmpty(postBody.get("medicalhistory")))
             patientDetails.setmMedicalHistory(postBody.get("medicalhistory"));
 
-        if(!StringUtils.isEmpty(postBody.get("bloodType")))
+        if (!StringUtils.isEmpty(postBody.get("bloodType")))
             patientDetails.setBloodType(postBody.get("bloodType"));
-        if(!StringUtils.isEmpty(postBody.get("allergies")))
+        if (!StringUtils.isEmpty(postBody.get("allergies")))
             patientDetails.setAllergies(postBody.get("allergies"));
-        if(!StringUtils.isEmpty(postBody.get("currentMedications")))
+        if (!StringUtils.isEmpty(postBody.get("currentMedications")))
             patientDetails.setCurrentMedications(postBody.get("currentMedications"));
-        if(!StringUtils.isEmpty(postBody.get("vaccinations")))
+        if (!StringUtils.isEmpty(postBody.get("vaccinations")))
             patientDetails.setVaccinations(postBody.get("vaccinations"));
 
         patientRepository.save(patientDetails);
@@ -195,17 +183,17 @@ public class ProfileService extends ServiceUtility {
 
         Optional<IPDetails> userQueriedFromDB = ipRepository.findById(Integer.toString(username.hashCode()));
 
-        if(!userQueriedFromDB.isPresent()) {
+        if (!userQueriedFromDB.isPresent()) {
             result.put("userExists", false);
             return ResponseEntity.ok(result);
         }
 
         IPDetails ipDetails = userQueriedFromDB.get();
-        if(!StringUtils.isEmpty(postBody.get("emailaddress")))
+        if (!StringUtils.isEmpty(postBody.get("emailaddress")))
             ipDetails.setEmail(postBody.get("emailaddress"));
-        if(!StringUtils.isEmpty(postBody.get("address")))
+        if (!StringUtils.isEmpty(postBody.get("address")))
             ipDetails.setAddress(postBody.get("address"));
-        if(!StringUtils.isEmpty(postBody.get("phonenumber")))
+        if (!StringUtils.isEmpty(postBody.get("phonenumber")))
             ipDetails.setPhoneNumber(postBody.get("phonenumber"));
 
         ipRepository.save(ipDetails);
@@ -217,7 +205,7 @@ public class ProfileService extends ServiceUtility {
         Map<String, Object> result = new HashMap<>();
 
         Optional<DoctorDetails> doctorQueriedFromDB = doctorRepository.findById(Integer.toString(doctorusername.hashCode()));
-        if(doctorQueriedFromDB.isPresent()) {
+        if (doctorQueriedFromDB.isPresent()) {
             result.put("name", doctorQueriedFromDB.get().mFirstName + " " + doctorQueriedFromDB.get().mLastName);
             result.put("phonenumber", doctorQueriedFromDB.get().mPhoneNumber);
             result.put("hospital", doctorQueriedFromDB.get().mHospital);
@@ -236,7 +224,7 @@ public class ProfileService extends ServiceUtility {
         Map<String, Object> result = new HashMap<>();
 
         Optional<PatientDetails> patientQueriedFromDB = patientRepository.findById(Integer.toString(patientusername.hashCode()));
-        if(patientQueriedFromDB.isPresent()) {
+        if (patientQueriedFromDB.isPresent()) {
             result.put("name", patientQueriedFromDB.get().mFirstName + " " + patientQueriedFromDB.get().mLastName);
             result.put("address", patientQueriedFromDB.get().mAddress);
             result.put("phonenumber", patientQueriedFromDB.get().mPhoneNumber);
@@ -254,7 +242,7 @@ public class ProfileService extends ServiceUtility {
         Map<String, Object> result = new HashMap<>();
 
         Optional<IPDetails> ipFromDB = ipRepository.findById(Integer.toString(ipusername.hashCode()));
-        if(ipFromDB.isPresent()) {
+        if (ipFromDB.isPresent()) {
             result.put("name", ipFromDB.get().mFirstName + " " + ipFromDB.get().mLastName);
             result.put("company", ipFromDB.get().mCompany);
             result.put("address", ipFromDB.get().mAddress);
