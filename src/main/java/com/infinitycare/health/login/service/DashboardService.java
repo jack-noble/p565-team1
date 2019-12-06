@@ -39,15 +39,19 @@ public class DashboardService extends ServiceUtility {
         String username = getUsername(request);
 
         ArrayList iplans = new ArrayList();
-        List<Optional<IpPlanDetails>> iPlans = new ArrayList<>();
+        List<IpPlanDetails> iPlans = new ArrayList<>();
         Map<String, Object> result = new HashMap<>();
 
         Optional<IPDetails> userQueriedFromDB = ipRepository.findById(Integer.toString(username.hashCode()));
-        if(userQueriedFromDB.isPresent()) { iplans = userQueriedFromDB.get().mIplans; }
+        if(userQueriedFromDB.isPresent()) {
+            iplans = userQueriedFromDB.get().mIplans;
+        }
 
         for (Object iplan : iplans) {
             Optional<IpPlanDetails> planFromDB = ipPlanRepository.findById(Integer.toString(iplan.hashCode()));
-            if (planFromDB.isPresent()) { iPlans.add(planFromDB); }
+            if (planFromDB.isPresent()) {
+                iPlans.add(planFromDB.get());
+            }
         }
 
         result.put("IPlans", iPlans);
@@ -61,30 +65,32 @@ public class DashboardService extends ServiceUtility {
         Map<String, Object> result = new HashMap<>();
         ArrayList iplans = new ArrayList();
 
-        boolean isIplansUpdated = false;
-
         Map<String, String> postBody = getPostBodyInAMap(request);
-        IpPlanDetails ipPlanDetails = new IpPlanDetails(postBody.get("name"), postBody.get("provider"),
-                                                        postBody.get("price"), postBody.get("details"));
 
         Optional<IPDetails> userQueriedFromDB = ipRepository.findById(Integer.toString(username.hashCode()));
         if(userQueriedFromDB.isPresent()) {
+            IpPlanDetails ipPlanDetails = new IpPlanDetails(postBody.get("name"), userQueriedFromDB.get().getCompany());
+            ipPlanDetails.setPremium(postBody.get("premium"));
+            ipPlanDetails.setDeductible(postBody.get("deductible"));
+            ipPlanDetails.setCoPayment(postBody.get("copayment"));
+            ipPlanDetails.setAnnualOutOfPocketLimit(postBody.get("outofpocketlimit"));
+            ipPlanDetails.setLevel(postBody.get("level"));
+
             IPDetails ipDetails = userQueriedFromDB.get();
             iplans = userQueriedFromDB.get().mIplans;
             if(action.equals("add")) {
                 ipPlanRepository.save(ipPlanDetails);
                 iplans.add(ipPlanDetails.mName);
-                isIplansUpdated = true;
+                result.put("planName", "Added " + ipPlanDetails.mName);
             }
             if(action.equals("delete")) {
                 iplans.remove(ipPlanDetails.mName);
-                isIplansUpdated = true;
+                result.put("planName", "Deleted " + ipPlanDetails.mName);
             }
             ipDetails.setmIplans(iplans);
             ipRepository.save(ipDetails);
         }
 
-        result.put("isIplansUpdated", isIplansUpdated);
         return ResponseEntity.ok(result);
     }
 

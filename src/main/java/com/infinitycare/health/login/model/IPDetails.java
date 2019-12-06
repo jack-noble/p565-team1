@@ -41,4 +41,8 @@ public class IPDetails extends UserDetails {
     public void setmIplans(ArrayList mIplans) { this.mIplans = mIplans; }
 
     public void setCompany(String company) { this.mCompany = company; };
+
+    public String getCompany() {
+        return mCompany;
+    }
 }
