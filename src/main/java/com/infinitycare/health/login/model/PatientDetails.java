@@ -118,4 +118,8 @@ public class PatientDetails extends UserDetails {
     public void setRecommendationWeight(int mRecommendationWeight) {
         this.mRecommendationWeight = mRecommendationWeight;
     }
+
+    public String getInsurancePlan() {
+        return mInsurancePlan;
+    }
 }

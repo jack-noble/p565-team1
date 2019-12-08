@@ -1,6 +1,7 @@
 package com.infinitycare.health.login.service;
 
 import com.infinitycare.health.database.DoctorRepository;
+import com.infinitycare.health.database.IpPlanRepository;
 import com.infinitycare.health.database.IpRepository;
 import com.infinitycare.health.database.PatientRepository;
 import com.infinitycare.health.login.model.*;
@@ -10,10 +11,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
 import javax.servlet.http.HttpServletRequest;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 
 @Service
 public class ProfileService extends ServiceUtility {
@@ -27,10 +25,14 @@ public class ProfileService extends ServiceUtility {
     @Autowired
     public DoctorRepository doctorRepository;
 
-    public ProfileService(PatientRepository patientRepository, IpRepository ipRepository, DoctorRepository doctorRepository) {
+    @Autowired
+    public IpPlanRepository ipPlanRepository;
+
+    public ProfileService(PatientRepository patientRepository, IpRepository ipRepository, DoctorRepository doctorRepository, IpPlanRepository ipPlanRepository) {
         this.patientRepository = patientRepository;
         this.ipRepository = ipRepository;
         this.doctorRepository = doctorRepository;
+        this.ipPlanRepository = ipPlanRepository;
     }
 
     public ResponseEntity<?> getProfile(HttpServletRequest request, String userType) {
@@ -58,6 +60,14 @@ public class ProfileService extends ServiceUtility {
                 result.put("allergies", userQueriedFromDB.get().getAllergies());
                 result.put("currentMedications", userQueriedFromDB.get().getCurrentMedications());
                 result.put("vaccinations", userQueriedFromDB.get().getVaccinations());
+
+                Optional<IpPlanDetails> insuranceProvider = ipPlanRepository.findById(Integer.toString(userQueriedFromDB.get().getInsurancePlan().hashCode()));
+                if(insuranceProvider.isPresent()) {
+                    result.put("premium", insuranceProvider.get().getPremium());
+                    result.put("deductible", insuranceProvider.get().getDeductible());
+                    result.put("copayment", insuranceProvider.get().getCoPayment());
+                    result.put("outofpocketlimit", insuranceProvider.get().getAnnualOutOfPocketLimit());
+                }
 
                 Optional<IPDetails> ipFromDB = ipRepository.findById(Integer.toString(userQueriedFromDB.get().mInsuranceProvider.hashCode()));
                 ipFromDB.ifPresent(ipDetails -> result.put("insuranceprovidername", (ipDetails.mFirstName + " " + ipDetails.mLastName)));
