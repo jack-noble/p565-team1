@@ -3,6 +3,7 @@ package com.infinitycare.health.login.model;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 import java.util.ArrayList;
+import java.util.List;
 
 @Document(collection = "IPDetails")
 public class IPDetails extends UserDetails {
@@ -44,5 +45,9 @@ public class IPDetails extends UserDetails {
 
     public String getCompany() {
         return mCompany;
+    }
+
+    public List<String> getIpPlans() {
+        return mIplans;
     }
 }

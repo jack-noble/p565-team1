@@ -1,9 +1,11 @@
 package com.infinitycare.health.login.model;
 
+import com.infinitycare.health.login.SendEmailSMTP;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 import java.util.ArrayList;
 import java.util.Base64;
+import java.util.Random;
 
 @Document(collection = "DoctorDetails")
 public class DoctorDetails extends UserDetails {
@@ -18,6 +20,7 @@ public class DoctorDetails extends UserDetails {
     public String mDoctorURLInSearch;
 
     public float mTotalRating;
+    private Integer mConsultationFee;
 
     public DoctorDetails(String mUserName) {
         this.mUserName = mUserName;
@@ -39,6 +42,8 @@ public class DoctorDetails extends UserDetails {
         mTimeSlots = new ArrayList<>();
         mReviews = new ArrayList();
         mTotalRating = 0;
+        // If there is no value available in the DB, we just randomly generate a value
+        mConsultationFee = Integer.parseInt(SendEmailSMTP.generateRandomNumber(400, 1500));
     }
 
     @Override
@@ -60,4 +65,13 @@ public class DoctorDetails extends UserDetails {
     public void setReviews(ArrayList mReviews) { this.mReviews = mReviews; }
     public void setTotalRating(float mTotalRating) { this.mTotalRating = mTotalRating; }
     public void setEducation(String education) { this.mEducation = education; }
+
+    public void setConsultationFee(int consultationFee) {
+        this.mConsultationFee = consultationFee;
+    }
+
+    public int getConsultationFee() {
+        return this.mConsultationFee;
+    }
+
 }

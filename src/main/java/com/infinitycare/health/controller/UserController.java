@@ -1,7 +1,8 @@
-package com.infinitycare.health.login.controller;
+package com.infinitycare.health.controller;
 
 import com.infinitycare.health.login.model.ServiceUtility;
 import com.infinitycare.health.login.service.*;
+import com.infinitycare.health.recommendations.RecommendationsService;
 import com.infinitycare.health.search.SearchService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -25,11 +26,12 @@ public class UserController extends ServiceUtility {
     SearchService searchService;
     ProfileService profileService;
     SignOutService signOutService;
+    RecommendationsService recommendationsService;
 
     @Inject
     public UserController(LoginService loginService, SignUpService signupservice, OtpService otpservice, ForgotPasswordService forgotPasswordService,
                           AppointmentsService appointmentsService, ProfileService profileService, SearchService searchService, DashboardService dashboardService,
-                          SignOutService signOutService){
+                          SignOutService signOutService, RecommendationsService recommendationsService){
         this.loginService = loginService;
         this.signupservice = signupservice;
         this.otpservice = otpservice;
@@ -39,6 +41,7 @@ public class UserController extends ServiceUtility {
         this.profileService = profileService;
         this.searchService = searchService;
         this.signOutService = signOutService;
+        this.recommendationsService = recommendationsService;
     }
 
     @RequestMapping(value = "/{userType}/login", method = {RequestMethod.POST, RequestMethod.GET})
@@ -161,6 +164,27 @@ public class UserController extends ServiceUtility {
     @RequestMapping(value = "/insurance/getpatients")
     public ResponseEntity<?> getPatients(HttpServletRequest request) {
         return this.dashboardService.getPatientsListForIp(request);
+    }
+
+    @RequestMapping(value = "/patient/survey")
+    public ResponseEntity<?> saveRecommendationWeights(HttpServletRequest request) {
+        return this.recommendationsService.saveRecommendationWeights(request);
+    }
+
+    @RequestMapping(value = "/patient/survey/results")
+    public ResponseEntity<?> getRecommendations(HttpServletRequest request) {
+        return this.recommendationsService.getRecommendations(request);
+    }
+
+    @RequestMapping(value = "/patient/insuranceplan")
+    public ResponseEntity<?> updateInsurancePlanOfPatient(HttpServletRequest request) {
+        return this.recommendationsService.updateInsurancePlanOfThePatient(request);
+    }
+
+    @RequestMapping(value = "/patient/insuranceplan/{planName}")
+    public ResponseEntity<?> getInsurancePlanDetails(@PathVariable String planName) {
+        planName = new String(Base64.getDecoder().decode(planName));
+        return this.recommendationsService.getPlanDetails(planName);
     }
 
     @RequestMapping(value = "/patient/doctor/{doctorId}/addreviews")

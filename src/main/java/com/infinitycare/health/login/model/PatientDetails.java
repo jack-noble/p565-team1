@@ -20,6 +20,12 @@ public class PatientDetails extends UserDetails {
     public String mEmergencyContactName;
     public String mEmergencyContactNumber;
 
+    /**
+     * The range of the income value spans from 0 to 3, 0 being the least and 3 being the highest
+     */
+    private int mIncomeValue;
+    private int mRecommendationWeight;
+
 
     public PatientDetails(String mUserName) {
         this.mUserName = mUserName;
@@ -43,7 +49,8 @@ public class PatientDetails extends UserDetails {
         mAllergies = "";
         mCurrentMedications = "";
         mVaccinations = "";
-
+        mIncomeValue = 0;
+        mRecommendationWeight = 0;
     }
 
     @Override
@@ -59,9 +66,9 @@ public class PatientDetails extends UserDetails {
     public void setmEmergencyContactName (String mEmergencyContactName) { this.mEmergencyContactName = mEmergencyContactName; }
     public void setmEmergencyContactNumber (String mEmergencyContactNumber) { this.mEmergencyContactNumber = mEmergencyContactNumber; }
     public void setmMedicalHistory (String mMedicalHistory) { this.mMedicalHistory = mMedicalHistory; }
-    public void setmInsurancePlan(String mInsurancePlan) { this.mInsurancePlan = mInsurancePlan; }
-    public void setmInsuranceProvider(String mInsuranceProvider) { this.mInsuranceProvider = mInsuranceProvider; }
-    public void setmInsuranceCompany(String mInsuranceCompany) { this.mInsuranceCompany = mInsuranceCompany; }
+    public void setInsurancePlan(String mInsurancePlan) { this.mInsurancePlan = mInsurancePlan; }
+    public void setInsuranceProvider(String mInsuranceProvider) { this.mInsuranceProvider = mInsuranceProvider; }
+    public void setInsuranceCompany(String mInsuranceCompany) { this.mInsuranceCompany = mInsuranceCompany; }
     public void setDOB(String dob) { this.mDOB = dob; }
 
     public String getBloodType() {
@@ -94,5 +101,21 @@ public class PatientDetails extends UserDetails {
 
     public void setVaccinations(String mVaccinations) {
         this.mVaccinations = mVaccinations;
+    }
+
+    public int getIncomeValue() {
+        return this.mIncomeValue;
+    }
+
+    public void setIncomeValue(int incomeValue) {
+        this.mIncomeValue = incomeValue;
+    }
+
+    public int getRecommendationWeight() {
+        return mRecommendationWeight;
+    }
+
+    public void setRecommendationWeight(int mRecommendationWeight) {
+        this.mRecommendationWeight = mRecommendationWeight;
     }
 }

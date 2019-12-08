@@ -70,6 +70,7 @@ public class SignUpService extends ServiceUtility {
             if(!doesDoctorAlreadyExist(doctorDetails)){
                 doctorDetails.setPassword(TextSecurer.encrypt(postBody.get(PASSWORD)));
                 doctorDetails.setEmail(postBody.get(EMAIL));
+                doctorDetails.setConsultationFee(Integer.parseInt(postBody.get(CONSULTATION_FEE)));
                 doctorDetails.setFirstName(postBody.get(FIRSTNAME));
                 doctorDetails.setLastName(postBody.get(LASTNAME));
                 doctorDetails.setAddress(postBody.get(ADDRESS));

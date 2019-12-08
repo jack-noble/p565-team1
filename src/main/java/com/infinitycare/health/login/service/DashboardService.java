@@ -79,6 +79,8 @@ public class DashboardService extends ServiceUtility {
             IPDetails ipDetails = userQueriedFromDB.get();
             iplans = userQueriedFromDB.get().mIplans;
             if(action.equals("add")) {
+                ipPlanDetails.setFirstNameOfCreator(ipDetails.mFirstName);
+                ipPlanDetails.setLastNameOfCreator(ipDetails.mLastName);
                 ipPlanRepository.save(ipPlanDetails);
                 iplans.add(ipPlanDetails.mName);
                 result.put("planName", "Added " + ipPlanDetails.mName);

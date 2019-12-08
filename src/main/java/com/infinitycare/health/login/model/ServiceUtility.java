@@ -53,6 +53,7 @@ public class ServiceUtility {
     public static final String IS_PASSWORD_CHANGED = "isPasswordChanged";
 
     public static final String FRONTEND_BASE_URL = "https://infinity-care.herokuapp.com";
+    public static final String CONSULTATION_FEE = "consultationFee";
     //public static final String FRONTEND_BASE_URL = "http://localhost:3000";
 
     public Map<String, String> getPostBodyInAMap(HttpServletRequest request) {
