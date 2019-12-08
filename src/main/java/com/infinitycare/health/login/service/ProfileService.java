@@ -51,7 +51,6 @@ public class ProfileService extends ServiceUtility {
                 result.put("phonenumber", userQueriedFromDB.get().mPhoneNumber);
                 result.put("dob", userQueriedFromDB.get().mDOB);
                 result.put("insurancecompany", userQueriedFromDB.get().mInsuranceCompany);
-                result.put("insuranceprovider", userQueriedFromDB.get().mInsuranceProvider);
                 result.put("insuranceplan", userQueriedFromDB.get().mInsurancePlan);
                 result.put("emergencycontactname", userQueriedFromDB.get().mEmergencyContactName);
                 result.put("emergencycontactnumber", userQueriedFromDB.get().mEmergencyContactNumber);
@@ -60,6 +59,11 @@ public class ProfileService extends ServiceUtility {
                 result.put("allergies", userQueriedFromDB.get().getAllergies());
                 result.put("currentMedications", userQueriedFromDB.get().getCurrentMedications());
                 result.put("vaccinations", userQueriedFromDB.get().getVaccinations());
+
+                IPDetails insuranceProviderDetails = getDetailsOfInsuranceProviderWhoCreatedThePlan(ipRepository, userQueriedFromDB.get().getInsurancePlan());
+                if(insuranceProviderDetails != null) {
+                    result.put("insuranceprovider", insuranceProviderDetails.mFirstName + " " + insuranceProviderDetails.mLastName);
+                }
 
                 Optional<IpPlanDetails> insuranceProvider = ipPlanRepository.findById(Integer.toString(userQueriedFromDB.get().getInsurancePlan().hashCode()));
                 if(insuranceProvider.isPresent()) {

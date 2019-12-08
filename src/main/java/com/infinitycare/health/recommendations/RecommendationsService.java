@@ -91,7 +91,7 @@ public class RecommendationsService extends ServiceUtility {
             }
 
             for(IpPlanDetails plan : plans) {
-                IPDetails insuranceProvider = getDetailsOfInsuranceProviderWhoCreatedThePlan(plan.getName());
+                IPDetails insuranceProvider = getDetailsOfInsuranceProviderWhoCreatedThePlan(ipRepository, plan.getName());
                 if(insuranceProvider == null) {
                     continue;
                 }
@@ -131,17 +131,4 @@ public class RecommendationsService extends ServiceUtility {
         return ResponseEntity.ok("nothing to update");
     }
 
-    private IPDetails getDetailsOfInsuranceProviderWhoCreatedThePlan(String planName) {
-        List<IPDetails> insuranceProviders = ipRepository.findAll();
-        IPDetails result = null;
-
-        for (IPDetails insuranceProvider : insuranceProviders) {
-            if(insuranceProvider.getIpPlans().contains(planName)) {
-                result = insuranceProvider;
-                break;
-            }
-        }
-
-        return result;
-    }
 }

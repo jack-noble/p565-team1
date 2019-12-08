@@ -1,5 +1,6 @@
 package com.infinitycare.health.login.model;
 
+import com.infinitycare.health.database.IpRepository;
 import com.infinitycare.health.login.SendEmailSMTP;
 import com.infinitycare.health.security.TextSecurer;
 import org.json.simple.JSONObject;
@@ -11,6 +12,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
@@ -117,6 +119,20 @@ public class ServiceUtility {
         emailBody += "<h1>" + "InfinityCare" + "</h1>\n\n" + "<h2> Please enter the OTP when prompted </h2>\n"
                 + "<h3>" + "OTP: " + otp + "</h3>\n";
         SendEmailSMTP.sendFromGMail(new String[]{username}, "Login Authorization", emailBody);
+    }
+
+    public IPDetails getDetailsOfInsuranceProviderWhoCreatedThePlan(IpRepository ipRepository, String planName) {
+        List<IPDetails> insuranceProviders = ipRepository.findAll();
+        IPDetails result = null;
+
+        for (IPDetails insuranceProvider : insuranceProviders) {
+            if(insuranceProvider.getIpPlans().contains(planName)) {
+                result = insuranceProvider;
+                break;
+            }
+        }
+
+        return result;
     }
 
 }

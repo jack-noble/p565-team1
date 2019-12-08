@@ -26,6 +26,13 @@ public class AppointmentsDetails{
     public String mPatientName;
     public String mDoctorName;
 
+    private String mReason;
+
+    private String mInsurancePlan;
+
+    private boolean isBillPaidByPatient;
+    private boolean isBillPaidByInsuranceProivder;
+
     public AppointmentsDetails(String mPatientUsername, String mDoctorUsername, Date mDate, String mHospital,
                                String mLocation, String mPatientName, String mDoctorName) {
         DateFormat dateFormat = new SimpleDateFormat("MMM dd, yyyy hh:mm");
@@ -41,6 +48,12 @@ public class AppointmentsDetails{
         this.mDisplayTime = String.valueOf(mDate.getHours() - 9);
         this.mPatientName = mPatientName;
         this.mDoctorName = mDoctorName;
+        this.isBillPaidByPatient = false;
+        this.isBillPaidByInsuranceProivder = false;
+    }
+
+    public String getDoctorDisplayName() {
+        return mDoctorName;
     }
 
     public void setStatus(boolean mActive) {
@@ -77,5 +90,37 @@ public class AppointmentsDetails{
 
     public String getDoctorUsername() {
         return mDoctorUsername;
+    }
+
+    public String getReason() {
+        return mReason;
+    }
+
+    public void setReason(String mReason) {
+        this.mReason = mReason;
+    }
+
+    public String getInsurancePlan() {
+        return mInsurancePlan;
+    }
+
+    public void setInsurancePlan(String mInsurancePlan) {
+        this.mInsurancePlan = mInsurancePlan;
+    }
+
+    public boolean isBillPaidByPatient() {
+        return isBillPaidByPatient;
+    }
+
+    public void setBillPaidByPatient(boolean billPaidByPatient) {
+        isBillPaidByPatient = billPaidByPatient;
+    }
+
+    public boolean isBillPaidByInsuranceProivder() {
+        return isBillPaidByInsuranceProivder;
+    }
+
+    public void setBillPaidByInsuranceProivder(boolean billPaidByInsuranceProivder) {
+        isBillPaidByInsuranceProivder = billPaidByInsuranceProivder;
     }
 }
