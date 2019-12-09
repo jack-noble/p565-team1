@@ -72,7 +72,38 @@ public class BillingService extends ServiceUtility {
 
         result.put("billsToBePaid", billsToBePaid);
         result.put("totalOutOfPocketAmount", totalOutOfPocketAmount);
+        populateStatsForPatient(result, username);
+    }
+
+    private void populateStatsForPatient(Map<String, Object> result, String username) {
+        int totalInProcessAmountByInsurance = 0;
+        int totalAmountCoveredByInsurance = 0;
+        int totalAmountDeniedByInsurance = 0;
+
+        List<AppointmentsDetails> appointmentsList = appointmentsRepository.findAllPatientAppointments(username);
+        for (AppointmentsDetails appointment : appointmentsList) {
+            int doctorPrice = doctorRepository.findById(Integer.toString(appointment.getDoctorUsername().hashCode())).get().getConsultationFee();
+            String insurancePlan = appointment.getInsurancePlan();
+            if (StringUtils.isEmpty(insurancePlan)) {
+                PatientDetails patientDetails = patientRepository.findById(Integer.toString(username.hashCode())).get();
+                insurancePlan = patientDetails.getInsurancePlan();
+            }
+
+            Optional<IpPlanDetails> plan = ipPlanRepository.findById(Integer.toString(insurancePlan.hashCode()));
+            if (StringUtils.isEmpty(insurancePlan) || !plan.isPresent()) {
+                //
+            } else if (appointment.getInsuranceProviderBillStatus().equals(Bill.DENIED)) {
+                totalAmountDeniedByInsurance = totalAmountDeniedByInsurance + doctorPrice - Integer.parseInt(plan.get().getCoPayment());
+            } else if(appointment.getInsuranceProviderBillStatus().equals(Bill.IN_PROCESS)){
+                totalInProcessAmountByInsurance = totalInProcessAmountByInsurance + doctorPrice - Integer.parseInt(plan.get().getCoPayment());
+            } else if(appointment.getInsuranceProviderBillStatus().equals(Bill.APPROVED)) {
+                totalAmountCoveredByInsurance = totalAmountCoveredByInsurance + doctorPrice - Integer.parseInt(plan.get().getCoPayment());
+            }
+        }
+
         result.put("totalAmountCoveredByInsurance", totalAmountCoveredByInsurance);
+        result.put("totalAmountDeniedByInsurance", totalAmountDeniedByInsurance);
+        result.put("totalInProcessAmountByInsurance", totalInProcessAmountByInsurance);
     }
 
     public ResponseEntity<?> getPatientPaidBills(HttpServletRequest request) {
