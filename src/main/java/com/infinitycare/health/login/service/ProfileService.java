@@ -86,6 +86,7 @@ public class ProfileService extends ServiceUtility {
                 result.put("firstname", userQueriedFromDB.get().mFirstName);
                 result.put("lastname", userQueriedFromDB.get().mLastName);
                 result.put("education", userQueriedFromDB.get().mEducation);
+                result.put("consultation", userQueriedFromDB.get().getConsultationFee());
                 result.put("hospital", userQueriedFromDB.get().mHospital);
                 result.put("specialization", userQueriedFromDB.get().mSpecialization);
                 result.put("address", userQueriedFromDB.get().mAddress);
@@ -137,6 +138,8 @@ public class ProfileService extends ServiceUtility {
             doctorDetails.setEmail(postBody.get("emailaddress"));
         if (!StringUtils.isEmpty(postBody.get("education")))
             doctorDetails.setEducation(postBody.get("education"));
+        if (!StringUtils.isEmpty(postBody.get("consultation")))
+            doctorDetails.setEducation(postBody.get("consultation"));
 
         doctorRepository.save(doctorDetails);
         result.put("isProfileUpdated", isProfileUpdated);
@@ -226,6 +229,7 @@ public class ProfileService extends ServiceUtility {
             result.put("address", doctorQueriedFromDB.get().mAddress);
             result.put("specialization", doctorQueriedFromDB.get().mSpecialization);
             result.put("education", doctorQueriedFromDB.get().mEducation);
+            result.put("consultation", doctorQueriedFromDB.get().getConsultationFee());
             result.put("totalrating", doctorQueriedFromDB.get().mTotalRating);
             result.put("biosummary", doctorQueriedFromDB.get().mPersonalBio);
             result.put("reviews", doctorQueriedFromDB.get().mReviews);
