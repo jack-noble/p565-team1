@@ -120,15 +120,34 @@ public class RecommendationsService extends ServiceUtility {
         Map<String, String> postBody = getPostBodyInAMap(request);
         String planName = postBody.get("planName");
 
+
         Optional<PatientDetails> patientQueriedFromDB = patientRepository.findById(Integer.toString(username.hashCode()));
         if (patientQueriedFromDB.isPresent()) {
             patientQueriedFromDB.get().setInsurancePlan(planName);
+
+            IPDetails insuranceProvider = getInsuranceProviderDetails(planName);
+            patientQueriedFromDB.get().setInsuranceProvider(insuranceProvider.getUserName());
+            patientQueriedFromDB.get().setInsuranceCompany(insuranceProvider.getCompany());
 
             patientRepository.save(patientQueriedFromDB.get());
             return ResponseEntity.ok("updated");
         }
 
         return ResponseEntity.ok("nothing to update");
+    }
+
+    private IPDetails getInsuranceProviderDetails(String insurancePlan) {
+        List<IPDetails> insuranceProviders = ipRepository.findAll();
+
+        IPDetails result = null;
+        for (IPDetails insuranceProvider : insuranceProviders) {
+            if(insuranceProvider.getIpPlans().contains(insurancePlan)) {
+                result = insuranceProvider;
+                break;
+            }
+        }
+
+        return result;
     }
 
 }

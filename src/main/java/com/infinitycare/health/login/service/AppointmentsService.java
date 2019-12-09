@@ -220,7 +220,7 @@ public class AppointmentsService extends ServiceUtility {
         }
 
         for(AppointmentsDetails appointment : appointmentsList) {
-            // Needs to be handled seperately and can't be merged with the above for loops.
+            // Needs to be handled seperately and can't be merged with the above 'for loops'.
             // This is because, if a list size is updated, we get ConcurrentModifiedException.
             // And only in this type of for loop, can we update an object in the list and it stays that way
             handleErroneousData(appointment);

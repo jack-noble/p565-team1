@@ -103,28 +103,11 @@ public class DashboardService extends ServiceUtility {
         return ResponseEntity.ok(result);
     }
 
-    private List<IPDetails> getPatientsList(HttpServletRequest request) {
+    private List<PatientDetails> getPatientsList(HttpServletRequest request) {
         String username = getUsername(request);
-
-        ArrayList finalpatients = new ArrayList();
-
-        Optional<IPDetails> ipFromDB = ipRepository.findById(Integer.toString(username.hashCode()));
-
-        if(ipFromDB.isPresent()) {
-            ArrayList patients = ipFromDB.get().mPatients;
-
-            for (Object o : patients) {
-                Map<String, Object> patient = new HashMap<>();
-                Optional<PatientDetails> patientFromDB = patientRepository.findById(Integer.toString(o.hashCode()));
-                if(patientFromDB.isPresent()) {
-                    patient.put("username", o);
-                    patient.put("name", patientFromDB.get().mFirstName + " " + patientFromDB.get().mLastName);
-                    patient.put("currentplan", patientFromDB.get().mInsurancePlan);
-                }
-                finalpatients.add(patient);
-            }
-        }
-        return finalpatients;
+        List<PatientDetails> patients = patientRepository.findAll();
+        patients.removeIf(patient -> !username.equals(patient.mInsuranceProvider));
+        return patients;
     }
 
     public ResponseEntity<?> addReviewsForDoctor(HttpServletRequest request, String doctorusername) {

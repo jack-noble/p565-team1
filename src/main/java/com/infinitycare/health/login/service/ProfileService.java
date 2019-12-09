@@ -267,6 +267,7 @@ public class ProfileService extends ServiceUtility {
             result.put("company", ipFromDB.get().mCompany);
             result.put("address", ipFromDB.get().mAddress);
             result.put("phonenumber", ipFromDB.get().mPhoneNumber);
+            result.put("insuranceProviderUserName", ipFromDB.get().getUserName());
             result.put("insurancePlans", getIpPlanDetails(ipFromDB.get().getIpPlans()));
         }
 
