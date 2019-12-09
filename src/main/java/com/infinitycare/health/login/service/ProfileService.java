@@ -86,7 +86,6 @@ public class ProfileService extends ServiceUtility {
                 result.put("firstname", userQueriedFromDB.get().mFirstName);
                 result.put("lastname", userQueriedFromDB.get().mLastName);
                 result.put("education", userQueriedFromDB.get().mEducation);
-                result.put("consultation", userQueriedFromDB.get().mConsultationFee);
                 result.put("hospital", userQueriedFromDB.get().mHospital);
                 result.put("specialization", userQueriedFromDB.get().mSpecialization);
                 result.put("address", userQueriedFromDB.get().mAddress);
