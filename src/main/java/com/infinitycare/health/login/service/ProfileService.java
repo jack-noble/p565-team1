@@ -139,7 +139,7 @@ public class ProfileService extends ServiceUtility {
         if (!StringUtils.isEmpty(postBody.get("education")))
             doctorDetails.setEducation(postBody.get("education"));
         if (!StringUtils.isEmpty(postBody.get("consultation")))
-            doctorDetails.setEducation(postBody.get("consultation"));
+            doctorDetails.setConsultationFee(Integer.parseInt(postBody.get("consultation")));
 
         doctorRepository.save(doctorDetails);
         result.put("isProfileUpdated", isProfileUpdated);
