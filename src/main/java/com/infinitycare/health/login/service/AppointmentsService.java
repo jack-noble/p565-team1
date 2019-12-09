@@ -1,5 +1,6 @@
 package com.infinitycare.health.login.service;
 
+import com.infinitycare.health.billing.BillingService;
 import com.infinitycare.health.database.AppointmentsRepository;
 import com.infinitycare.health.database.DoctorRepository;
 import com.infinitycare.health.database.IpPlanRepository;
@@ -10,7 +11,6 @@ import com.mongodb.BasicDBObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
-import org.springframework.util.StringUtils;
 
 import javax.servlet.http.HttpServletRequest;
 import java.text.DateFormat;
@@ -33,11 +33,16 @@ public class AppointmentsService extends ServiceUtility {
     @Autowired
     public AppointmentsRepository appointmentsRepository;
 
-    public AppointmentsService(PatientRepository patientRepository, DoctorRepository doctorRepository, AppointmentsRepository appointmentsRepository, IpPlanRepository ipPlanRepository) {
+    @Autowired
+    private BillingService billingService;
+
+    public AppointmentsService(PatientRepository patientRepository, DoctorRepository doctorRepository, AppointmentsRepository appointmentsRepository,
+                               IpPlanRepository ipPlanRepository, BillingService billingService) {
         this.patientRepository = patientRepository;
         this.doctorRepository = doctorRepository;
         this.appointmentsRepository = appointmentsRepository;
         this.ipPlanRepository = ipPlanRepository;
+        this.billingService = billingService;
     }
 
     public ResponseEntity<?> getTimeSlots(HttpServletRequest request, String doctorusername) {
@@ -199,7 +204,7 @@ public class AppointmentsService extends ServiceUtility {
                 }
             }
 
-            addBillsToTheFinalResult(results, appointmentsList, username);
+            billingService.populatePatientsUnpaidBillsAndStats(results, appointmentsList, username);
         }
 
         if(userType.equals(DOCTOR)) {
@@ -237,37 +242,6 @@ public class AppointmentsService extends ServiceUtility {
         }
 
         return ResponseEntity.ok(results);
-    }
-
-    private void addBillsToTheFinalResult(Map<String, Object> results, List<AppointmentsDetails> appointmentsList, String username) {
-        // When there's no insurance plan in the AppointmentDetails(old data), just use the patients current insurance plan
-        // Handle usecases where the patient does not have any insurance
-        appointmentsList.forEach(appointment -> {
-            Billing bill;
-            int doctorPrice = doctorRepository.findById(Integer.toString(appointment.getDoctorUsername().hashCode())).get().getConsultationFee();
-            String insurancePlan = appointment.getInsurancePlan();
-            if(StringUtils.isEmpty(insurancePlan)) {
-                PatientDetails patientDetails = patientRepository.findById(Integer.toString(username.hashCode())).get();
-                insurancePlan = patientDetails.getInsurancePlan();
-            }
-
-            Optional<IpPlanDetails> plan = ipPlanRepository.findById(Integer.toString(insurancePlan.hashCode()));
-            if(StringUtils.isEmpty(insurancePlan) || !plan.isPresent()) {
-                bill = new Billing(appointment.getDoctorDisplayName(), appointment.getReason(), appointment.getDisplayDate(), doctorPrice);
-            } else {
-                bill = new Billing(appointment.getDoctorDisplayName(), appointment.getReason(), appointment.getDisplayDate(), Integer.parseInt(plan.get().getCoPayment()));
-            }
-
-            if(appointment.isBillPaidByPatient()) {
-                results.computeIfAbsent("pastBills", k -> new ArrayList<Billing>());
-                List<Billing> bills = (List<Billing>) results.get("pastBills");
-                bills.add(bill);
-            } else {
-                results.computeIfAbsent("currentBills", k -> new ArrayList<Billing>());
-                List<Billing> bills = (List<Billing>) results.get("currentBills");
-                bills.add(bill);
-            }
-        });
     }
 
     private void handleErroneousData(AppointmentsDetails appointment) {

@@ -1,5 +1,6 @@
 package com.infinitycare.health.controller;
 
+import com.infinitycare.health.billing.BillingService;
 import com.infinitycare.health.login.model.ServiceUtility;
 import com.infinitycare.health.login.service.*;
 import com.infinitycare.health.recommendations.RecommendationsService;
@@ -27,11 +28,12 @@ public class UserController extends ServiceUtility {
     ProfileService profileService;
     SignOutService signOutService;
     RecommendationsService recommendationsService;
+    BillingService billingService;
 
     @Inject
     public UserController(LoginService loginService, SignUpService signupservice, OtpService otpservice, ForgotPasswordService forgotPasswordService,
                           AppointmentsService appointmentsService, ProfileService profileService, SearchService searchService, DashboardService dashboardService,
-                          SignOutService signOutService, RecommendationsService recommendationsService){
+                          SignOutService signOutService, RecommendationsService recommendationsService, BillingService billingService){
         this.loginService = loginService;
         this.signupservice = signupservice;
         this.otpservice = otpservice;
@@ -42,6 +44,7 @@ public class UserController extends ServiceUtility {
         this.searchService = searchService;
         this.signOutService = signOutService;
         this.recommendationsService = recommendationsService;
+        this.billingService = billingService;
     }
 
     @RequestMapping(value = "/{userType}/login", method = {RequestMethod.POST, RequestMethod.GET})
@@ -191,6 +194,16 @@ public class UserController extends ServiceUtility {
     public ResponseEntity addReviews(HttpServletRequest request, @PathVariable String doctorId) {
         doctorId = new String(Base64.getDecoder().decode(doctorId));
         return this.dashboardService.addReviewsForDoctor(request, doctorId);
+    }
+
+    @RequestMapping(value = "/insurance/claims")
+    public ResponseEntity<?> getInsuranceProviderClaims(HttpServletRequest request) {
+        return this.billingService.getInsuranceProviderClaims(request);
+    }
+
+    @RequestMapping(value = "/patient/bills/history")
+    public ResponseEntity<?> getPatientBillHistory(HttpServletRequest request) {
+        return this.billingService.getPatientPaidBills(request);
     }
 
 }

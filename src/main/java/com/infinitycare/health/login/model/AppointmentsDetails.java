@@ -3,7 +3,6 @@ package com.infinitycare.health.login.model;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 import java.text.DateFormat;
-import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Base64;
 import java.util.Date;
@@ -31,7 +30,7 @@ public class AppointmentsDetails{
     private String mInsurancePlan;
 
     private boolean isBillPaidByPatient;
-    private boolean isBillPaidByInsuranceProivder;
+    private String insuranceProviderBillStatus;
 
     public AppointmentsDetails(String mPatientUsername, String mDoctorUsername, Date mDate, String mHospital,
                                String mLocation, String mPatientName, String mDoctorName) {
@@ -49,7 +48,7 @@ public class AppointmentsDetails{
         this.mPatientName = mPatientName;
         this.mDoctorName = mDoctorName;
         this.isBillPaidByPatient = false;
-        this.isBillPaidByInsuranceProivder = false;
+        this.insuranceProviderBillStatus = Bill.IN_PROCESS;
     }
 
     public String getDoctorDisplayName() {
@@ -116,11 +115,11 @@ public class AppointmentsDetails{
         isBillPaidByPatient = billPaidByPatient;
     }
 
-    public boolean isBillPaidByInsuranceProivder() {
-        return isBillPaidByInsuranceProivder;
+    public String getInsuranceProviderBillStatus() {
+        return insuranceProviderBillStatus;
     }
 
-    public void setBillPaidByInsuranceProivder(boolean billPaidByInsuranceProivder) {
-        isBillPaidByInsuranceProivder = billPaidByInsuranceProivder;
+    public void setInsuranceProviderBillStatus(String billStatus) {
+        insuranceProviderBillStatus = billStatus;
     }
 }

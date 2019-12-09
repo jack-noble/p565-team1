@@ -258,12 +258,26 @@ public class ProfileService extends ServiceUtility {
         Optional<IPDetails> ipFromDB = ipRepository.findById(Integer.toString(ipusername.hashCode()));
         if (ipFromDB.isPresent()) {
             result.put("name", ipFromDB.get().mFirstName + " " + ipFromDB.get().mLastName);
+            result.put("firstName", ipFromDB.get().mFirstName);
+            result.put("lastName", ipFromDB.get().mLastName);
             result.put("company", ipFromDB.get().mCompany);
             result.put("address", ipFromDB.get().mAddress);
             result.put("phonenumber", ipFromDB.get().mPhoneNumber);
+            result.put("insurancePlans", getIpPlanDetails(ipFromDB.get().getIpPlans()));
         }
 
         return ResponseEntity.ok(result);
+    }
+
+    private List<IpPlanDetails> getIpPlanDetails(List<String> insurancePlans) {
+        List<IpPlanDetails> plans = new ArrayList<>();
+
+        insurancePlans.forEach(insurancePlan -> {
+            Optional<IpPlanDetails> plan = ipPlanRepository.findById(Integer.toString(insurancePlan.hashCode()));
+            plan.ifPresent(plans::add);
+        });
+
+        return plans;
     }
 
 }
