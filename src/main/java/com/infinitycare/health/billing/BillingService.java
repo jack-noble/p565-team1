@@ -140,6 +140,48 @@ public class BillingService extends ServiceUtility {
         return ResponseEntity.ok(billsToBePaid);
     }
 
+    public ResponseEntity<?> getAllPatientClaims(HttpServletRequest request) {
+        // When there's no insurance plan in the AppointmentDetails(old data), just use the patients current insurance plan
+        // Handle usecases where the patient does not have any insurance
+
+        //String username = getUsername(request);
+        String username = "vivekshrestabandaru@gmail.com";
+        Map<String, Object> result = new HashMap<>();
+
+        List<AppointmentsDetails> appointmentsList = appointmentsRepository.findAllPatientAppointments(username);
+
+        List<Bill> approvedClaims = new ArrayList<>();
+        List<Bill> inProcessClaims = new ArrayList<>();
+        List<Bill> deniedClaims = new ArrayList<>();
+
+        appointmentsList.forEach(appointment -> {
+            Bill bill = null;
+            int doctorPrice = doctorRepository.findById(Integer.toString(appointment.getDoctorUsername().hashCode())).get().getConsultationFee();
+            String insurancePlan = appointment.getInsurancePlan();
+            if (StringUtils.isEmpty(insurancePlan)) {
+                PatientDetails patientDetails = patientRepository.findById(Integer.toString(username.hashCode())).get();
+                insurancePlan = patientDetails.getInsurancePlan();
+            }
+
+            Optional<IpPlanDetails> plan = ipPlanRepository.findById(Integer.toString(insurancePlan.hashCode()));
+            if (plan.isPresent()) {
+               bill = new Bill(appointment.getDoctorDisplayName(), appointment.getReason(), appointment.getDisplayDate(), doctorPrice - Integer.parseInt(plan.get().getCoPayment()), appointment.getId());
+            }
+
+            if(Bill.APPROVED.equals(appointment.getInsuranceProviderBillStatus()))
+                approvedClaims.add(bill);
+            else if(Bill.IN_PROCESS.equals(appointment.getInsuranceProviderBillStatus()))
+                inProcessClaims.add(bill);
+            else if(Bill.DENIED.equals(appointment.getInsuranceProviderBillStatus()))
+                deniedClaims.add(bill);
+        });
+
+        result.put("approvedClaims", approvedClaims);
+        result.put("inProcessClaims", inProcessClaims);
+        result.put("deniedClaims", deniedClaims);
+        return ResponseEntity.ok(result);
+    }
+
     public ResponseEntity<?> editPatientBillStatus(HttpServletRequest request, boolean didPatientPay) {
         Map<String, String> postBody = getPostBodyInAMap(request);
         String appointmentId = postBody.get("id");

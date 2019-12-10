@@ -211,4 +211,9 @@ public class UserController extends ServiceUtility {
         return this.billingService.editPatientBillStatus(request, true);
     }
 
+    @RequestMapping(value = "patient/claims")
+    public ResponseEntity<?> getAllPatientClaims(HttpServletRequest request) {
+        return this.billingService.getAllPatientClaims(request);
+    }
+
 }
