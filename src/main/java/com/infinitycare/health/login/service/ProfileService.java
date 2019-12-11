@@ -62,7 +62,7 @@ public class ProfileService extends ServiceUtility {
 
                 IPDetails insuranceProviderDetails = getDetailsOfInsuranceProviderWhoCreatedThePlan(ipRepository, userQueriedFromDB.get().getInsurancePlan());
                 if(insuranceProviderDetails != null) {
-                    result.put("insuranceprovider", insuranceProviderDetails.mFirstName + " " + insuranceProviderDetails.mLastName);
+                    result.put("insuranceprovider", insuranceProviderDetails.mUserName);
                 }
 
                 Optional<IpPlanDetails> insuranceProvider = ipPlanRepository.findById(Integer.toString(userQueriedFromDB.get().getInsurancePlan().hashCode()));
