@@ -201,6 +201,11 @@ public class UserController extends ServiceUtility {
         return this.billingService.getInsuranceProviderClaims(request);
     }
 
+    @RequestMapping(value = "/insurance/editclaims/{billStatus}")
+    public ResponseEntity<?> EditInsuranceProviderClaims(HttpServletRequest request, @PathVariable String billStatus) {
+        return this.billingService.editInsuranceProviderBillStatus(request, billStatus);
+    }
+
     @RequestMapping(value = "/patient/bills/history")
     public ResponseEntity<?> getPatientBillHistory(HttpServletRequest request) {
         return this.billingService.getPatientPaidBills(request);
