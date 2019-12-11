@@ -11,13 +11,19 @@ public class Bill {
     private String mDisplayDate;
     private int mAmountToBePaid;
     private String mAppointmentId;
+    private String mPatientName;
+    private String mPatientUsername;
+    private String mDoctorUsername;
 
-    public Bill(String doctorName, String reason, String displayDate, int amountToBePaid, String appointmentId) {
+    public Bill(String doctorName, String doctorUsername, String reason, String displayDate, int amountToBePaid, String appointmentId, String patientName, String patientUsername) {
         mDoctorName = doctorName;
         mReason = reason;
         mDisplayDate = displayDate;
         mAmountToBePaid = amountToBePaid;
         mAppointmentId = appointmentId;
+        mPatientName = patientName;
+        mPatientUsername = patientUsername;
+        mDoctorUsername = doctorUsername;
     }
 
     public String getDoctorName() {
@@ -26,6 +32,14 @@ public class Bill {
 
     public void setDoctorName(String doctorName) {
         this.mDoctorName = doctorName;
+    }
+
+    public String getDoctorUsername() {
+        return mDoctorUsername;
+    }
+
+    public void setDoctorUsername(String mDoctorUsername) {
+        this.mDoctorUsername = mDoctorUsername;
     }
 
     public String getReason() {
@@ -58,6 +72,22 @@ public class Bill {
 
     public void setAppointmentId(String mAppointmentId) {
         this.mAppointmentId = mAppointmentId;
+    }
+
+    public String getPatientName() {
+        return mPatientName;
+    }
+
+    public void setPatientName(String mPatientName) {
+        this.mPatientName = mPatientName;
+    }
+
+    public String getPatientUsername() {
+        return mPatientUsername;
+    }
+
+    public void setPatientUsername(String mPatientUsername) {
+        this.mPatientUsername = mPatientUsername;
     }
 
 }

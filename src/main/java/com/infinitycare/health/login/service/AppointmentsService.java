@@ -204,7 +204,7 @@ public class AppointmentsService extends ServiceUtility {
                 }
             }
 
-            billingService.populatePatientsUnpaidBillsAndStats(results, appointmentsList, username);
+            billingService.getPatientsUnpaidBills(results, appointmentsList, username);
         }
 
         if(userType.equals(DOCTOR)) {

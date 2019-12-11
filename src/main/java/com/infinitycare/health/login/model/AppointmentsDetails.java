@@ -55,6 +55,14 @@ public class AppointmentsDetails{
         return mDoctorName;
     }
 
+    public String getPatientUsername() {
+        return mPatientUsername;
+    }
+
+    public String getPatientName() {
+        return mPatientName;
+    }
+
     public void setStatus(boolean mActive) {
         this.mActive = mActive;
     }

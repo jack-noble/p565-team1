@@ -36,13 +36,13 @@ public class BillingService extends ServiceUtility {
         this.appointmentsRepository = appointmentRepository;
     }
 
-    public void populatePatientsUnpaidBillsAndStats(Map<String, Object> result, List<AppointmentsDetails> appointmentsList, String username) {
+    public void getPatientsUnpaidBills(Map<String, Object> result, List<AppointmentsDetails> appointmentsList, String username) {
         // When there's no insurance plan in the AppointmentDetails(old data), just use the patients current insurance plan
         // Handle usecases where the patient does not have any insurance
 
         List<Bill> billsToBePaid = new ArrayList<>();
-        int totalOutOfPocketAmount = 0;
-        int totalAmountCoveredByInsurance = 0;
+        // int totalOutOfPocketAmount = 0;
+        // int totalAmountCoveredByInsurance = 0;
         for (AppointmentsDetails appointment : appointmentsList) {
             if (!appointment.isBillPaidByPatient()) {
                 Bill bill;
@@ -55,23 +55,23 @@ public class BillingService extends ServiceUtility {
 
                 Optional<IpPlanDetails> plan = ipPlanRepository.findById(Integer.toString(insurancePlan.hashCode()));
                 if (StringUtils.isEmpty(insurancePlan) || !plan.isPresent()) {
-                    bill = new Bill(appointment.getDoctorDisplayName(), appointment.getReason(), appointment.getDisplayDate(), doctorPrice, appointment.getId());
-                    totalOutOfPocketAmount = totalOutOfPocketAmount + doctorPrice;
+                    bill = new Bill(appointment.getDoctorDisplayName(), appointment.getDoctorUsername(), appointment.getReason(), appointment.getDisplayDate(), doctorPrice, appointment.getId(), appointment.getPatientName(), appointment.getPatientUsername());                    
+                    // totalOutOfPocketAmount = totalOutOfPocketAmount + doctorPrice;
                 } else if (appointment.getInsuranceProviderBillStatus().equals(Bill.DENIED)) {
                     // If the bill is denied, then the whole price needs to be paid by the patient
-                    bill = new Bill(appointment.getDoctorDisplayName(), appointment.getReason(), appointment.getDisplayDate(), doctorPrice, appointment.getId());
-                    totalOutOfPocketAmount = totalOutOfPocketAmount + doctorPrice;
+                    bill = new Bill(appointment.getDoctorDisplayName(), appointment.getDoctorUsername(), appointment.getReason(), appointment.getDisplayDate(), doctorPrice, appointment.getId(), appointment.getPatientName(), appointment.getPatientUsername());                    
+                    // totalOutOfPocketAmount = totalOutOfPocketAmount + doctorPrice;
                 } else {
-                    bill = new Bill(appointment.getDoctorDisplayName(), appointment.getReason(), appointment.getDisplayDate(), Integer.parseInt(plan.get().getCoPayment()), appointment.getId());
-                    totalOutOfPocketAmount = totalOutOfPocketAmount + Integer.parseInt(plan.get().getCoPayment());
-                    totalAmountCoveredByInsurance += doctorPrice - Integer.parseInt(plan.get().getCoPayment());
+                    bill = new Bill(appointment.getDoctorDisplayName(), appointment.getDoctorUsername(), appointment.getReason(), appointment.getDisplayDate(), Integer.parseInt(plan.get().getCoPayment()), appointment.getId(), appointment.getPatientName(), appointment.getPatientUsername());
+                    // totalOutOfPocketAmount = totalOutOfPocketAmount + Integer.parseInt(plan.get().getCoPayment());
+                    // totalAmountCoveredByInsurance += doctorPrice - Integer.parseInt(plan.get().getCoPayment());
                 }
                 billsToBePaid.add(bill);
             }
         }
 
         result.put("billsToBePaid", billsToBePaid);
-        result.put("totalOutOfPocketAmount", totalOutOfPocketAmount);
+        // result.put("totalOutOfPocketAmount", totalOutOfPocketAmount);
         populateStatsForPatient(result, username);
     }
 
@@ -79,6 +79,9 @@ public class BillingService extends ServiceUtility {
         int totalInProcessAmountByInsurance = 0;
         int totalAmountCoveredByInsurance = 0;
         int totalAmountDeniedByInsurance = 0;
+        int totalAmountOfAllBills = 0;
+        int outOfPocketAmountSpent = 0;
+        int outOfPocketLimit = 0;
 
         List<AppointmentsDetails> appointmentsList = appointmentsRepository.findAllPatientAppointments(username);
         for (AppointmentsDetails appointment : appointmentsList) {
@@ -90,20 +93,29 @@ public class BillingService extends ServiceUtility {
             }
 
             Optional<IpPlanDetails> plan = ipPlanRepository.findById(Integer.toString(insurancePlan.hashCode()));
+            outOfPocketLimit = Integer.parseInt(plan.get().getAnnualOutOfPocketLimit());
             if (StringUtils.isEmpty(insurancePlan) || !plan.isPresent()) {
                 //
             } else if (appointment.getInsuranceProviderBillStatus().equals(Bill.DENIED)) {
                 totalAmountDeniedByInsurance = totalAmountDeniedByInsurance + doctorPrice - Integer.parseInt(plan.get().getCoPayment());
+                outOfPocketAmountSpent = outOfPocketAmountSpent + doctorPrice;
             } else if(appointment.getInsuranceProviderBillStatus().equals(Bill.IN_PROCESS)){
                 totalInProcessAmountByInsurance = totalInProcessAmountByInsurance + doctorPrice - Integer.parseInt(plan.get().getCoPayment());
+                outOfPocketAmountSpent = outOfPocketAmountSpent + Integer.parseInt(plan.get().getCoPayment());
             } else if(appointment.getInsuranceProviderBillStatus().equals(Bill.APPROVED)) {
                 totalAmountCoveredByInsurance = totalAmountCoveredByInsurance + doctorPrice - Integer.parseInt(plan.get().getCoPayment());
+                outOfPocketAmountSpent = outOfPocketAmountSpent + Integer.parseInt(plan.get().getCoPayment());
             }
         }
 
         result.put("totalAmountCoveredByInsurance", totalAmountCoveredByInsurance);
         result.put("totalAmountDeniedByInsurance", totalAmountDeniedByInsurance);
         result.put("totalInProcessAmountByInsurance", totalInProcessAmountByInsurance);
+        result.put("totalAmountCoveredByPatient", outOfPocketAmountSpent);
+        result.put("totalAmountOfAllBills", totalAmountOfAllBills);
+        result.put("outOfPocketAmountSpent", outOfPocketAmountSpent);
+        result.put("outOfPocketLimit", outOfPocketLimit);
+        result.put("outOfPocketLimitRemaining", outOfPocketLimit - outOfPocketAmountSpent);
     }
 
     public ResponseEntity<?> getPatientPaidBills(HttpServletRequest request) {
@@ -113,31 +125,35 @@ public class BillingService extends ServiceUtility {
         String username = getUsername(request);
         List<AppointmentsDetails> appointmentsList = appointmentsRepository.findAllPatientAppointments(username);
 
-        List<Bill> billsToBePaid = new ArrayList<>();
+        List<Bill> billsPaid = new ArrayList<>();
         appointmentsList.forEach(appointment -> {
             if(appointment.isBillPaidByPatient()) {
                 Bill bill;
                 int doctorPrice = doctorRepository.findById(Integer.toString(appointment.getDoctorUsername().hashCode())).get().getConsultationFee();
-                String insurancePlan = appointment.getInsurancePlan();
-                if (StringUtils.isEmpty(insurancePlan)) {
-                    PatientDetails patientDetails = patientRepository.findById(Integer.toString(username.hashCode())).get();
-                    insurancePlan = patientDetails.getInsurancePlan();
-                }
+                
+                bill = new Bill(appointment.getDoctorDisplayName(), appointment.getDoctorUsername(), appointment.getReason(), appointment.getDisplayDate(), doctorPrice, appointment.getId(), appointment.getPatientName(), appointment.getPatientUsername());
+                billsPaid.add(bill);
+                
+                // String insurancePlan = appointment.getInsurancePlan();
+                // if (StringUtils.isEmpty(insurancePlan)) {
+                //     PatientDetails patientDetails = patientRepository.findById(Integer.toString(username.hashCode())).get();
+                //     insurancePlan = patientDetails.getInsurancePlan();
+                // }
 
-                Optional<IpPlanDetails> plan = ipPlanRepository.findById(Integer.toString(insurancePlan.hashCode()));
-                if (StringUtils.isEmpty(insurancePlan) || !plan.isPresent()) {
-                    bill = new Bill(appointment.getDoctorDisplayName(), appointment.getReason(), appointment.getDisplayDate(), doctorPrice, appointment.getId());
-                } else if(appointment.getInsuranceProviderBillStatus().equals(Bill.DENIED)) {
-                    // If the bill is denied, then the whole price needs to be paid by the patient
-                    bill = new Bill(appointment.getDoctorDisplayName(), appointment.getReason(), appointment.getDisplayDate(), doctorPrice, appointment.getId());
-                } else {
-                    bill = new Bill(appointment.getDoctorDisplayName(), appointment.getReason(), appointment.getDisplayDate(), Integer.parseInt(plan.get().getCoPayment()), appointment.getId());
-                }
-                billsToBePaid.add(bill);
+                // Optional<IpPlanDetails> plan = ipPlanRepository.findById(Integer.toString(insurancePlan.hashCode()));
+                // if (StringUtils.isEmpty(insurancePlan) || !plan.isPresent()) {
+                //     bill = new Bill(appointment.getDoctorDisplayName(), appointment.getReason(), appointment.getDisplayDate(), doctorPrice, appointment.getId());
+                // } else if(appointment.getInsuranceProviderBillStatus().equals(Bill.DENIED)) {
+                //     // If the bill is denied, then the whole price needs to be paid by the patient
+                //     bill = new Bill(appointment.getDoctorDisplayName(), appointment.getReason(), appointment.getDisplayDate(), doctorPrice, appointment.getId());
+                // } else {
+                //     bill = new Bill(appointment.getDoctorDisplayName(), appointment.getReason(), appointment.getDisplayDate(), Integer.parseInt(plan.get().getCoPayment()), appointment.getId());
+                // }
+                // billsToBePaid.add(bill);
             }
         });
 
-        return ResponseEntity.ok(billsToBePaid);
+        return ResponseEntity.ok(billsPaid);
     }
 
     public ResponseEntity<?> getAllPatientClaims(HttpServletRequest request) {
@@ -165,7 +181,7 @@ public class BillingService extends ServiceUtility {
 
             Optional<IpPlanDetails> plan = ipPlanRepository.findById(Integer.toString(insurancePlan.hashCode()));
             if (plan.isPresent()) {
-               bill = new Bill(appointment.getDoctorDisplayName(), appointment.getReason(), appointment.getDisplayDate(), doctorPrice - Integer.parseInt(plan.get().getCoPayment()), appointment.getId());
+                bill = new Bill(appointment.getDoctorDisplayName(), appointment.getDoctorUsername(), appointment.getReason(), appointment.getDisplayDate(), doctorPrice, appointment.getId(), appointment.getPatientName(), appointment.getPatientUsername());
             }
 
             if(Bill.APPROVED.equals(appointment.getInsuranceProviderBillStatus()))
@@ -230,7 +246,7 @@ public class BillingService extends ServiceUtility {
 
                 Optional<IpPlanDetails> plan = ipPlanRepository.findById(Integer.toString(insurancePlan.hashCode()));
                 if(insuranceProvider.getIpPlans().contains(insurancePlan) && plan.isPresent()) {
-                    Bill bill = new Bill(appointment.getDoctorDisplayName(), appointment.getReason(), appointment.getDisplayDate(), doctorPrice - Integer.parseInt(plan.get().getCoPayment()), appointment.getId());
+                    Bill bill = new Bill(appointment.getDoctorDisplayName(), appointment.getDoctorUsername(), appointment.getReason(), appointment.getDisplayDate(), doctorPrice, appointment.getId(), appointment.getPatientName(), appointment.getPatientUsername());
 
                     if(appointment.getInsuranceProviderBillStatus().equals(Bill.IN_PROCESS))
                         billsToBePaid.add(bill);
