@@ -160,8 +160,7 @@ public class BillingService extends ServiceUtility {
         // When there's no insurance plan in the AppointmentDetails(old data), just use the patients current insurance plan
         // Handle usecases where the patient does not have any insurance
 
-        //String username = getUsername(request);
-        String username = "vivekshrestabandaru@gmail.com";
+        String username = getUsername(request);
         Map<String, Object> result = new HashMap<>();
 
         List<AppointmentsDetails> appointmentsList = appointmentsRepository.findAllPatientAppointments(username);
