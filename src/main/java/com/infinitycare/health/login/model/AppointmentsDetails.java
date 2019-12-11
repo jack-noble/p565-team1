@@ -29,6 +29,10 @@ public class AppointmentsDetails{
         this.mDate = mDate;
     }
 
+    public String getPatientName() {
+        return mPatientName;
+    }
+
     public void setStatus(boolean mActive) {
         this.mActive = mActive;
     }
@@ -44,4 +48,63 @@ public class AppointmentsDetails{
     public Date getDate() {
         return this.mDate;
     }
+<<<<<<< Updated upstream
+=======
+
+    public void setDisplayTime(String mDisplayTime) {
+        this.mDisplayTime = mDisplayTime;
+    }
+
+    public String getDisplayTime() {
+        return this.mDisplayTime;
+    }
+
+    public void formatDisplayDate(Date date) {
+        mDisplayDate = new SimpleDateFormat("EEE, d MMM yyyy").format(date);
+    }
+
+    public String getDisplayDate() {
+        return mDisplayDate;
+    }
+
+    public String getDoctorUsername() {
+        return mDoctorUsername;
+    }
+
+    public String getPatientUsername() {
+        return mPatientUsername;
+    }
+
+    public String getReason() {
+        return mReason;
+    }
+
+    public void setReason(String mReason) {
+        this.mReason = mReason;
+    }
+
+    public String getInsurancePlan() {
+        return mInsurancePlan;
+    }
+
+    public void setInsurancePlan(String mInsurancePlan) {
+        this.mInsurancePlan = mInsurancePlan;
+    }
+
+    public boolean isBillPaidByPatient() {
+        return isBillPaidByPatient;
+    }
+
+    public void setBillPaidByPatient(boolean billPaidByPatient) {
+        isBillPaidByPatient = billPaidByPatient;
+    }
+
+    public String getInsuranceProviderBillStatus() {
+        return insuranceProviderBillStatus;
+    }
+
+    public void setInsuranceProviderBillStatus(String billStatus) {
+        insuranceProviderBillStatus = billStatus;
+    }
+>>>>>>> Stashed changes
 }

@@ -119,6 +119,95 @@ public class AppointmentsService extends CookieDetails {
 
         if(userType.equals(PATIENT)) {
             appointmentsList = appointmentsRepository.findAllPatientAppointments(username);
+<<<<<<< Updated upstream
+=======
+            for(int i = 0; i < appointmentsList.size(); i++) {
+                AppointmentsDetails appointment = appointmentsList.get(i);
+                if(now.compareTo(appointment.mDate) > 0) {
+                    appointment.setStatus(false);
+                    appointmentsRepository.save(appointment);
+                    appointmentsList.remove(appointment);
+                }
+            }
+
+            billingService.getPatientsUnpaidBills(results, appointmentsList, username);
+        }
+
+        if(userType.equals(DOCTOR)) {
+            appointmentsList = appointmentsRepository.findAllDoctorAppointments(username);
+            for(int i = 0; i < appointmentsList.size(); i++) {
+                AppointmentsDetails appointment = appointmentsList.get(i);
+                if(now.compareTo(appointment.mDate) > 0) {
+                    appointment.setStatus(false);
+                    appointmentsRepository.save(appointment);
+                    appointmentsList.remove(appointment);
+                }
+            }
+        }
+
+        for(AppointmentsDetails appointment : appointmentsList) {
+            // Needs to be handled seperately and can't be merged with the above for loops.
+            // This is because, if a list size is updated, we get ConcurrentModifiedException.
+            // And only in this type of for loop, can we update an object in the list and it stays that way
+            handleErroneousData(appointment);
+        }
+
+        results.put("CurrentAppointments", appointmentsList);
+        List<AppointmentsDetails> pastAppointments = getPastAppointmentsAsList(request, userType);
+
+        for(AppointmentsDetails appointment: appointmentsList) {
+            appointment.setDisplayTime(get12HrTime(Integer.valueOf(appointment.getDisplayTime())));
+        }
+        for(AppointmentsDetails appointment: pastAppointments) {
+            appointment.setDisplayTime(get12HrTime(Integer.valueOf(appointment.getDisplayTime())));
+        }
+        if (pastAppointments.isEmpty()) {
+            results.put("PastAppointments", new ArrayList<AppointmentsDetails>());
+        } else {
+            results.put("PastAppointments", pastAppointments);
+        }
+
+        return ResponseEntity.ok(results);
+    }
+
+    private void handleErroneousData(AppointmentsDetails appointment) {
+        boolean isChanged = false;
+        if(appointment.getDisplayTime().contains("M")) {
+            //If it contains AM or PM in the 'about to be displayed time'
+            appointment.setDisplayTime(String.valueOf(getTimeSlotToStoreInDB(appointment.getDisplayTime(), " ")));
+            isChanged = true;
+        }
+
+        if(Integer.parseInt(appointment.getDisplayTime()) > 7) {
+            appointment.setDisplayTime(String.valueOf(Integer.parseInt(appointment.getDisplayTime()) - 9));
+            isChanged = true;
+        }
+
+        if(appointment.getDisplayDate().contains("/")) {
+            appointment.formatDisplayDate(appointment.getDate());
+            isChanged = true;
+        }
+
+        if(isChanged) {
+            appointmentsRepository.save(appointment);
+        }
+    }
+
+    public ResponseEntity<?> getPastAppointments(HttpServletRequest request, String userType) {
+        Map<String, Object> result = new HashMap();
+
+        result.put("Appointments", getPastAppointmentsAsList(request, userType));
+        return ResponseEntity.ok(result);
+    }
+
+    private List<AppointmentsDetails> getPastAppointmentsAsList(HttpServletRequest request, String userType) {
+        String username = getUsername(request);
+
+        List<AppointmentsDetails> result = new ArrayList();
+
+        if(userType.equals(PATIENT)) {
+            List<AppointmentsDetails> appointmentsList = appointmentsRepository.findAllPatientAppointments(username);
+>>>>>>> Stashed changes
             for (AppointmentsDetails appointmentsDetails : appointmentsList) {
                 if (now.compareTo(appointmentsDetails.getDate()) > 0) {
                     appointmentsDetails.setStatus(false);
