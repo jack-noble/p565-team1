@@ -36,10 +36,11 @@ public class BillingService extends ServiceUtility {
         this.appointmentsRepository = appointmentRepository;
     }
 
-    public void getPatientsUnpaidBills(Map<String, Object> result, List<AppointmentsDetails> appointmentsList, String username) {
+    public void getPatientsUnpaidBills(Map<String, Object> result, String username) {
         // When there's no insurance plan in the AppointmentDetails(old data), just use the patients current insurance plan
         // Handle usecases where the patient does not have any insurance
 
+        List<AppointmentsDetails> appointmentsList = appointmentsRepository.findAllPatientAppointments(username);
         List<Bill> billsToBePaid = new ArrayList<>();
         // int totalOutOfPocketAmount = 0;
         // int totalAmountCoveredByInsurance = 0;
