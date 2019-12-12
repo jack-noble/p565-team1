@@ -201,6 +201,7 @@ public class AppointmentsService extends ServiceUtility {
                     appointment.setStatus(false);
                     appointmentsRepository.save(appointment);
                     appointmentsList.remove(appointment);
+                    i--;
                 }
             }
 
@@ -215,6 +216,7 @@ public class AppointmentsService extends ServiceUtility {
                     appointment.setStatus(false);
                     appointmentsRepository.save(appointment);
                     appointmentsList.remove(appointment);
+                    i--;
                 }
             }
         }
