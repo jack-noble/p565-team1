@@ -234,6 +234,12 @@ public class BillingService extends ServiceUtility {
         List<Bill> approvedBills = new ArrayList<>();
         List<Bill> deniedBills = new ArrayList<>();
 
+        int[] amountPaidByInsuranceProvider = new int[0];
+        amountPaidByInsuranceProvider[0] = 0;
+
+        int[] amountPaidByPatientsOfTheInsuranceProvider = new int[0];
+        amountPaidByPatientsOfTheInsuranceProvider[0] = 0;
+
         Optional<IPDetails> ip = ipRepository.findById(Integer.toString(username.hashCode()));
         if(ip.isPresent()) {
             IPDetails insuranceProvider = ip.get();
@@ -246,6 +252,8 @@ public class BillingService extends ServiceUtility {
 
                 Optional<IpPlanDetails> plan = ipPlanRepository.findById(Integer.toString(insurancePlan.hashCode()));
                 if(insuranceProvider.getIpPlans().contains(insurancePlan) && plan.isPresent()) {
+                    amountPaidByInsuranceProvider[0] += doctorPrice - Integer.parseInt(plan.get().getCoPayment());
+                    amountPaidByPatientsOfTheInsuranceProvider[0] += Integer.parseInt(plan.get().getCoPayment());
                     Bill bill = new Bill(appointment.getDoctorDisplayName(), appointment.getDoctorUsername(), appointment.getReason(), appointment.getDisplayDate(), doctorPrice, appointment.getId(), appointment.getPatientName(), appointment.getPatientUsername());
 
                     if(appointment.getInsuranceProviderBillStatus().equals(Bill.IN_PROCESS))
@@ -261,6 +269,8 @@ public class BillingService extends ServiceUtility {
         results.put("billsToBePaid", billsToBePaid);
         results.put("approvedBills", approvedBills);
         results.put("deniedBills", deniedBills);
+        results.put("amountPaidByInsuranceProvider", amountPaidByInsuranceProvider[0]);
+        results.put("amountPaidByPatientsOfTheInsuranceProvider", amountPaidByPatientsOfTheInsuranceProvider[0]);
         return ResponseEntity.ok(results);
     }
 
