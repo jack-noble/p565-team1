@@ -235,10 +235,7 @@ public class BillingService extends ServiceUtility {
         List<Bill> deniedBills = new ArrayList<>();
 
         int[] amountPaidByInsuranceProvider = new int[1];
-        amountPaidByInsuranceProvider[0] = 0;
-
         int[] amountPaidByPatientsOfTheInsuranceProvider = new int[1];
-        amountPaidByPatientsOfTheInsuranceProvider[0] = 0;
 
         Optional<IPDetails> ip = ipRepository.findById(Integer.toString(username.hashCode()));
         if(ip.isPresent()) {
