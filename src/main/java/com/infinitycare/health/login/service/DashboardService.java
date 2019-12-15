@@ -136,7 +136,7 @@ public class DashboardService extends ServiceUtility {
             isReviewAdded = true;
         }
 
-        result.put("isReviewAdded", isReviewAdded);
+        result.put("isReviewAdded", doctorusername + isReviewAdded);
         return ResponseEntity.ok(result);
     }
 

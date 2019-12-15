@@ -48,7 +48,10 @@ public class SearchService extends ServiceUtility {
                 Set<DoctorDetails> details = new HashSet<>();
                 String[] arr = query.split(" ");
                 for(String word : arr) {
-                    if(word.equalsIgnoreCase("in") || word.equalsIgnoreCase(("specialized")) || word.equalsIgnoreCase(("speciality"))) {
+                    if(query.contains("around me")) {
+                        details.addAll(doctorRepository.findDoctorsWithSimilarLocations("bloomington"));
+                        return ResponseEntity.ok(details);
+                    } else if(word.equalsIgnoreCase("in") || word.equalsIgnoreCase("around") || word.equalsIgnoreCase(("specialized")) || word.equalsIgnoreCase(("speciality")) || word.equalsIgnoreCase("specialised")) {
                         details.addAll(doctorRepository.findDoctorsWithSimilarSpecializations(arr[arr.length - 1]));
                         details.addAll(doctorRepository.findDoctorsWithSimilarLocations(arr[arr.length - 1]));
                         return ResponseEntity.ok(details);
@@ -87,7 +90,10 @@ public class SearchService extends ServiceUtility {
                 Set<String> details = new HashSet<>();
                 String[] arr = query.split(" ");
                 for(String word : arr) {
-                    if(word.equalsIgnoreCase("in") || word.equalsIgnoreCase(("specialized")) || word.equalsIgnoreCase(("speciality"))) {
+                    if(query.contains("around me")) {
+                        doctorRepository.findDoctorsWithSimilarLocations("bloomington").forEach(doctor -> details.add(doctor.getAddress()));
+                        return ResponseEntity.ok(details);
+                    } else if(word.equalsIgnoreCase("in") || word.equalsIgnoreCase(("specialized")) || word.equalsIgnoreCase(("speciality")) || word.equalsIgnoreCase("specialised")) {
                         doctorRepository.findDoctorsWithSimilarSpecializations(arr[arr.length - 1]).forEach(doctor -> details.add(doctor.getAddress()));
                         doctorRepository.findDoctorsWithSimilarLocations(arr[arr.length - 1]).forEach(doctor -> details.add(doctor.getAddress()));
                         return ResponseEntity.ok(details);
