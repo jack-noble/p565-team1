@@ -38,7 +38,7 @@ public class OtpService extends ServiceUtility {
     }
 
     public ResponseEntity<?> validateOtp(HttpServletRequest request, String userType) {
-        boolean isOtpAccurate = false;
+        boolean isOtpAccurate = true; //
         String userOtpFromDB = "";
         Map<String, Object> result = new HashMap<>();
         result.put(IS_OTP_ACCURATE, isOtpAccurate);
