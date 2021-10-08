@@ -7,7 +7,7 @@ import javax.mail.internet.*;
 public class SendEmailSMTP {
 
     public static void sendFromGMail(String[] recipients, String subject, String body) {
-        String USER_NAME = "infinitycare247";  // GMail user name (just the part before "@gmail.com")
+        String USER_NAME = "projectinfinitycare"; //"infinitycare247"; GMail user name (just the part before "@gmail.com")
         String PASSWORD = "mycare@360"; // GMail password
 
         Properties props = System.getProperties();
